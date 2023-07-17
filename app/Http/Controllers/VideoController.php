@@ -17,6 +17,7 @@ class VideoController extends Controller
 
     public function getVideo(Request $request)
     {
+        // return response()->json(\Illuminate\Support\Facades\Crypt::decrypt("eyJpdiI6IkpDc1dFUGxQV012MHlKMFFUNXorMHc9PSIsInZhbHVlIjoiNWpvcjJrWEo5dGFPTmVEdUhxUTR2cE9FVnlhRkNmamo3TTNxUER0NUtVdz0iLCJtYWMiOiI2ZWEwN2UwNGMxYmFhZTAzZDdjYjI1OTEyMGIwMzMyZGJhZDQ0ZWQxZTM1OTIyMTQ2OWZiZDQ3Njk1Nzk3NjhiIiwidGFnIjoiIn0="));
         $video =  $this->awsS3Service->getFile($request);
 
         return view('welcome', [

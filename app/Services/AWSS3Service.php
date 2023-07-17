@@ -15,7 +15,7 @@ class AWSS3Service
     public function getFile($request)
     {
         $bucket = config('filesystems.disks.s3.bucket');
-        $expires = '+30 second';
+        $expires = '+5 second';
 
         $s3Client = new S3Client([
             'region' => config('filesystems.disks.s3.region'),
