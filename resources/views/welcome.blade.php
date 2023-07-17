@@ -8,5 +8,7 @@
 </head>
 <body>
     Welcome
+    <br>
+    <video src="{{ $video }}" controls />
 </body>
 </html>
