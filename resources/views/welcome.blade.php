@@ -5,13 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Welcome</title>
+    {{-- <link rel="stylesheet" href="{{ asset('css/app-c0922643.css') }}"> --}}
 </head>
 <body>
     Welcome
     <br>
-    <video id="videoData" controls controlsList="nodownload">
+    {{-- <video id="videoData" controls controlsList="nodownload">
         <source id="videoSource" src="{{ $video }}" type="video/mp4">
-    </video>
+    </video> --}}
+
+    <div id="app"></div>
+	<script src="{{ asset('be/js/app-8837467c.js') }}" defer></script>
 </body>
 </html>
 <script type="text/javascript">
