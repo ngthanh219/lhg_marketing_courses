@@ -18,7 +18,7 @@ export default defineConfig({
         }),
     ],
     build: {
-        outDir: 'public/js/' + site + '/',
+        outDir: 'public/sources/' + site + '/',
         assetsDir: '',
         rollupOptions: {
             input: {
