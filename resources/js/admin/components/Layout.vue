@@ -23,7 +23,11 @@
             Footer,
         },
         mounted() {
-            
+            var auth = this.$store.state.auth;
+
+            if (!auth.accessToken || !auth.user) {
+                this.$router.push({path: '/admin/login' });
+            }
         }
     }
 </script>

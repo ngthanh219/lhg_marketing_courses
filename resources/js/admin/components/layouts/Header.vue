@@ -21,13 +21,13 @@
                         Change password
                     </a>
                     <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-footer">
-                        <form action="#" method="post">
+                    <!-- <a href="#" class="dropdown-footer">
+                        <form>
                             <input type="hidden" name="access_token" value="#">
                             <input type="hidden" name="refresh_token" value="#">
                             <button type="submit" class="border-0 bg-primary d-flex justify-content-center align-items-center w-100" style="border-radius: 3px">Refresh token</button>
                         </form>
-                    </a>
+                    </a> -->
                     <a href="#" class="dropdown-footer">
                         <form v-on:submit="logout">
                             <button type="submit" class="border-0 bg-danger d-flex justify-content-center align-items-center w-100" style="border-radius: 3px">Logout</button>

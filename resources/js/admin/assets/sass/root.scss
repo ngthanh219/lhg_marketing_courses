@@ -39,3 +39,14 @@
         text-align: center;
     }
 }
+
+.btn-loading {
+    position: relative;
+    height: 38px;
+
+    .loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

@@ -7,23 +7,18 @@ import getters from './getters';
 
 const store = createStore({
     state: {
-        isLoadingLogin: false,
-        notification: {
-            success: 0,
-            message: null,
-            status: 0
-        },
+        isUpdating: false,
         auth: {
             user: null,
-            isUpdatingUser: true,
-            accessToken: null,
-            refreshToken: null
+            accessToken: null
         },
     },
     actions,
     mutations,
     getters,
-    plugins: [createPersistedState()],
+    plugins: [createPersistedState( {
+        key: 'c_user'
+    })],
 });
 
 export default store;
