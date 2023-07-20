@@ -1,12 +1,9 @@
 let getters = {
-    isLoadingLogin: state => {
-        return state.isLoadingLogin
+    isUpdating: state => {
+        return state.isUpdating
     },
     auth: state => {
         return state.auth
-    },
-    notification: state => {
-        return state.notification
     }
 }
 

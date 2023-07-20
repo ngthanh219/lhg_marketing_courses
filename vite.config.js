@@ -14,7 +14,7 @@ export default defineConfig({
                 'resources/js/admin/app.js',
                 'resources/js/client/app.js'
             ],
-            refresh: true,
+            refresh: false,
         }),
     ],
     build: {

@@ -1,11 +1,9 @@
 export default {
-    setLoadingLogin(state, isLoadingLogin) {
-        state.isLoadingLogin = isLoadingLogin;
+    setIsUpdating(state, isUpdating) {
+        state.isUpdating = isUpdating;
     },
+
     setAuth(state, auth) {
         state.auth = auth;
-    },
-    setNotification(state, notification) {
-        state.notification = notification;
     }
 }

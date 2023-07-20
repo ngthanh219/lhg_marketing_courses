@@ -1,4 +1,4 @@
-let request = {
+let helper = {
     appendFormData(form) {
         const formData = new FormData();
 
@@ -19,7 +19,7 @@ let request = {
         if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) { // 46 is dot
             e.preventDefault();
         }
-    }
+    },
 }
 
-export default request;
+export default helper;
