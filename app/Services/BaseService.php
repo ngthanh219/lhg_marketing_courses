@@ -8,6 +8,13 @@ use Illuminate\Support\Facades\Log;
 
 class BaseService
 {
+    public function pagination($models, $request)
+    {
+        $models = $models->paginate($request->limit, ['*'], 'page', $request->offset);
+
+        return $this->convertPagination($models);
+    }
+
     public function convertPagination(LengthAwarePaginator $awarePaginator)
     {
         return [

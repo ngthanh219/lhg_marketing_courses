@@ -1,7 +1,7 @@
 import Layout from "../components/Layout.vue";
 import NotFoundV1 from "../components/pages/not-found/NotFoundV1.vue";
 
-import Login from "../components/pages/auth/Login.Vue";
+import Login from "../components/pages/auth/Login.vue";
 import User from "../components/pages/users/User.vue";
 import Course from "../components/pages/courses/Course.vue";
 import Video from "../components/pages/videos/Video.vue";

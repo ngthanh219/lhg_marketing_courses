@@ -17,25 +17,13 @@
                 </div>
                 <div class="row">
                     <div class="col-md-2">
-                        <div class="form-group">
-                            <label>Số lượng hiển thị</label>
-                            <input type="number" class="form-control" min="15" placeholder="15" value="15">
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label>Trang</label>
-                            <input type="number" class="form-control offset" min="1" value="1">
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
+                        <div class="form-group input-group-sm">
                             <label>Thông tin</label>
                             <input type="text" class="form-control" placeholder="Email, số điện thoại">
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group">
+                        <div class="form-group input-group-sm">
                             <label>Trạng thái</label>
                             <select class="form-control">
                                 <option value="0">Đang hoạt động</option>
@@ -59,18 +47,29 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title limit-offset"></h3>
-                                <div class="text-right">
-                                    <a href="" class="btn btn-outline-dark btn-sm" id="paginate-left">
-                                        <i class="fas fa-angle-left left"></i>
-                                    </a>
-                                    <a href="" class="btn btn-outline-dark btn-sm" id="paginate-right">
-                                        <i class="fas fa-angle-right right"></i>
-                                    </a>
+                                <h3 class="card-title limit-offset">1/1200 dữ liệu</h3>
+                                <div class="card-tools row">
+                                    <div class="input-group input-group-sm data-filter page">
+                                        <div class="label">Trang: </div>
+                                        <input type="text" style="width: 10px;" class="form-control" value="1" placeholder="1">
+                                    </div>
+                                    <div class="input-group input-group-sm data-filter">
+                                        <div class="label">Hiển thị: </div>
+                                        <select class="form-control">
+                                            <option value="10">15</option>
+                                            <option value="30">30</option>
+                                            <option value="50">50</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <ul class="pagination pagination-sm float-right">
+                                            <li class="page-item"><a class="page-link" href="#">«</a></li>
+                                            <li class="page-item"><a class="page-link" href="#">»</a></li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
-    
-                            <div class="card-body table-responsive p-0" style="height: 680px">
+                            <div class="card-body data-table table-responsive p-0">
                                 <table class="table text-center table-head-fixed text-nowrap">
                                     <thead>
                                         <tr>
