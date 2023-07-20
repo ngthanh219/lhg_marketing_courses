@@ -1,3 +1,5 @@
+# ENV
+
 APP_NAME=Laravel
 APP_ENV=local
 APP_KEY=base64:9+s4X/2sqx0h9XQB+cGGEF/gBoVsSYjy2pujcJkPwxU=
@@ -58,3 +60,14 @@ VITE_PUSHER_HOST="${PUSHER_HOST}"
 VITE_PUSHER_PORT="${PUSHER_PORT}"
 VITE_PUSHER_SCHEME="${PUSHER_SCHEME}"
 VITE_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
+
+# Install js
+- npm install
+- npm install vue@next vue-loader@next
+- npm i @vitejs/plugin-vue
+- npm install vue-router
+- npm run dev
+
+# Install css, js for admin
+- cd ./public/assets/admin
+- git clone https://github.com/ngthanh219/AdminLTE.git

@@ -13,3 +13,29 @@
 //     text-decoration: none;
 //     list-style: none;
 // }
+
+.card-body.data-table {
+    height: 650px;
+}
+
+.data-filter {
+    width: 120px;
+    margin-right: 10px;
+    align-items: center;
+
+    .label {
+        margin-right: 5px;
+    }
+
+    .form-control {
+        border-radius: 4px !important;
+    }
+}
+
+.data-filter.page {
+    width: 100px;
+    
+    .form-control {
+        text-align: center;
+    }
+}
