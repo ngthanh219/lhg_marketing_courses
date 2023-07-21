@@ -4,6 +4,7 @@ import NotFoundV1 from "../components/pages/not-found/NotFoundV1.vue";
 import Login from "../components/pages/auth/Login.vue";
 import User from "../components/pages/users/User.vue";
 import Course from "../components/pages/courses/Course.vue";
+import CourseSection from "../components/pages/course-sections/CourseSection.vue";
 import Video from "../components/pages/videos/Video.vue";
 import Billing from "../components/pages/billing/Billing.vue";
 
@@ -26,7 +27,12 @@ const routes = [
             {
                 path: 'courses',
                 name: 'Course',
-                component: Course
+                component: Course,
+            },
+            {
+                path: 'courses/:courseId/sections',
+                name: 'CourseSection',
+                component: CourseSection
             },
             {
                 path: 'videos',

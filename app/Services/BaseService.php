@@ -8,20 +8,26 @@ use Illuminate\Support\Facades\Log;
 
 class BaseService
 {
-    public function pagination($models, $request)
+    public function pagination($models, $request, $otherParams = [])
     {
         $models = $models->paginate($request->limit, ['*'], 'page', $request->page);
 
-        return $this->convertPagination($models);
+        return $this->convertPagination($models, $otherParams);
     }
 
-    public function convertPagination(LengthAwarePaginator $awarePaginator)
+    public function convertPagination(LengthAwarePaginator $awarePaginator, $otherParams = [])
     {
-        return [
+        $response = [
             'total_record' => $awarePaginator->total(),
             'total_page' => $awarePaginator->lastPage(),
             'list' => $awarePaginator->items()
         ];
+
+        foreach ($otherParams as $key => $param) {
+            $response[$key] = $param;
+        }
+
+        return $response;
     }
 
     public function responseSuccess($data = null, $appends = [], $message = '')

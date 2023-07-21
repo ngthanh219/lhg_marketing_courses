@@ -4,14 +4,17 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Quản lý khóa học</h1>
+                        <h1 class="m-0">Quản lý khóa học / Danh sách học phần</h1>
+                        <span v-if="dataList">Khóa học: {{ dataList.course_name }}</span>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item">
                                 Trang chủ
                             </li>
-                            <li class="breadcrumb-item active">Quản lý khóa học</li>
+                            <li class="breadcrumb-item active">
+                                <router-link to="/admin/courses">Quản lý khóa học</router-link> / Danh sách học phần
+                            </li>
                         </ol>
                     </div>
                 </div>
@@ -52,7 +55,7 @@
                                 v-if="dataList"
                                 :dataList="dataList"
                                 :query="query"
-                                :getData="getCourseData"
+                                :getData="getCourseSectionData"
                             />
 
                             <div class="card-body data-table table-responsive p-0">
@@ -60,7 +63,7 @@
                                     <thead>
                                         <tr>
                                             <th style="width: 25px">
-                                                <a href="/" @click="sortCourseData($event, 'id_sort')">
+                                                <a href="/" @click="sortCourseSectionData($event, 'id_sort')">
                                                     ID
                                                     <i
                                                         class="id-icon fas"
@@ -70,10 +73,8 @@
                                                     />
                                                 </a>
                                             </th>
-                                            <th style="width: 250px">Tên khóa học</th>
-                                            <th style="width: 250px">Giá</th>
-                                            <th style="width: 250px">Giá khuyến mãi</th>
-                                            <th style="width: 250px">Trạng thái</th>
+                                            <th style="width: 750px">Tên phần học</th>
+                                            <th style="width: 100px">Trạng thái</th>
                                             <th>Ngày tạo</th>
                                             <th style="width: 100px"></th>
                                         </tr>
@@ -82,8 +83,6 @@
                                         <tr v-for="data, index in dataList.list">
                                             <td>{{ data.id }}</td>
                                             <td>{{ data.name }}</td>
-                                            <td>{{ data.price.toLocaleString() + 'đ' }}</td>
-                                            <td>{{ data.discount_price.toLocaleString() + 'đ' }}</td>
                                             <td>
                                                 <span 
                                                     class="badge" 
@@ -105,10 +104,10 @@
                                                         </div>
                                                     </div>
                                                     <div class="action-detail">
-                                                        <router-link :to="'/admin/courses/' + data.id + '/sections'" class="action-detail-btn">
+                                                        <a class="action-detail-btn">
                                                             <i class="nav-icon fa fa-book"></i>
-                                                            <div class="icon-wrap">Danh sách phần học</div>
-                                                        </router-link>
+                                                            <div class="icon-wrap">Danh sách video</div>
+                                                        </a>
                                                         <a class="action-detail-btn" >
                                                             <i class="fas fa-eye"></i>
                                                             <div class="icon-wrap">Xem thông tin</div>
@@ -141,7 +140,7 @@
     import TablePagination from '../../commons/pagination/TablePagination.vue';
 
     export default {
-        name: "Course",
+        name: "CourseSection",
         components: { 
             TablePagination
         },
@@ -163,12 +162,13 @@
         mounted() {
             this.$helper.getCurrentQuery(this.query);
 
-            this.getCourseData();
+            this.getCourseSectionData();
         },
         methods: {
-            async getCourseData() {
+            async getCourseSectionData() {
                 this.$helper.setPageLoading(true);
-                await this.$store.dispatch("getCourses", {
+                await this.$store.dispatch("getCourseSections", {
+                    courseId: this.$route.params.courseId,
                     query: this.$helper.getQueryString(this.query),
                     error: this.formDataError
                 })
@@ -190,10 +190,10 @@
                 if (this.query.page == 0) {
                     this.query.page = 1;
                 }
-                this.getCourseData();
+                this.getCourseSectionData();
             },
 
-            sortCourseData(e, queryParam) {
+            sortCourseSectionData(e, queryParam) {
                 e.preventDefault();
 
                 if (this.query[queryParam] == "desc") {
@@ -203,7 +203,7 @@
                 }
 
                 this.$helper.pushQueryUrl(this.query);
-                this.getCourseData();
+                this.getCourseSectionData();
             }
         }
     }
