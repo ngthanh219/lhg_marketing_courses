@@ -11,7 +11,11 @@ return [
     ],
     "auth" => [
         "auth_error" => "Not authentication",
-        "login_error" => "Email or password was invalid"
+        "login_error" => "Email or password was invalid",
+        "is_login" => [
+            "logged_in" => "Logged in",
+            "not_logged_in" => "Not logged"
+        ],
     ],
     "data_status" => [
         "success" => "Success",

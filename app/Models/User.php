@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libraries\Constant;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -16,6 +17,7 @@ class User extends Authenticatable
     protected $fillable = [
         'role_id',
         'name',
+        'phone',
         'email',
         'password',
         'verification_code',
@@ -25,21 +27,19 @@ class User extends Authenticatable
     ];
 
     protected $hidden = [
-        'role_id',
         'password',
         'email_verified_at',
-        'is_login',
         'deleted_at',
         'updated_at'
     ];
 
     public function getCreatedAtAttribute($value)
     {
-        return Carbon::parse($value)->format("Y-m-d H:i:s");
+        return Carbon::parse($value)->format("d-m-Y H:i:s");
     }
 
     public function getUpdatedAtAttribute($value)
     {
-        return Carbon::parse($value)->format("Y-m-d H:i:s");
+        return Carbon::parse($value)->format("d-m-Y H:i:s");
     }
 }

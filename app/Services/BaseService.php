@@ -10,7 +10,7 @@ class BaseService
 {
     public function pagination($models, $request)
     {
-        $models = $models->paginate($request->limit, ['*'], 'page', $request->offset);
+        $models = $models->paginate($request->limit, ['*'], 'page', $request->page);
 
         return $this->convertPagination($models);
     }
