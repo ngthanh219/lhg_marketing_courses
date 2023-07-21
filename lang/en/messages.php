@@ -20,5 +20,8 @@ return [
     "data_status" => [
         "success" => "Success",
         "fail" => "Failed"
+    ],
+    "course" => [
+        "not_exist" => "The course does not exist"
     ]
 ];

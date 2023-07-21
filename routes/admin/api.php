@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CourseController;
+use App\Http\Controllers\Admin\CourseSectionController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,5 +21,6 @@ Route::group([
         'prefix' => 'courses'
     ], function () {
         Route::get('', [CourseController::class, 'index']);
+        Route::get('{couseId}/sections', [CourseSectionController::class, 'getSectionsByCourse']);
     });
 });

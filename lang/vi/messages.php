@@ -20,5 +20,8 @@ return [
     "data_status" => [
         "success" => "Thành công",
         "fail" => "Thất bại"
+    ],
+    "course" => [
+        "not_exist" => "Khóa học không tồn tại"
     ]
 ];

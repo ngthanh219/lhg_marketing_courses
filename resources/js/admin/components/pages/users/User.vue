@@ -9,7 +9,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item">
-                                <a href="#">Trang chủ</a>
+                                Trang chủ
                             </li>
                             <li class="breadcrumb-item active">Quản lý người dùng</li>
                         </ol>
@@ -109,11 +109,11 @@
                                                     <div class="action-detail">
                                                         <a class="action-detail-btn" >
                                                             <i class="fas fa-eye"></i>
-                                                            <span class="icon-wrap">Xem thông tin</span>
+                                                            <div class="icon-wrap">Xem thông tin</div>
                                                         </a>
                                                         <a class="action-detail-btn">
                                                             <i class="fas fa-trash"></i>
-                                                            <span class="icon-wrap">Xóa</span>
+                                                            <div class="icon-wrap">Xóa</div>
                                                         </a>
                                                     </div>
                                                 </div>
