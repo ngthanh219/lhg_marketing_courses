@@ -8,7 +8,7 @@
                 <div class="card-body login-card-body">
                     <p class="login-box-msg">Đăng nhập để bắt đầu</p>
                     <form v-on:submit="login">
-                        <div class="error text-danger text-bold text-sm" v-if="formDataError.message">{{formDataError.message}}</div>
+                        <div class="error text-danger text-bold text-sm text-center" v-if="formDataError.message">{{formDataError.message}}</div>
                         <div class="input-group mt-3">
                             <input type="email" class="form-control" placeholder="Email" name="email" v-model="formData.email">
                             <div class="input-group-append">
@@ -56,7 +56,7 @@
             return {
                 isLoginClick: false,
                 formData: {
-                    email: 'admin@gmail.com',
+                    email: 'admin1@gmail.com',
                     password: '123456'
                 },
                 formDataError: {
@@ -70,30 +70,28 @@
             var auth = this.$store.state.auth;
 
             if (auth.accessToken && auth.user) {
-                this.$router.push({path: '/admin/users' });
+                this.$helper.redirectPage('users');
             }
         },
         methods: {
-            login(e) {
+            async login(e) {
                 e.preventDefault();
 
                 this.isLoginClick = true;
                 if (this.isLoginClick) {
-                    this.$store.dispatch('login', {
+                    await this.$store.dispatch('login', {
                         request: this.$helper.appendFormData(this.formData),
                         error: this.formDataError
                     })
                     .then(res => {
-                        this.$store.commit('setAuth', {
-                            user: res.data.user,
-                            accessToken: res.data.access_token
-                        });
-                        this.isLoginClick = false;
-                        this.$router.push({path: '/admin/users' });
+                        this.$helper.setAuth(res.data);
+                        this.$helper.redirectPage('users');
                     })
                     .catch(err => {
-                        this.isLoginClick = false;
+                        
                     });
+
+                    this.isLoginClick = false;
                 }
             }
         }

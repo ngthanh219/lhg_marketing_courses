@@ -16,12 +16,13 @@ return new class extends Migration
             $table->id();
             $table->integer('role_id')->default(Constant::ROLE_CLIENT);
             $table->string('name');
+            $table->integer('phone')->unique()->default();
             $table->string('email')->unique();
             $table->string('password');
             $table->string('verification_code')->nullable();
             $table->timestamp("verification_code_at")->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->tinyInteger('is_login')->nullable();
+            $table->tinyInteger('is_login')->default(Constant::IS_NOT_LOGGED);
             $table->softDeletes();
             $table->timestamps();
         });

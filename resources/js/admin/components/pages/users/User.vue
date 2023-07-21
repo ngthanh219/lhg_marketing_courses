@@ -19,25 +19,26 @@
                     <div class="col-md-2">
                         <div class="form-group input-group-sm">
                             <label>Thông tin</label>
-                            <input type="text" class="form-control" placeholder="Email, số điện thoại">
+                            <input type="text" class="form-control" placeholder="Email, số điện thoại" v-model="query.information">
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group input-group-sm">
                             <label>Trạng thái</label>
-                            <select class="form-control">
-                                <option value="0">Đang hoạt động</option>
-                                <option value="1">Đã khóa</option>
+                            <select class="form-control" v-model="query.is_login">
+                                <option value="2">Tất cả</option>
+                                <option value="0">Chưa đăng nhập</option>
+                                <option value="1">Đã đăng nhập</option>
                             </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-end">
+                        <div class="form-group input-group-sm">
+                            <a href="/" class="btn btn-primary" @click="filter">Lọc</a>
                         </div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <a id="filter-action" class="btn btn-primary">Filter</a>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -46,68 +47,84 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title limit-offset">1/1200 dữ liệu</h3>
-                                <div class="card-tools row">
-                                    <div class="input-group input-group-sm data-filter page">
-                                        <div class="label">Trang: </div>
-                                        <input type="text" style="width: 10px;" class="form-control" value="1" placeholder="1">
-                                    </div>
-                                    <div class="input-group input-group-sm data-filter">
-                                        <div class="label">Hiển thị: </div>
-                                        <select class="form-control">
-                                            <option value="10">15</option>
-                                            <option value="30">30</option>
-                                            <option value="50">50</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <ul class="pagination pagination-sm float-right">
-                                            <li class="page-item"><a class="page-link" href="#">«</a></li>
-                                            <li class="page-item"><a class="page-link" href="#">»</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
+
+                            <TablePagination
+                                v-if="dataList"
+                                :dataList="dataList"
+                                :query="query"
+                                :getData="getUserData"
+                            />
+
                             <div class="card-body data-table table-responsive p-0">
-                                <table class="table text-center table-head-fixed text-nowrap">
+                                <table class="table text-center table-hover table-head-fixed text-nowrap">
                                     <thead>
                                         <tr>
                                             <th style="width: 25px">
-                                                <a href="" id="order-by-id">
-                                                    User ID
-                                                    <i class="id-icon fas fa-arrow-down"></i>
+                                                <a href="/" @click="sortUserData($event, 'id_sort')">
+                                                    ID
+                                                    <i
+                                                        class="id-icon fas"
+                                                        v-bind:class="[
+                                                            query.id_sort == 'asc' ? 'fa-arrow-up' : 'fa-arrow-down'
+                                                        ]"
+                                                    />
                                                 </a>
                                             </th>
-                                            <th style="width: 250px">Full name</th>
+                                            <th style="width: 250px">Chức vụ</th>
+                                            <th style="width: 250px">Họ tên</th>
+                                            <th style="width: 250px">Số điện thoại</th>
                                             <th style="width: 250px">Email</th>
-                                            <th class="d-none user-agent">User agent</th>
-                                            <th style="width: 250px">Wallet address</th>
-                                            <th style="width: 250px">Stamina</th>
-                                            <th style="width: 250px">
-                                                <a href="" id="order-by-bape-coin">
-                                                    Bape coin
-                                                    <i class="bape-coin-icon fas fa-arrow-down"></i>
-                                                </a>
-                                            </th>
-                                            <th style="width: 250px">
-                                                <a href="" id="order-by-ape-coin">
-                                                    Ape coin
-                                                    <i class="ape-coin-icon fas fa-arrow-down"></i>
-                                                </a>
-                                            </th>
-                                            <th style="width: 250px">
-                                                <a href="" id="order-by-earn">
-                                                    Earned
-                                                    <i class="earn-icon fas fa-arrow-down"></i>
-                                                </a>
-    
-                                            </th>
-                                            <th>Status</th>
-                                            <th style="width: 250px">Action</th>
+                                            <th class="user-agent">Trạng thái đăng nhập</th>
+                                            <th class="user-agent">Ngày tạo</th>
+                                            <th style="width: 100px"></th>
                                         </tr>
                                     </thead>
-                                    <tbody class="table-data"></tbody>
+                                    <tbody class="table-data" v-if="dataList">
+                                        <tr v-for="data, index in dataList.list">
+                                            <td>{{ data.id }}</td>
+                                            <td>{{ data.role_id == 0 ? 'Admin' : 'Người dùng' }}</td>
+                                            <td>{{ data.name }}</td>
+                                            <td>{{ data.phone }}</td>
+                                            <td>{{ data.email }}</td>
+                                            <td>
+                                                <span 
+                                                    class="badge" 
+                                                    v-bind:class="[
+                                                        data.is_login == 1 ? 'alert-success' : 'alert-secondary'
+                                                    ]"
+                                                >
+                                                    {{ data.is_login == 1 ? 'Đã đăng nhập' : 'Chưa đăng nhập' }}
+                                                </span>
+                                            </td>
+                                            <td>{{ data.created_at }}</td>
+                                            <td>
+                                                <div class="table-action">
+                                                    <div class="action-btn">
+                                                        <div>
+                                                            <div class="dot"></div>
+                                                            <div class="dot"></div>
+                                                            <div class="dot"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="action-detail">
+                                                        <a class="action-detail-btn" >
+                                                            <i class="fas fa-eye"></i>
+                                                            <span class="icon-wrap">Xem thông tin</span>
+                                                        </a>
+                                                        <a class="action-detail-btn">
+                                                            <i class="fas fa-trash"></i>
+                                                            <span class="icon-wrap">Xóa</span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody v-if="dataList && dataList.list.length == 0">
+                                        <tr>
+                                            <td colspan="8">Không có dữ liệu</td>
+                                        </tr>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -119,11 +136,72 @@
 </template>
 
 <script>
+    import TablePagination from '../../commons/pagination/TablePagination.vue';
+
     export default {
-        name: 'User',
+        name: "User",
+        components: { 
+            TablePagination
+        },
         data() {
             return {
+                dataList: null,
+                query: {
+                    limit: 15,
+                    page: 1,
+                    id_sort: "desc",
+                    information: "",
+                    is_login: 2
+                },
+                formDataError: {
+                    message: ""
+                },
+            };
+        },
+        mounted() {
+            this.$helper.getCurrentQuery(this.query);
 
+            this.getUserData();
+        },
+        methods: {
+            async getUserData() {
+                this.$helper.setPageLoading(true);
+                await this.$store.dispatch("getUsers", {
+                    query: this.$helper.getQueryString(this.query),
+                    error: this.formDataError
+                })
+                .then(res => {
+                    this.dataList = res.data;
+                })
+                    .catch(err => {
+                });
+                this.$helper.setPageLoading(false);
+            },
+
+            filter(e) {
+                e.preventDefault();
+
+                this.$helper.pushQueryUrl(this.query);
+                if (this.query.page >= this.dataList.total_page) {
+                    this.query.page = this.dataList.total_page;
+                }
+                if (this.query.page == 0) {
+                    this.query.page = 1;
+                }
+                this.getUserData();
+            },
+
+            sortUserData(e, queryParam) {
+                e.preventDefault();
+
+                if (this.query[queryParam] == "desc") {
+                    this.query[queryParam] = "asc";
+                } else {
+                    this.query[queryParam] = "desc";
+                }
+
+                this.$helper.pushQueryUrl(this.query);
+                this.getUserData();
             }
         }
     }

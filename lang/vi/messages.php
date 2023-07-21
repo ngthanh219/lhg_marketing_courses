@@ -11,7 +11,11 @@ return [
     ],
     "auth" => [
         "auth_error" => "Thông tin tài khoản không hợp lệ",
-        "login_error" => "Thông tin đăng nhập không chính xác"
+        "login_error" => "Thông tin đăng nhập không chính xác",
+        "is_login" => [
+            "logged_in" => "Đã đăng nhập",
+            "not_logged_in" => "Chưa đăng nhập"
+        ],
     ],
     "data_status" => [
         "success" => "Thành công",

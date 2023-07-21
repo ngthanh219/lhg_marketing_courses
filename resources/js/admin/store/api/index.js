@@ -1,4 +1,5 @@
 import env from '../../../env';
+import helper from '../../helpers/helper';
 
 const errorMessage = 'An error has occurred!';
 
@@ -18,6 +19,8 @@ function handleFormDataError(errors, formDataError) {
 
         formDataError.message = errors.message;
     }
+
+    return formDataError;
 }
 
 function rejectError(err, formDataError = null) {
@@ -26,23 +29,40 @@ function rejectError(err, formDataError = null) {
         validation: null
     };
 
+    var notification = {
+        success: 0,
+        message: null
+    };
+
     if (typeof (err.response) !== 'undefined') {
+        if (typeof (err.response.status) !== 'undefined' && err.response.status === 401) {
+            helper.setAuth({
+                user: null,
+                access_token: null
+            });
+
+            helper.setNotification(0, null);
+        }
+
         err = err.response.data;
 
         if (typeof (err.error) !== 'undefined') {
             errors.message = err.error.error_message;
-        } else {
-            errors.err;
         }
 
         if (typeof (err.validation) !== 'undefined') {
             errors.validation = err.validation;
         }
+
+        notification.message = errors.message;
     } else {
         errors.message = errorMessage;
+        notification.message = errors.message;
     }
 
-    handleFormDataError(errors, formDataError);
+    helper.setNotification(notification.success, notification.message);
+
+    return handleFormDataError(errors, formDataError);
 }
 
 const actionParams = {
