@@ -1,11 +1,21 @@
 <template>
-    <div class="content-wrapper">
+    <div class="content-wrapper page-component">
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Quản lý khóa học / Danh sách học phần</h1>
-                        <span v-if="dataList">Khóa học: {{ dataList.course_name }}</span>
+                        <h1 class="m-0">
+                            Danh sách phần học
+                        </h1>
+                        <span v-if="dataList">
+                            <div v-if="dataList.course_name">
+                                <b>Khóa học: </b>
+                                <span class="underline">{{ dataList.course_name }}</span> - 
+                                <router-link to="/admin/course-sections" class="underline oblique" @click="clearFilter($event, 'course_id')">
+                                    clear
+                                </router-link>
+                            </div>
+                        </span>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -13,7 +23,7 @@
                                 Trang chủ
                             </li>
                             <li class="breadcrumb-item active">
-                                <router-link to="/admin/courses">Quản lý khóa học</router-link> / Danh sách học phần
+                                Danh sách phần học
                             </li>
                         </ol>
                     </div>
@@ -21,8 +31,8 @@
                 <div class="row">
                     <div class="col-md-2">
                         <div class="form-group input-group-sm">
-                            <label>Tên khóa học</label>
-                            <input type="text" class="form-control" placeholder="Tên khóa học" v-model="query.name">
+                            <label>Tên phần học</label>
+                            <input type="text" class="form-control" placeholder="Tên phần học" v-model="query.name">
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -73,8 +83,9 @@
                                                     />
                                                 </a>
                                             </th>
-                                            <th style="width: 750px">Tên phần học</th>
-                                            <th style="width: 100px">Trạng thái</th>
+                                            <th style="width: 600px">Tên phần học</th>
+                                            <th style="width: 250px">Số lượng</th>
+                                            <th style="width: 250px">Trạng thái</th>
                                             <th>Ngày tạo</th>
                                             <th style="width: 100px"></th>
                                         </tr>
@@ -83,6 +94,9 @@
                                         <tr v-for="data, index in dataList.list">
                                             <td>{{ data.id }}</td>
                                             <td>{{ data.name }}</td>
+                                            <td>
+                                                <router-link target="_blank" :to="'/admin/videos?course_section_id=' + data.id" title="Danh sách video">{{ data.videos_count }} video</router-link>
+                                            </td>
                                             <td>
                                                 <span 
                                                     class="badge" 
@@ -104,17 +118,20 @@
                                                         </div>
                                                     </div>
                                                     <div class="action-detail">
-                                                        <a class="action-detail-btn">
-                                                            <i class="nav-icon fa fa-book"></i>
-                                                            <div class="icon-wrap">Danh sách video</div>
-                                                        </a>
-                                                        <a class="action-detail-btn" >
+                                                        <a class="action-detail-btn" v-if="query.is_deleted == 0" @click="openForm($event, index, dataList.list[index])">
                                                             <i class="fas fa-eye"></i>
                                                             <div class="icon-wrap">Xem thông tin</div>
                                                         </a>
-                                                        <a class="action-detail-btn">
-                                                            <i class="fas fa-trash"></i>
-                                                            <div class="icon-wrap">Xóa</div>
+                                                        <a class="action-detail-btn" @click="deleteData($event, data.id)">
+                                                            <i 
+                                                                class="fas"
+                                                                v-bind:class="[
+                                                                    query.is_deleted == 0 ? 'fa-trash' : 'fa-window-restore'
+                                                                ]"
+                                                            />
+                                                            <div class="icon-wrap">
+                                                                {{ query.is_deleted == 0 ? 'Xóa' : 'Khôi phục' }}
+                                                            </div>
                                                         </a>
                                                     </div>
                                                 </div>
@@ -133,16 +150,25 @@
                 </div>
             </div>
         </section>
+
+        <CourseSectionInformation
+            v-if="isForm"
+
+            :closeForm="closeForm"
+            :courseSectionData="data"
+        />
     </div>
 </template>
 
 <script>
     import TablePagination from '../../commons/pagination/TablePagination.vue';
+    import CourseSectionInformation from './CourseSectionInformation.vue';
 
     export default {
         name: "CourseSection",
         components: { 
-            TablePagination
+            TablePagination,
+            CourseSectionInformation
         },
         data() {
             return {
@@ -152,11 +178,15 @@
                     page: 1,
                     id_sort: "desc",
                     name: "",
-                    is_show: 2
+                    is_show: 2,
+                    course_id: null,
+                    is_deleted: 0
                 },
                 formDataError: {
                     message: ""
                 },
+                isForm: false,
+                data: null
             };
         },
         mounted() {
@@ -168,7 +198,6 @@
             async getCourseSectionData() {
                 this.$helper.setPageLoading(true);
                 await this.$store.dispatch("getCourseSections", {
-                    courseId: this.$route.params.courseId,
                     query: this.$helper.getQueryString(this.query),
                     error: this.formDataError
                 })
@@ -184,12 +213,22 @@
                 e.preventDefault();
 
                 this.$helper.pushQueryUrl(this.query);
+
                 if (this.query.page >= this.dataList.total_page) {
                     this.query.page = this.dataList.total_page;
                 }
+
                 if (this.query.page == 0) {
                     this.query.page = 1;
                 }
+
+                this.getCourseSectionData();
+            },
+
+            clearFilter(e, param) {
+                e.preventDefault();
+
+                this.query[param] = null;
                 this.getCourseSectionData();
             },
 
@@ -204,6 +243,47 @@
 
                 this.$helper.pushQueryUrl(this.query);
                 this.getCourseSectionData();
+            },
+
+            openForm(e, index, data) {
+                e.preventDefault();
+
+                this.isForm = true;
+                this.data = data;
+                this.data['index'] = index;
+            },
+
+            closeForm(e) {
+                e.preventDefault();
+
+                this.isForm = false;
+            },
+
+            async deleteData(e, id) {
+                e.preventDefault();
+
+                var alertMessage = 'Bạn muốn xóa phần học này?';
+                var successMessage = 'Xóa thành công';
+                if (this.query.is_deleted == 1) {
+                    alertMessage = 'Bạn muốn khôi phục phần học này?';
+                    successMessage = 'Khôi phục thành công';
+                }
+
+                if (confirm(alertMessage)) {
+                    this.$helper.setPageLoading(true);
+                    await this.$store.dispatch("deleteCourseSection", {
+                        id: id,
+                        error: this.formDataError
+                    })
+                    .then(res => {
+                        this.$helper.setNotification(1, successMessage);
+                    })
+                    .catch(err => {
+
+                    });
+
+                    this.getCourseSectionData();
+                }
             }
         }
     }

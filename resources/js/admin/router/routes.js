@@ -30,7 +30,7 @@ const routes = [
                 component: Course,
             },
             {
-                path: 'courses/:courseId/sections',
+                path: 'course-sections',
                 name: 'CourseSection',
                 component: CourseSection
             },

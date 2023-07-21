@@ -20,13 +20,6 @@ let helper = {
             success: success,
             message: message
         });
-
-        setTimeout(() => {
-            store.commit('setNotification', {
-                success: 0,
-                message: null
-            });
-        }, 5000);
     },
 
     redirectPage(path, query = {}) {
@@ -80,18 +73,61 @@ let helper = {
         const formData = new FormData();
 
         for (var param in form) {
-            formData.append(param, form[param]);
+            if (form[param] !== null && form[param] !== '') {
+                formData.append(param, form[param]);
+            }
         }
 
         return formData;
     },
 
     isNumber(e) {
-        let keyCode = (e.keyCode ? e.keyCode : e.which);
+        const keyCode = e.keyCode || e.which;
+        const keyChar = String.fromCharCode(keyCode);
 
-        if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) { // 46 is dot
+        const isOnlyNumber = /^[0-9]$/.test(keyChar);
+        const isBackspace = keyCode === 8;
+
+        if (!isOnlyNumber && !isBackspace) {
             e.preventDefault();
         }
+    },
+
+    formatDuration(duration) {
+        const hours = Math.floor(duration / 3600);
+        const minutes = Math.floor((duration % 3600) / 60);
+        const seconds = duration % 60;
+
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    },
+
+    scrollTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
+    },
+
+    mergeArrayData(array1, array2) {
+        for (var param in array1) {
+            if (typeof (array2[param]) !== 'undefined') {
+                array2[param] = array1[param];
+            }
+        }
+    },
+
+    checkChangeFormData(data, form) {
+        var check = false;
+
+        for (var param in data) {
+            if (typeof (form[param]) !== 'undefined') {
+                if (form[param] !== data[param]) {
+                    check = true;
+                }
+            }
+        }
+
+        return check;
     },
 }
 

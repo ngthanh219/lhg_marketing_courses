@@ -1,7 +1,7 @@
 <template>
-    <div class="not-found-v1 wrapper-content">
+    <div class="content-wrapper">
         <div class="content">
-            This page doesn't exist!
+            Trang này không tồn tại
         </div>
     </div>
 </template>
@@ -13,7 +13,7 @@
 </script>
 
 <style lang="scss" scoped>
-    .not-found-v1.wrapper-content {
+    .content-wrapper {
         display: flex;
         flex: 1;
         justify-content: center;

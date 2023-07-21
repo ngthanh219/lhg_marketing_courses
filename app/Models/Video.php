@@ -9,38 +9,29 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Course extends Model
+class Video extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name',
-        'slogan',
-        'introduction',
+        'course_section_id',
         'description',
-        'image',
-        'price',
-        'discount',
-        'discount_price',
+        'source_url',
+        'duration',
         'is_show'
     ];
 
     protected $hidden = [
-        'image',
         'deleted_at',
         'updated_at'
     ];
 
-    protected $appends = [
-        'image_url'
-    ];
-
-    public function getImageUrlAttribute()
-    {
+    public function getSourceUrlAttribute($value)
+    {  
         $awsS3Service = new AWSS3Service();
 
-        if ($this->image) {
-            return $awsS3Service->getFile($this->image, Constant::EXPIRE_IMAGE);
+        if ($value) {
+            return $awsS3Service->getFile($value, Constant::EXPIRE_VIDEO);
         }
 
         return null;
@@ -56,8 +47,8 @@ class Course extends Model
         return Carbon::parse($value)->format("d-m-Y H:i:s");
     }
 
-    public function courseSections()
+    public function courseSection()
     {
-        return $this->hasMany(CourseSection::class, 'course_id', 'id');
+        return $this->belongsTo(CourseSection::class, 'course_section_id', 'id');
     }
 }

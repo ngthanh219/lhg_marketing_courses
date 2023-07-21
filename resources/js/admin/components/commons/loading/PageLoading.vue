@@ -20,7 +20,7 @@
         width: 100%;
         height: 100%;
         background: hsla(0deg, 0%, 8%, 0.85);
-        z-index: 99999999;
+        z-index: 999999999999999;
     }
 
     .lds-roller {

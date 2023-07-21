@@ -1,5 +1,5 @@
 <template>
-    <div class="content-wrapper">
+    <div class="content-wrapper page-component">
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
@@ -38,8 +38,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                </div>
             </div>
         </div>
         <section class="content">
@@ -74,8 +72,8 @@
                                             <th style="width: 250px">Họ tên</th>
                                             <th style="width: 250px">Số điện thoại</th>
                                             <th style="width: 250px">Email</th>
-                                            <th class="user-agent">Trạng thái đăng nhập</th>
-                                            <th class="user-agent">Ngày tạo</th>
+                                            <th style="width: 250px">Trạng thái đăng nhập</th>
+                                            <th style="width: 250px">Ngày tạo</th>
                                             <th style="width: 100px"></th>
                                         </tr>
                                     </thead>
@@ -107,13 +105,20 @@
                                                         </div>
                                                     </div>
                                                     <div class="action-detail">
-                                                        <a class="action-detail-btn" >
+                                                        <a class="action-detail-btn" v-if="query.is_deleted == 0" @click="openForm($event, index, dataList.list[index])">
                                                             <i class="fas fa-eye"></i>
                                                             <div class="icon-wrap">Xem thông tin</div>
                                                         </a>
-                                                        <a class="action-detail-btn">
-                                                            <i class="fas fa-trash"></i>
-                                                            <div class="icon-wrap">Xóa</div>
+                                                        <a class="action-detail-btn" @click="deleteData($event, data.id)">
+                                                            <i 
+                                                                class="fas"
+                                                                v-bind:class="[
+                                                                    query.is_deleted == 0 ? 'fa-trash' : 'fa-window-restore'
+                                                                ]"
+                                                            />
+                                                            <div class="icon-wrap">
+                                                                {{ query.is_deleted == 0 ? 'Xóa' : 'Khôi phục' }}
+                                                            </div>
                                                         </a>
                                                     </div>
                                                 </div>
@@ -132,16 +137,25 @@
                 </div>
             </div>
         </section>
+
+        <UserInformation
+            v-if="isForm"
+
+            :closeForm="closeForm"
+            :userData="data"
+        />
     </div>
 </template>
 
 <script>
     import TablePagination from '../../commons/pagination/TablePagination.vue';
+    import UserInformation from './UserInformation.vue';
 
     export default {
         name: "User",
-        components: { 
-            TablePagination
+        components: {
+            TablePagination,
+            UserInformation
         },
         data() {
             return {
@@ -151,11 +165,14 @@
                     page: 1,
                     id_sort: "desc",
                     information: "",
-                    is_login: 2
+                    is_login: 2,
+                    is_deleted: 0
                 },
                 formDataError: {
                     message: ""
                 },
+                isForm: false,
+                data: null
             };
         },
         mounted() {
@@ -173,7 +190,7 @@
                 .then(res => {
                     this.dataList = res.data;
                 })
-                    .catch(err => {
+                .catch(err => {
                 });
                 this.$helper.setPageLoading(false);
             },
@@ -182,12 +199,15 @@
                 e.preventDefault();
 
                 this.$helper.pushQueryUrl(this.query);
+
                 if (this.query.page >= this.dataList.total_page) {
                     this.query.page = this.dataList.total_page;
                 }
+
                 if (this.query.page == 0) {
                     this.query.page = 1;
                 }
+
                 this.getUserData();
             },
 
@@ -202,6 +222,47 @@
 
                 this.$helper.pushQueryUrl(this.query);
                 this.getUserData();
+            },
+
+            openForm(e, index, data) {
+                e.preventDefault();
+
+                this.isForm = true;
+                this.data = data;
+                this.data['index'] = index;
+            },
+
+            closeForm(e) {
+                e.preventDefault();
+
+                this.isForm = false;
+            },
+
+            async deleteData(e, id) {
+                e.preventDefault();
+
+                var alertMessage = 'Bạn muốn xóa tài khoản này?';
+                var successMessage = 'Xóa thành công';
+                if (this.query.is_deleted == 1) {
+                    alertMessage = 'Bạn muốn khôi phục tài khoản này?';
+                    successMessage = 'Khôi phục thành công';
+                }
+
+                if (confirm(alertMessage)) {
+                    this.$helper.setPageLoading(true);
+                    await this.$store.dispatch("deleteUser", {
+                        id: id,
+                        error: this.formDataError
+                    })
+                    .then(res => {
+                        this.$helper.setNotification(1, successMessage);
+                    })
+                    .catch(err => {
+
+                    });
+
+                    this.getUserData();
+                }
             }
         }
     }

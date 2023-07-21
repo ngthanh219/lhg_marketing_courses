@@ -1,20 +1,10 @@
 <template>
-    <div class="content-wrapper page-component">
+    <div class="page-component modal-list">
         <div class="content-header">
+            <div class="form-group input-group-sm">
+                <a href="/" class="btn btn-primary" @click="closeModal">Quay lại</a>
+            </div>
             <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1 class="m-0">Quản lý khóa học</h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item">
-                                Trang chủ
-                            </li>
-                            <li class="breadcrumb-item active">Quản lý khóa học</li>
-                        </ol>
-                    </div>
-                </div>
                 <div class="row">
                     <div class="col-md-2">
                         <div class="form-group input-group-sm">
@@ -69,24 +59,17 @@
                                                 </a>
                                             </th>
                                             <th style="width: 250px">Tên khóa học</th>
-                                            <th style="width: 250px">Phần học</th>
                                             <th style="width: 250px">Giá</th>
                                             <th style="width: 250px">Giảm giá</th>
                                             <th style="width: 250px">Giá khuyến mãi</th>
                                             <th style="width: 250px">Trạng thái</th>
-                                            <th style="width: 250px">Ngày tạo</th>
-                                            <th style="width: 100px"></th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody class="table-data" v-if="dataList">
                                         <tr v-for="data, index in dataList.list">
                                             <td>{{ data.id }}</td>
                                             <td>{{ data.name }}</td>
-                                            <td>
-                                                <router-link target="_blank" :to="'/admin/course-sections?course_id=' + data.id">
-                                                    {{ data.course_sections_count + ' phần' }}
-                                                </router-link>
-                                            </td>
                                             <td>{{ data.price.toLocaleString() + 'đ' }}</td>
                                             <td>{{ data.discount }}%</td>
                                             <td>{{ data.discount_price.toLocaleString() + 'đ' }}</td>
@@ -100,34 +83,8 @@
                                                     {{ data.is_show == 0 ? 'Đang hiển thị' : 'Đã ẩn' }}
                                                 </span>
                                             </td>
-                                            <td>{{ data.created_at }}</td>
                                             <td>
-                                                <div class="table-action">
-                                                    <div class="action-btn">
-                                                        <div>
-                                                            <div class="dot"></div>
-                                                            <div class="dot"></div>
-                                                            <div class="dot"></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="action-detail">
-                                                        <a class="action-detail-btn" v-if="query.is_deleted == 0" @click="openForm($event, index, dataList.list[index])">
-                                                            <i class="fas fa-eye"></i>
-                                                            <div class="icon-wrap">Xem thông tin</div>
-                                                        </a>
-                                                        <a class="action-detail-btn" @click="deleteData($event, data.id)">
-                                                            <i 
-                                                                class="fas"
-                                                                v-bind:class="[
-                                                                    query.is_deleted == 0 ? 'fa-trash' : 'fa-window-restore'
-                                                                ]"
-                                                            />
-                                                            <div class="icon-wrap">
-                                                                {{ query.is_deleted == 0 ? 'Xóa' : 'Khôi phục' }}
-                                                            </div>
-                                                        </a>
-                                                    </div>
-                                                </div>
+                                                <a class="cursor-pointer" @click="selectData($event, data.id, data.name)">Chọn</a>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -143,25 +100,20 @@
                 </div>
             </div>
         </section>
-
-        <CourseInformation
-            v-if="isForm"
-
-            :closeForm="closeForm"
-            :courseData="data"
-        />
     </div>
 </template>
 
 <script>
     import TablePagination from '../../commons/pagination/TablePagination.vue';
-    import CourseInformation from './CourseInformation.vue';
 
     export default {
-        name: "Course",
+        name: "CourseList",
         components: { 
-            TablePagination,
-            CourseInformation
+            TablePagination
+        },
+        props: {
+            closeModalList: Function,
+            selectCourseData: Function
         },
         data() {
             return {
@@ -176,14 +128,10 @@
                 },
                 formDataError: {
                     message: ""
-                },
-                isForm: false,
-                data: null
+                }
             };
         },
         mounted() {
-            this.$helper.getCurrentQuery(this.query);
-
             this.getCourseData();
         },
         methods: {
@@ -203,8 +151,6 @@
 
             filter(e) {
                 e.preventDefault();
-
-                this.$helper.pushQueryUrl(this.query);
 
                 if (this.query.page >= this.dataList.total_page) {
                     this.query.page = this.dataList.total_page;
@@ -226,49 +172,20 @@
                     this.query[queryParam] = "desc";
                 }
 
-                this.$helper.pushQueryUrl(this.query);
                 this.getCourseData();
             },
 
-            openForm(e, index, data) {
+            closeModal(e) {
                 e.preventDefault();
 
-                this.isForm = true;
-                this.data = data;
-                this.data['index'] = index;
+                this.closeModalList();
             },
 
-            closeForm(e) {
+            selectData(e, id, name) {
                 e.preventDefault();
 
-                this.isForm = false;
-            },
-
-            async deleteData(e, id) {
-                e.preventDefault();
-
-                var alertMessage = 'Bạn muốn xóa khóa học này?';
-                var successMessage = 'Xóa thành công';
-                if (this.query.is_deleted == 1) {
-                    alertMessage = 'Bạn muốn khôi phục khóa học này?';
-                    successMessage = 'Khôi phục thành công';
-                }
-
-                if (confirm(alertMessage)) {
-                    this.$helper.setPageLoading(true);
-                    await this.$store.dispatch("deleteCourse", {
-                        id: id,
-                        error: this.formDataError
-                    })
-                    .then(res => {
-                        this.$helper.setNotification(1, successMessage);
-                    })
-                    .catch(err => {
-
-                    });
-
-                    this.getCourseData();
-                }
+                this.selectCourseData(id, name);
+                this.closeModalList();
             }
         }
     }

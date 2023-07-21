@@ -180,8 +180,7 @@ return [
     */
 
     'attributes' => [
-        'model_name' => 'Model name',
-        'box_name' => 'Box name',
+        
     ],
 
 ];
