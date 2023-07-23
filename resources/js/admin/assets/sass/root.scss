@@ -181,7 +181,7 @@ body {
         height: 100%;
         width: 100%;
         z-index: 99999999;
-        background: hsla(0, 0%, 8%, 0.85);
+        background: hsla(0, 0%, 8%, 0.5);
         // transform: translateX(100%);
         // transition: .4s all ease;
 
@@ -192,7 +192,7 @@ body {
             height: 100%;
             width: 100%;
             transform: translateY(20%);
-            transition: 0.3s all ease;
+            transition: 0.2s all ease;
             opacity: 0;
 
             .content {
@@ -226,5 +226,9 @@ body {
             transform: translateX(0%);
             opacity: 1;
         }
+    }
+
+    .popup-component.transition-active {
+        background: hsla(0, 0%, 8%, 0);
     }
 }

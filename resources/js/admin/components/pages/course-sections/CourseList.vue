@@ -2,7 +2,7 @@
     <div class="page-component modal-list">
         <div class="content-header">
             <div class="form-group input-group-sm">
-                <a href="/" class="btn btn-primary" @click="closeModal">Quay lại</a>
+                <a href="/" class="btn btn-sm btn-primary" @click="closeModal">Quay lại</a>
             </div>
             <div class="container-fluid">
                 <div class="row">
@@ -24,7 +24,7 @@
                     </div>
                     <div class="col-md-6 d-flex align-items-end">
                         <div class="form-group input-group-sm">
-                            <a href="/" class="btn btn-primary" @click="filter">Lọc</a>
+                            <a href="/" class="btn btn-sm btn-primary" @click="filter">Lọc</a>
                         </div>
                     </div>
                 </div>
@@ -47,6 +47,7 @@
                                 <table class="table text-center table-hover table-head-fixed text-nowrap">
                                     <thead>
                                         <tr>
+                                            <th></th>
                                             <th style="width: 25px">
                                                 <a href="/" @click="sortCourseData($event, 'id_sort')">
                                                     ID
@@ -63,11 +64,14 @@
                                             <th style="width: 250px">Giảm giá</th>
                                             <th style="width: 250px">Giá khuyến mãi</th>
                                             <th style="width: 250px">Trạng thái</th>
-                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody class="table-data" v-if="dataList">
                                         <tr v-for="data, index in dataList.list">
+                                            <td>
+                                                <a class="btn btn-sm btn-danger" v-if="data.id === courseId">Đang chọn</a>
+                                                <a class="btn btn-sm btn-outline-primary" @click="selectData($event, data.id, data.name)" v-else>Chọn</a>
+                                            </td>
                                             <td>{{ data.id }}</td>
                                             <td>{{ data.name }}</td>
                                             <td>{{ data.price.toLocaleString() + 'đ' }}</td>
@@ -82,9 +86,6 @@
                                                 >
                                                     {{ data.is_show == 0 ? 'Đang hiển thị' : 'Đã ẩn' }}
                                                 </span>
-                                            </td>
-                                            <td>
-                                                <a class="cursor-pointer" @click="selectData($event, data.id, data.name)">Chọn</a>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -113,7 +114,8 @@
         },
         props: {
             closeModalList: Function,
-            selectCourseData: Function
+            selectCourseData: Function,
+            courseId: Number
         },
         data() {
             return {
@@ -185,7 +187,7 @@
                 e.preventDefault();
 
                 this.selectCourseData(id, name);
-                this.closeModalList();
+                // this.closeModalList();
             }
         }
     }

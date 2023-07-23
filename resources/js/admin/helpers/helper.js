@@ -119,9 +119,17 @@ let helper = {
     checkChangeFormData(data, form) {
         var check = false;
 
-        for (var param in data) {
-            if (typeof (form[param]) !== 'undefined') {
-                if (form[param] !== data[param]) {
+        if (data !== null) {
+            for (var param in data) {
+                if (typeof (form[param]) !== 'undefined') {
+                    if (form[param] !== data[param]) {
+                        check = true;
+                    }
+                }
+            }
+        } else {
+            for (var param in form) {
+                if (form[param] !== '' && form[param] !== null) {
                     check = true;
                 }
             }

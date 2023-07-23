@@ -1,5 +1,5 @@
 <template>
-    <div class="content-wrapper">
+    <div class="content-wrapper page-component">
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
@@ -63,21 +63,6 @@
         </div>
         <section class="content">
             <div class="container-fluid">
-                <!-- <div class="card card-default collapsed-card box-selection">
-                    <div class="card-header">
-                        <h3 class="card-title">Danh sách phần học</h3>
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body" style="display: none;">
-                        <div class="row">
-                            123
-                        </div>
-                    </div>
-                </div> -->
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
@@ -141,13 +126,20 @@
                                                         </div>
                                                     </div>
                                                     <div class="action-detail">
-                                                        <a class="action-detail-btn" >
+                                                        <a class="action-detail-btn" v-if="query.is_deleted == 0" @click="openForm($event, index, dataList.list[index])">
                                                             <i class="fas fa-eye"></i>
                                                             <div class="icon-wrap">Xem thông tin</div>
                                                         </a>
-                                                        <a class="action-detail-btn">
-                                                            <i class="fas fa-trash"></i>
-                                                            <div class="icon-wrap">Xóa</div>
+                                                        <a class="action-detail-btn" @click="deleteData($event, data.id)">
+                                                            <i 
+                                                                class="fas"
+                                                                v-bind:class="[
+                                                                    query.is_deleted == 0 ? 'fa-trash' : 'fa-window-restore'
+                                                                ]"
+                                                            />
+                                                            <div class="icon-wrap">
+                                                                {{ query.is_deleted == 0 ? 'Xóa' : 'Khôi phục' }}
+                                                            </div>
                                                         </a>
                                                     </div>
                                                 </div>
@@ -166,16 +158,26 @@
                 </div>
             </div>
         </section>
+
+        <VideoInformation
+            v-if="isForm"
+
+            :closeForm="closeForm"
+            :videoData="data"
+            :getVideoData="getVideoData"
+        />
     </div>
 </template>
 
 <script>
     import TablePagination from '../../commons/pagination/TablePagination.vue';
+    import VideoInformation from './VideoInformation.vue';
 
     export default {
         name: "Video",
         components: { 
-            TablePagination
+            TablePagination,
+            VideoInformation
         },
         data() {
             return {
@@ -186,11 +188,14 @@
                     id_sort: "desc",
                     description: "",
                     is_show: 2,
-                    course_section_id: null
+                    course_section_id: null,
+                    is_deleted: 0
                 },
                 formDataError: {
                     message: ""
                 },
+                isForm: false,
+                data: null
             };
         },
         mounted() {
@@ -208,7 +213,7 @@
                 .then(res => {
                     this.dataList = res.data;
                 })
-                    .catch(err => {
+                .catch(err => {
                 });
                 this.$helper.setPageLoading(false);
             },
@@ -244,6 +249,47 @@
 
                 this.$helper.pushQueryUrl(this.query);
                 this.getVideoData();
+            },
+
+            openForm(e, index, data) {
+                e.preventDefault();
+
+                this.isForm = true;
+                this.data = data;
+                this.data['index'] = index;
+            },
+
+            closeForm(e) {
+                e.preventDefault();
+
+                this.isForm = false;
+            },
+
+            async deleteData(e, id) {
+                e.preventDefault();
+
+                var alertMessage = 'Bạn muốn xóa video này?';
+                var successMessage = 'Xóa thành công';
+                if (this.query.is_deleted == 1) {
+                    alertMessage = 'Bạn muốn khôi phục video này?';
+                    successMessage = 'Khôi phục thành công';
+                }
+
+                if (confirm(alertMessage)) {
+                    this.$helper.setPageLoading(true);
+                    await this.$store.dispatch("deleteVideo", {
+                        id: id,
+                        error: this.formDataError
+                    })
+                    .then(res => {
+                        this.$helper.setNotification(1, successMessage);
+                    })
+                    .catch(err => {
+
+                    });
+
+                    this.getVideoData();
+                }
             }
         }
     }

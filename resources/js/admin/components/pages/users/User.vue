@@ -4,7 +4,9 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Quản lý tài khoản</h1>
+                        <a href="/" class="btn btn-primary" @click="openForm">
+                            <i class="id-icon fas fa-plus mr-2"></i>Thêm mới
+                        </a>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -143,6 +145,7 @@
 
             :closeForm="closeForm"
             :userData="data"
+            :getUserData="getUserData"
         />
     </div>
 </template>
@@ -227,14 +230,20 @@
             openForm(e, index, data) {
                 e.preventDefault();
 
+                if (typeof (index) !== 'undefined') {
+                    this.data = data;
+                    this.data['index'] = index;
+                } else {
+                    this.data = null;
+                }
+
                 this.isForm = true;
-                this.data = data;
-                this.data['index'] = index;
             },
 
             closeForm(e) {
                 e.preventDefault();
 
+                this.data = null;
                 this.isForm = false;
             },
 

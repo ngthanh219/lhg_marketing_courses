@@ -1,5 +1,5 @@
 <template>
-    <div class="popup-component">
+    <div class="popup-component" v-bind:class="{ 'transition-active': !isTransitionActive }">
         <div class="pc-form" v-bind:class="{ 'transition-active': isTransitionActive }">
             <div class="content">
                 <div class="container-fluid" style="width: 80%">
@@ -46,7 +46,7 @@
                                                 {{ parseInt(formData.price - (formData.price * (formData.discount / 100))).toLocaleString() }}đ</label>
                                             <input type="text" class="form-control form-control-border" placeholder="xxx" v-model="formData.discount" @keypress="this.$helper.isNumber($event)">
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group" v-if="courseData != null">
                                             <div class="custom-control custom-checkbox">
                                                 <input 
                                                     class="custom-control-input" 
@@ -70,7 +70,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group" v-if="courseData !== null">
                                             <div class="form-preview-image">
                                                 Ảnh hiện tại{{ courseData.image_url != null || previewImage ? '' : ': Chưa có' }}
 
@@ -81,7 +81,7 @@
                                     </div>
                                     <div class="card-footer">
                                         <button type="submit" class="btn btn-primary mr-2" v-bind:class="{
-                                            disabled: !(this.$helper.checkChangeFormData(courseData, formData) || formData.is_change_image == 1)
+                                            disabled: !(this.$helper.checkChangeFormData(courseData, formData) || formData.is_change_image)
                                         }">
                                             {{ courseData ? 'Cập nhật' : 'Thêm mới' }}
                                         </button>
@@ -102,6 +102,7 @@
         name: "CourseInformation",
         props: {
             closeForm: Function,
+            getCourseData: Function,
             courseData: Object
         },
         data() {
@@ -117,7 +118,7 @@
                     image_url: '',
                     price: 0,
                     discount: 0,
-                    is_show: 0
+                    is_show: 1
                 },
                 formDataError: {
                     message: '',
@@ -138,7 +139,12 @@
 
             setTimeout(() => {
                 this.isTransitionActive = true;
-                this.$helper.mergeArrayData(this.courseData, this.formData)
+
+                if (this.courseData) {
+                    this.$helper.mergeArrayData(this.courseData, this.formData);
+                } else {
+                    this.formData.is_change_image = true;
+                }
             }, 200);
         },
         methods: {
@@ -151,23 +157,44 @@
                 }, 400);
             },
 
-            handleData(e) {
+            async handleData(e) {
                 e.preventDefault();
 
                 if (this.courseData) {
                     if (this.$helper.checkChangeFormData(this.courseData, this.formData) || this.formData.is_change_image == 1) {
                         this.$helper.setPageLoading(true);
-                        this.update();
+                        await this.update();
                     }
                 } else {
-                    this.$helper.setPageLoading(true);
-                    this.create();
+                    if (this.$helper.checkChangeFormData(null, this.formData)) {
+                        this.$helper.setPageLoading(true);
+                        var transaction = await this.create();
+
+                        if (transaction) {
+                            await this.getCourseData();
+                            this.closeFormComponent(e);
+                        } else {
+                            this.$helper.setPageLoading(false);
+                        }
+                    }
                 }
             },
 
-            create() {
-                console.log('create');
-                this.$helper.setPageLoading(false);
+            async create() {
+                var transaction = false;
+                await this.$store.dispatch("createCourse", {
+                    request: this.$helper.appendFormData(this.formData),
+                    error: this.formDataError
+                })
+                .then(res => {
+                    transaction = true;
+                    this.$helper.setNotification(1, 'Tạo mới thành công');
+                })
+                .catch(err => {
+
+                });
+
+                return transaction;
             },
 
             async update() {
@@ -204,9 +231,11 @@
             },
 
             checkPreviewImage() {
-                if (this.formData.is_change_image) {
-                    this.previewImage = null;
-                    this.formData.image_url = this.courseData.image_url;
+                if (this.courseData !== null) {
+                    if (this.formData.is_change_image) {
+                        this.previewImage = null;
+                        this.formData.image_url = this.courseData.image_url;
+                    }
                 }
             }
         }

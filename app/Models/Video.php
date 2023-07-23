@@ -16,22 +16,33 @@ class Video extends Model
     protected $fillable = [
         'course_section_id',
         'description',
-        'source_url',
+        'source',
         'duration',
         'is_show'
     ];
 
     protected $hidden = [
+        'source',
         'deleted_at',
         'updated_at'
     ];
 
-    public function getSourceUrlAttribute($value)
+    protected $appends = [
+        'source_url',
+        'course_section_name'
+    ];
+
+    public function getCourseSectionNameAttribute()
+    {
+        return CourseSection::find($this->course_section_id)->name;
+    }
+
+    public function getSourceUrlAttribute()
     {  
         $awsS3Service = new AWSS3Service();
 
-        if ($value) {
-            return $awsS3Service->getFile($value, Constant::EXPIRE_VIDEO);
+        if ($this->source) {
+            return $awsS3Service->getFile($this->source, Constant::EXPIRE_VIDEO);
         }
 
         return null;

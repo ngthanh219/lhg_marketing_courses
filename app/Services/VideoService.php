@@ -14,15 +14,18 @@ class VideoService extends BaseService
     protected $course;
     protected $courseSection;
     protected $video;
+    protected $awsS3Service;
 
     public function __construct(
         Course $course,
         CourseSection $courseSection,
-        Video $video
+        Video $video,
+        AWSS3Service $awsS3Service
     ) {
         $this->course = $course;
         $this->courseSection = $courseSection;
         $this->video = $video;
+        $this->awsS3Service = $awsS3Service;
     }
 
     public function index($request)
@@ -64,12 +67,84 @@ class VideoService extends BaseService
                 }
             }
 
+            if (isset($request->is_deleted)) {
+                if ($request->is_deleted == Constant::IS_DELETED) {
+                    $videos = $videos->onlyTrashed();
+                }
+            }
+
             $data = $this->pagination($videos, $request, [
                 'course_name' => $courseName,
                 'course_section_name' => $courseSectionName
             ]);
 
             return $this->responseSuccess($data);
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
+    public function update($request, $id)
+    {
+        try {
+            $video = $this->video->find($id);
+
+            if (!$video) {
+                return $this->responseError(__('messages.video.not_exist'), 400, ErrorCode::PARAM_INVALID);
+            }
+
+            $courseSection = $this->courseSection->find($request->course_section_id);
+
+            if (!$courseSection) {
+                return $this->responseError(__('messages.course_section.not_exist'), 400, ErrorCode::PARAM_INVALID);
+            }
+
+            $source = null;
+            $updatedData = [
+                'course_section_id' => $request->course_section_id,
+                'description' => $request->description,
+                'duration' => $request->duration,
+                'is_show' => $request->is_show
+            ];
+
+            if ($request->is_change_video === "true") {
+                $request->file = $request->source;
+                $source = $this->awsS3Service->uploadFile($request, Constant::VIDEO_FOLDER);
+                $updatedData['source'] = $source;
+                $this->awsS3Service->removeFile($video->source);
+            }
+
+            $video->update($updatedData);
+
+            return $this->responseSuccess($video);
+        } catch (\Exception $ex) {
+            $this->awsS3Service->removeFile($source);
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
+    public function delete($request, $id)
+    {
+        try {
+            $video = $this->video->find($id);
+            
+            if (!$video) {
+                $video = $this->video->withTrashed()->where('id', $id)->first();
+
+                if (!$video) {
+                    return $this->responseError(__('messages.video.not_exist'), 400, ErrorCode::PARAM_INVALID);
+                }
+
+                $video->restore();
+            } else {
+                $video->delete();
+            }
+
+            return $this->responseSuccess();
         } catch (\Exception $ex) {
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 

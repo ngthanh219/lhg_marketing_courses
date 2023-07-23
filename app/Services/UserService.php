@@ -58,6 +58,39 @@ class UserService extends BaseService
         }
     }
 
+    public function create($request)
+    {
+        try {
+            $existEmail = $this->user->where('email', $request->email)->first();
+            if ($existEmail) {
+                return $this->responseError(__('messages.user.email_exist'), 400, ErrorCode::PARAM_INVALID);
+            }
+
+            $existPhone = $this->user->where('phone', $request->phone)->first();
+            if ($existPhone) {
+                return $this->responseError(__('messages.user.phone_exist'), 400, ErrorCode::PARAM_INVALID);
+            }
+
+            $newData = [
+                'role_id' => $request->role_id,
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+                'email_verified_at' => now(),
+                'is_login' => $request->is_login
+            ];
+
+            $data = $this->user->create($newData);
+
+            return $this->responseSuccess($data);
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
     public function update($request, $id)
     {
         try {
