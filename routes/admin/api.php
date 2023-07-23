@@ -40,5 +40,7 @@ Route::group([
         'prefix' => 'videos'
     ], function () {
         Route::get('', [VideoController::class, 'index']);
+        Route::post('{id}', [VideoController::class, 'update']);
+        Route::delete('{id}', [VideoController::class, 'delete']);
     });
 });

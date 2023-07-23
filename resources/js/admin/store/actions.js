@@ -19,7 +19,9 @@ let actions = {
     updateCourseSection: courseSection.updateCourseSection,
     deleteCourseSection: courseSection.deleteCourseSection,
 
-    getVideos: video.getVideos
+    getVideos: video.getVideos,
+    updateVideo: video.updateVideo,
+    deleteVideo: video.deleteVideo,
 }
 
 export default actions;

@@ -84,7 +84,7 @@
                                                 </a>
                                             </th>
                                             <th style="width: 600px">Tên phần học</th>
-                                            <th style="width: 250px">Số lượng</th>
+                                            <th style="width: 250px">Số lượng video</th>
                                             <th style="width: 250px">Trạng thái</th>
                                             <th>Ngày tạo</th>
                                             <th style="width: 100px"></th>
@@ -156,6 +156,7 @@
 
             :closeForm="closeForm"
             :courseSectionData="data"
+            :getCourseSectionData="getCourseSectionData"
         />
     </div>
 </template>
@@ -204,7 +205,7 @@
                 .then(res => {
                     this.dataList = res.data;
                 })
-                    .catch(err => {
+                .catch(err => {
                 });
                 this.$helper.setPageLoading(false);
             },

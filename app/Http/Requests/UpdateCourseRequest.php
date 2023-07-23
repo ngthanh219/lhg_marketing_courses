@@ -15,7 +15,7 @@ class UpdateCourseRequest extends FormRequest
     {
         $image = '';
 
-        if ($this->input('is_change_image') === true) {
+        if ($this->input('is_change_image') === "true") {
             $image = 'required|file|mimes:jpg,jpeg,png';
         }
 

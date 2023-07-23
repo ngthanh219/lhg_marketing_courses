@@ -31,5 +31,8 @@ return [
         "not_exist" => "Tài khoản này không tồn tại",
         "email_exist" => "Email này đã được sử dụng",
         "phone_exist" => "Số điện thoại này đã được sử dụng",
-    ]
+    ],
+    "video" => [
+        "not_exist" => "Video này không tồn tại"
+    ],
 ];

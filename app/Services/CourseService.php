@@ -65,7 +65,7 @@ class CourseService extends BaseService
             }
 
             $image = null;
-            $data = [
+            $updatedData = [
                 'name' => $request->name,
                 'slogan' => $request->slogan,
                 'introduction' => $request->introduction,
@@ -76,14 +76,14 @@ class CourseService extends BaseService
                 'discount_price' => (double) ($request->price - (($request->price * ($request->discount / 100)) * 100 / 100))
             ];
 
-            if ($request->is_change_image === true) {
+            if ($request->is_change_image === "true") {
                 $request->file = $request->image_url;
                 $image = $this->awsS3Service->uploadFile($request, Constant::IMAGE_FOLDER);
-                $data['image'] = $image;
+                $updatedData['image'] = $image;
                 $this->awsS3Service->removeFile($course->image);
             }
 
-            $course->update($data);
+            $course->update($updatedData);
 
             return $this->responseSuccess($course);
         } catch (\Exception $ex) {

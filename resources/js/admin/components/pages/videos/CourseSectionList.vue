@@ -8,8 +8,8 @@
                 <div class="row">
                     <div class="col-md-2">
                         <div class="form-group input-group-sm">
-                            <label>Tên khóa học</label>
-                            <input type="text" class="form-control" placeholder="Tên khóa học" v-model="query.name">
+                            <label>Tên phần học</label>
+                            <input type="text" class="form-control" placeholder="Tên phần học" v-model="query.name">
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -40,7 +40,7 @@
                                 v-if="dataList"
                                 :dataList="dataList"
                                 :query="query"
-                                :getData="getCourseData"
+                                :getData="getCourseSectionData"
                             />
 
                             <div class="card-body data-table table-responsive p-0">
@@ -49,7 +49,7 @@
                                         <tr>
                                             <th></th>
                                             <th style="width: 25px">
-                                                <a href="/" @click="sortCourseData($event, 'id_sort')">
+                                                <a href="/" @click="sortCourseSectionData($event, 'id_sort')">
                                                     ID
                                                     <i
                                                         class="id-icon fas"
@@ -59,24 +59,18 @@
                                                     />
                                                 </a>
                                             </th>
-                                            <th style="width: 250px">Tên khóa học</th>
-                                            <th style="width: 250px">Giá</th>
-                                            <th style="width: 250px">Giảm giá</th>
-                                            <th style="width: 250px">Giá khuyến mãi</th>
+                                            <th style="width: 600px">Tên phần học</th>
                                             <th style="width: 250px">Trạng thái</th>
                                         </tr>
                                     </thead>
                                     <tbody class="table-data" v-if="dataList">
                                         <tr v-for="data, index in dataList.list">
                                             <td>
-                                                <a class="btn btn-sm btn-danger" v-if="data.id === courseId">Đang chọn</a>
+                                                <a class="btn btn-sm btn-danger" v-if="data.id === courseSectionId">Đang chọn</a>
                                                 <a class="btn btn-sm btn-outline-primary" @click="selectData($event, data.id, data.name)" v-else>Chọn</a>
                                             </td>
                                             <td>{{ data.id }}</td>
                                             <td>{{ data.name }}</td>
-                                            <td>{{ data.price.toLocaleString() + 'đ' }}</td>
-                                            <td>{{ data.discount }}%</td>
-                                            <td>{{ data.discount_price.toLocaleString() + 'đ' }}</td>
                                             <td>
                                                 <span 
                                                     class="badge" 
@@ -108,14 +102,14 @@
     import TablePagination from '../../commons/pagination/TablePagination.vue';
 
     export default {
-        name: "CourseList",
+        name: "CourseSectionList",
         components: { 
             TablePagination
         },
         props: {
             closeModalList: Function,
-            selectCourseData: Function,
-            courseId: Number
+            selectCourseSectionData: Function,
+            courseSectionId: Number
         },
         data() {
             return {
@@ -126,6 +120,7 @@
                     id_sort: "desc",
                     name: "",
                     is_show: 2,
+                    course_id: null,
                     is_deleted: 0
                 },
                 formDataError: {
@@ -134,12 +129,12 @@
             };
         },
         mounted() {
-            this.getCourseData();
+            this.getCourseSectionData();
         },
         methods: {
-            async getCourseData() {
+            async getCourseSectionData() {
                 this.$helper.setPageLoading(true);
-                await this.$store.dispatch("getCourses", {
+                await this.$store.dispatch("getCourseSections", {
                     query: this.$helper.getQueryString(this.query),
                     error: this.formDataError
                 })
@@ -162,10 +157,10 @@
                     this.query.page = 1;
                 }
 
-                this.getCourseData();
+                this.getCourseSectionData();
             },
 
-            sortCourseData(e, queryParam) {
+            sortCourseSectionData(e, queryParam) {
                 e.preventDefault();
 
                 if (this.query[queryParam] == "desc") {
@@ -174,7 +169,7 @@
                     this.query[queryParam] = "desc";
                 }
 
-                this.getCourseData();
+                this.getCourseSectionData();
             },
 
             closeModal(e) {
@@ -186,7 +181,7 @@
             selectData(e, id, name) {
                 e.preventDefault();
 
-                this.selectCourseData(id, name);
+                this.selectCourseSectionData(id, name);
                 // this.closeModalList();
             }
         }

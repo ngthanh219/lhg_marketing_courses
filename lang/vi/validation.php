@@ -167,6 +167,9 @@ return [
         'price'                 => 'giá',
         'image'                 => 'ảnh',
         'introduction'          => 'giới thiệu',
-        'course_id'             => 'khóa học đang chọn'
+        'course_id'             => 'khóa học đang chọn',
+        'course_section_id'     => 'phần học đang chọn',
+        'duration'              => 'thời gian',
+        'source'                => 'video'
     ],
 ];

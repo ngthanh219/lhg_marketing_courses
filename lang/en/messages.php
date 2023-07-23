@@ -31,5 +31,8 @@ return [
         "not_exist" => "This user does not exist",
         "email_exist" => "This email was used by other user",
         "phone_exist" => "This phone was used by other user",
-    ]
+    ],
+    "video" => [
+        "not_exist" => "This video does not exist",
+    ],
 ];

@@ -73,16 +73,16 @@ class CourseSectionService extends BaseService
     public function update($request, $id)
     {
         try {
-            $course = $this->course->find($request->course_id);
-
-            if (!$course) {
-                return $this->responseError(__('messages.course.not_exist'), 400, ErrorCode::PARAM_INVALID);
-            }
-
             $courseSection = $this->courseSection->find($id);
 
             if (!$courseSection) {
                 return $this->responseError(__('messages.course_section.not_exist'), 400, ErrorCode::PARAM_INVALID);
+            }
+
+            $course = $this->course->find($request->course_id);
+
+            if (!$course) {
+                return $this->responseError(__('messages.course.not_exist'), 400, ErrorCode::PARAM_INVALID);
             }
 
             $courseSection->update($request->only(
