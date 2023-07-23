@@ -1,9 +1,10 @@
 import actionParams from "./index";
 
-let authentication = {
-    login({state}, form) {
+let video = {
+    getVideos({state}, form) {
+        axios.defaults.headers.common = {'Authorization': `Bearer ` + state.auth.accessToken}
         return new Promise((resolve, reject) => {
-            axios.post(actionParams.API + 'login', form.request)
+            axios.get(actionParams.API + 'videos' + form.query)
             .then((res) => {
                 actionParams.resetFormError(form.error);
                 resolve(res.data);
@@ -15,4 +16,4 @@ let authentication = {
     },
 }
 
-export default authentication;
+export default video;

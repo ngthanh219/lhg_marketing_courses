@@ -65,9 +65,18 @@ function rejectError(err, formDataError = null) {
     return handleFormDataError(errors, formDataError);
 }
 
+function resetFormError(formError) {
+    if (formError) {
+        for (var param in formError) {
+            formError[param] = '';
+        }
+    }
+}
+
 const actionParams = {
     API: env.api + 'admin/',
-    getError: rejectError
+    getError: rejectError,
+    resetFormError: resetFormError,
 };
 
 export default actionParams;

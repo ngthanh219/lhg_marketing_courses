@@ -37,7 +37,7 @@ class BaseService
         if ($data) {
             $response['data'] = $data;
         } else {
-            $response['message'] = $message ? $message : __('messages.success');
+            $response['message'] = $message ? $message : __('messages.data_status.success');
         }
 
         Log::info(json_encode([

@@ -22,6 +22,14 @@ return [
         "fail" => "Thất bại"
     ],
     "course" => [
-        "not_exist" => "Khóa học không tồn tại"
+        "not_exist" => "Khóa học này không tồn tại"
+    ],
+    "course_section" => [
+        "not_exist" => "Phần học này không tồn tại"
+    ],
+    "user" => [
+        "not_exist" => "Tài khoản này không tồn tại",
+        "email_exist" => "Email này đã được sử dụng",
+        "phone_exist" => "Số điện thoại này đã được sử dụng",
     ]
 ];

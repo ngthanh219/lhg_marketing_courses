@@ -6,7 +6,6 @@
                 $store.state.notification.success == 1 ? 'alert-success' : 'alert-danger'
             ]"
         >
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
             <h5>
                 <i 
                     class="icon fas"
@@ -24,5 +23,36 @@
 <script>
     export default {
         name: "Notification",
+        data() {
+            return {
+                proccessPercent: 100,
+                intervalId: null,
+                notification: null
+            }
+        },
+        mounted() {
+            this.notification = this.$store.state.notification;
+
+            if (this.notification.message) {
+                this.setProccess();
+            }
+        },
+        updated() {
+            this.proccessPercent = 100;
+        },
+        methods: {
+            setProccess() {
+                this.intervalId = setInterval(this.move, 50);
+            },
+
+            move() {
+                if (this.proccessPercent <= 0) {
+                    this.$helper.setNotification(0, null);
+                    clearInterval(this.intervalId);
+                } else {
+                    this.proccessPercent -= 1;
+                }
+            }
+        }
     }
 </script>

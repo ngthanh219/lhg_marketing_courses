@@ -42,9 +42,91 @@ class UserService extends BaseService
                 }
             }
 
+            if (isset($request->is_deleted)) {
+                if ($request->is_deleted == Constant::IS_DELETED) {
+                    $users = $users->onlyTrashed();
+                }
+            }
+
             $data = $this->pagination($users, $request);
 
             return $this->responseSuccess($data);
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
+    public function update($request, $id)
+    {
+        try {
+            $user = $this->user->find($id);
+            
+            if (!$user) {
+                return $this->responseError(__('messages.user.not_exist'), 400, ErrorCode::PARAM_INVALID);
+            }
+
+            if ($request->email !== $user->email) {
+                $existEmail = $this->user->where('id', '!=', $user->id)
+                    ->where('email', $request->email)
+                    ->first();
+
+                if ($existEmail) {
+                    return $this->responseError(__('messages.user.email_exist'), 400, ErrorCode::PARAM_INVALID);
+                }
+            }
+
+            if ($request->phone !== $user->phone) {
+                $existPhone = $this->user->where('id', '!=', $user->id)
+                    ->where('phone', $request->phone)
+                    ->first();
+
+                if ($existPhone) {
+                    return $this->responseError(__('messages.user.phone_exist'), 400, ErrorCode::PARAM_INVALID);
+                }
+            }
+
+            $updatedData = [
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'is_login' => $request->is_login,
+                'role_id' => $request->role_id
+            ];
+
+            if ($request->is_change_password) {
+                $updatedData['password'] = bcrypt($request->password);
+            }
+
+            $user->update($updatedData);
+
+            return $this->responseSuccess($user);
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
+    public function delete($request, $id)
+    {
+        try {
+            $user = $this->user->find($id);
+            
+            if (!$user) {
+                $user = $this->user->withTrashed()->where('id', $id)->first();
+
+                if (!$user) {
+                    return $this->responseError(__('messages.user.not_exist'), 400, ErrorCode::PARAM_INVALID);
+                }
+
+                $user->restore();
+            } else {
+                $user->delete();
+            }
+
+            return $this->responseSuccess();
         } catch (\Exception $ex) {
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 

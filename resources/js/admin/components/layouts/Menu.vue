@@ -20,6 +20,12 @@
                         </router-link>
                     </li>
                     <li class="nav-item">
+                        <router-link to="/admin/course-sections" class="nav-link">
+                            <i class="nav-icon fas fa-copy"></i>
+                            <p>Quản lý phần học</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item">
                         <router-link to="/admin/videos" class="nav-link">
                             <i class="nav-icon fa fa-video"></i>
                             <p>Quản lý video</p>

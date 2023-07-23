@@ -162,5 +162,11 @@ return [
         'title'                 => 'tiêu đề',
         'username'              => 'tên đăng nhập',
         'year'                  => 'năm',
+        'is_show'               => 'trạng thái hiển thị',
+        'discount'              => 'khuyến mãi',
+        'price'                 => 'giá',
+        'image'                 => 'ảnh',
+        'introduction'          => 'giới thiệu',
+        'course_id'             => 'khóa học đang chọn'
     ],
 ];

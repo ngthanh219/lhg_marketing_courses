@@ -1,3 +1,7 @@
+body {
+    overflow-x: hidden;
+}
+
 .card-body.data-table {
     height: 600px;
 }
@@ -14,6 +18,10 @@
     .form-control {
         border-radius: 4px !important;
     }
+}
+
+.data-filter.deleted {
+    width: 150px;
 }
 
 .data-filter.page {
@@ -37,9 +45,21 @@
 
 .notification-dialog {
     position: fixed;
-    bottom: 10px;
-    right: 0;
-    z-index: 9;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999999999999;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.underline {
+    text-decoration: underline;
+}
+
+.oblique {
+    font-style: oblique;
 }
 
 .table-action {
@@ -140,12 +160,71 @@
     display: flex;
 }
 
-
 .page-link.disabled {
     pointer-events: none;
     opacity: .4;
 
     i {
         color: black;
+    }
+}
+
+.page-component {
+    position: relative;
+
+    .popup-component {
+        // position: absolute;
+        // top: 0px;
+        position: fixed;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 99999999;
+        background: hsla(0, 0%, 8%, 0.85);
+        // transform: translateX(100%);
+        // transition: .4s all ease;
+
+        .pc-form {
+            // position: absolute;
+            // top: 60px;
+            // right: 0;
+            height: 100%;
+            width: 100%;
+            transform: translateY(20%);
+            transition: 0.3s all ease;
+            opacity: 0;
+
+            .content {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                overflow: auto;
+                
+                .container-fluid {
+                    height: 92%;
+                }
+            }
+
+            .card-body {
+                // height: 590px;
+                // overflow-y: auto;
+
+                .form-preview-image {
+                    width: 50%;
+                }
+            }
+
+            .modal-list {
+                background: white;
+                border-radius: 3px;
+            }
+        }
+
+        .pc-form.transition-active {
+            transform: translateX(0%);
+            opacity: 1;
+        }
     }
 }

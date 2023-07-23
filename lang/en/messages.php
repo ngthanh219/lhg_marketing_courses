@@ -22,6 +22,14 @@ return [
         "fail" => "Failed"
     ],
     "course" => [
-        "not_exist" => "The course does not exist"
+        "not_exist" => "This course does not exist"
+    ],
+    "course_section" => [
+        "not_exist" => "This section does not exist"
+    ],
+    "user" => [
+        "not_exist" => "This user does not exist",
+        "email_exist" => "This email was used by other user",
+        "phone_exist" => "This phone was used by other user",
     ]
 ];

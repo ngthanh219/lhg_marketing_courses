@@ -8,6 +8,13 @@
             }} bản ghi
         </h3>
         <div class="card-tools row">
+            <div class="input-group input-group-sm data-filter deleted">
+                <div class="label">Dữ liệu: </div>
+                <select class="form-control" v-model="query.is_deleted" @change="trashedFilter">
+                    <option value="0">Khả dụng</option>
+                    <option value="1">Đã xóa</option>
+                </select>
+            </div>
             <div class="input-group input-group-sm data-filter page">
                 <div class="label">Trang: </div>
                 <input 
@@ -16,8 +23,9 @@
                     v-model="query.page" 
                     @keypress="this.$helper.isNumber($event)"
                     @keyup.enter="filter"
-                    @blur="filter"
+                    
                 />
+                <!-- @blur="filter" -->
             </div>
             <div class="input-group input-group-sm data-filter">
                 <div class="label">Hiển thị: </div>
@@ -71,6 +79,13 @@
             filter(e) {
                 e.preventDefault();
 
+                this.filterDataTable();
+            },
+
+            trashedFilter(e) {
+                e.preventDefault();
+
+                this.query.page = 1;
                 this.filterDataTable();
             },
 

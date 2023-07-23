@@ -3,47 +3,58 @@
 namespace Database\Seeders;
 
 use App\Libraries\Constant;
-use App\Models\CourseSection;
+use App\Models\Video;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class CourseSectionSeeder extends Seeder
+class VideoSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        CourseSection::insert([
+        Video::insert([
             [
                 'id' => 1,
-                'course_id' => 1,
-                'name' => 'PHẦN 1 : Tạo Lading page Cơ Bản',
+                'course_section_id' => 1,
+                'description' => 'Video 1',
+                'source_url' => 'videos/ex.mp4',
+                'duration' => 30,
                 'is_show' => Constant::IS_SHOW,
                 'created_at' => now(),
                 'updated_at' => now()
-            ], [
+            ],
+            [
                 'id' => 2,
-                'course_id' => 1,
-                'name' => 'PHẦN 2: Thiết Kế Chuyên Sâu Cho Ladipage',
+                'course_section_id' => 1,
+                'description' => 'Video 2',
+                'source_url' => 'videos/ex.mp4',
+                'duration' => 30,
                 'is_show' => Constant::IS_SHOW,
                 'created_at' => now(),
                 'updated_at' => now()
-            ], [
+            ],
+            [
                 'id' => 3,
-                'course_id' => 1,
-                'name' => 'PHẦN 3: Tạo hệ thống bán hàng automation',
+                'course_section_id' => 1,
+                'description' => 'Video 3',
+                'source_url' => 'videos/ex.mp4',
+                'duration' => 30,
                 'is_show' => Constant::IS_SHOW,
                 'created_at' => now(),
                 'updated_at' => now()
-            ], [
+            ],
+            [
                 'id' => 4,
-                'course_id' => 1,
-                'name' => 'PHẦN 4: Chuẩn bị để tự tin quay video chuyên nghiệp',
+                'course_section_id' => 1,
+                'description' => 'Video 4',
+                'source_url' => 'videos/ex.mp4',
+                'duration' => 30,
                 'is_show' => Constant::IS_SHOW,
                 'created_at' => now(),
                 'updated_at' => now()
-            ]
+            ],
         ]);
     }
 }
