@@ -31,7 +31,7 @@
                                             <label>Thời gian</label>
                                             <input type="text" class="form-control form-control-border" placeholder="xxx" v-model="formData.duration">
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group" v-if="videoData != null">
                                             <div class="custom-control custom-checkbox">
                                                 <input 
                                                     class="custom-control-input" 
@@ -102,7 +102,7 @@
             return {
                 isTransitionActive: false,
                 formData: {
-                    course_section_id: '',
+                    course_section_id: null,
                     description: '',
                     is_change_video: false,
                     source: '',
@@ -126,8 +126,13 @@
 
             setTimeout(() => {
                 this.isTransitionActive = true;
-                this.$helper.mergeArrayData(this.videoData, this.formData);
-                this.courseSectionName = this.videoData.course_section_name;
+
+                if (this.videoData) {
+                    this.$helper.mergeArrayData(this.videoData, this.formData);
+                    this.courseSectionName = this.videoData.course_section_name;
+                } else {
+                    this.formData.is_change_video = true;
+                }
             }, 200);
         },
         methods: {
@@ -158,14 +163,35 @@
                         }
                     }
                 } else {
-                    this.$helper.setPageLoading(true);
-                    await this.create();
+                    if (this.$helper.checkChangeFormData(null, this.formData)) {
+                        this.$helper.setPageLoading(true);
+                        var transaction = await this.create();
+
+                        if (transaction) {
+                            await this.getVideoData();
+                            this.closeFormComponent(e);
+                        } else {
+                            this.$helper.setPageLoading(false);
+                        }
+                    }
                 }
             },
 
             async create() {
-                console.log('create');
-                this.$helper.setPageLoading(false);
+                var transaction = false;
+                await this.$store.dispatch("createVideo", {
+                    request: this.$helper.appendFormData(this.formData),
+                    error: this.formDataError
+                })
+                .then(res => {
+                    transaction = true;
+                    this.$helper.setNotification(1, 'Tạo mới thành công');
+                })
+                .catch(err => {
+
+                });
+
+                return transaction;
             },
 
             async update() {

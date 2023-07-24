@@ -23,6 +23,7 @@ let actions = {
     deleteCourseSection: courseSection.deleteCourseSection,
 
     getVideos: video.getVideos,
+    createVideo: video.createVideo,
     updateVideo: video.updateVideo,
     deleteVideo: video.deleteVideo,
 }

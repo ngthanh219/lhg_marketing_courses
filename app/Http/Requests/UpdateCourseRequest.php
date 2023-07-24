@@ -27,7 +27,7 @@ class UpdateCourseRequest extends FormRequest
             'image_url' => $image,
             'price' => 'required|integer|min:0',
             'discount' => 'required|integer|min:0|between:0,100',
-            'is_show' => 'required|min:0|max:1'
+            'is_show' => 'required|integer|min:0|max:1'
         ];
     }
 }

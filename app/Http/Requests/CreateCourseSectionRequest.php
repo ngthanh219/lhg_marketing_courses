@@ -17,7 +17,7 @@ class CreateCourseSectionRequest extends FormRequest
             'course_id' => 'required|integer|min:1',
             'name' => 'required|max:255',
             'description' => 'max:1000',
-            'is_show' => 'required|min:0|max:1'
+            'is_show' => 'required|integer|min:0|max:1'
         ];
     }
 }
