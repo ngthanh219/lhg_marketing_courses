@@ -86,6 +86,40 @@ class VideoService extends BaseService
         }
     }
 
+    public function create($request)
+    {
+        try {
+            $courseSection = $this->courseSection->find($request->course_section_id);
+
+            if (!$courseSection) {
+                return $this->responseError(__('messages.course_section.not_exist'), 400, ErrorCode::PARAM_INVALID);
+            }
+
+            $source = null;
+            $newData = [
+                'course_section_id' => (int) $request->course_section_id,
+                'description' => $request->description,
+                'duration' => (int) $request->duration,
+                'is_show' => (int) $request->is_show
+            ];
+
+            if (isset($request->source)) {
+                $request->file = $request->source;
+                $source = $this->awsS3Service->uploadFile($request, Constant::VIDEO_FOLDER);
+                $newData['source'] = $source;
+            }
+
+            $video = $this->video->create($newData);
+
+            return $this->responseSuccess($video);
+        } catch (\Exception $ex) {
+            $this->awsS3Service->removeFile($source);
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
     public function update($request, $id)
     {
         try {

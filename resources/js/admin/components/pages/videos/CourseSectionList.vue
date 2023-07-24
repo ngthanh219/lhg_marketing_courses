@@ -2,7 +2,7 @@
     <div class="page-component modal-list">
         <div class="content-header">
             <div class="form-group input-group-sm">
-                <a href="/" class="btn btn-primary" @click="closeModal">Quay lại</a>
+                <a href="/" class="btn btn-sm btn-primary" @click="closeModal">Quay lại</a>
             </div>
             <div class="container-fluid">
                 <div class="row">
@@ -24,7 +24,7 @@
                     </div>
                     <div class="col-md-6 d-flex align-items-end">
                         <div class="form-group input-group-sm">
-                            <a href="/" class="btn btn-primary" @click="filter">Lọc</a>
+                            <a href="/" class="btn btn-sm btn-primary" @click="filter">Lọc</a>
                         </div>
                     </div>
                 </div>
