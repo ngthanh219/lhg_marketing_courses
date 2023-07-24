@@ -1,5 +1,5 @@
 <template>
-    <div class="popup-component">
+    <div class="popup-component" v-bind:class="{ 'transition-active': !isTransitionActive }">
         <div class="pc-form" v-bind:class="{ 'transition-active': isTransitionActive }">
             <div class="content">
                 <div class="container-fluid" style="width: 80%">
@@ -79,7 +79,7 @@
             return {
                 isTransitionActive: false,
                 formData: {
-                    course_id: '',
+                    course_id: null,
                     name: '',
                     description: '',
                     is_show: 0
@@ -100,8 +100,11 @@
 
             setTimeout(() => {
                 this.isTransitionActive = true;
-                this.$helper.mergeArrayData(this.courseSectionData, this.formData);
-                this.courseName = this.courseSectionData.course_name;
+
+                if (this.courseSectionData) {
+                    this.$helper.mergeArrayData(this.courseSectionData, this.formData);
+                    this.courseName = this.courseSectionData.course_name;
+                }
             }, 200);
         },
         methods: {
@@ -132,14 +135,35 @@
                         }
                     }
                 } else {
-                    this.$helper.setPageLoading(true);
-                    await this.create();
+                    if (this.$helper.checkChangeFormData(null, this.formData)) {
+                        this.$helper.setPageLoading(true);
+                        var transaction = await this.create();
+
+                        if (transaction) {
+                            await this.getCourseSectionData();
+                            this.closeFormComponent(e);
+                        } else {
+                            this.$helper.setPageLoading(false);
+                        }
+                    }
                 }
             },
 
             async create() {
-                console.log('create');
-                this.$helper.setPageLoading(false);
+                var transaction = false;
+                await this.$store.dispatch("createCourseSection", {
+                    request: this.$helper.appendFormData(this.formData),
+                    error: this.formDataError
+                })
+                .then(res => {
+                    transaction = true;
+                    this.$helper.setNotification(1, 'Tạo mới thành công');
+                })
+                .catch(err => {
+
+                });
+
+                return transaction;
             },
 
             async update() {

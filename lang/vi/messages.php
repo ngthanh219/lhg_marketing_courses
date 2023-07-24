@@ -10,7 +10,7 @@ return [
         "param_exists" => "Thông số đã tồn tại"
     ],
     "auth" => [
-        "auth_error" => "Thông tin tài khoản không hợp lệ",
+        "auth_error" => "Xác thực tài khoản không hợp lệ",
         "login_error" => "Thông tin đăng nhập không chính xác",
         "is_login" => [
             "logged_in" => "Đã đăng nhập",

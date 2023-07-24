@@ -55,6 +55,38 @@ class CourseService extends BaseService
         }
     }
 
+    public function create($request)
+    {
+        try {
+            $image = null;
+            $newData = [
+                'name' => $request->name,
+                'slogan' => $request->slogan,
+                'introduction' => $request->introduction,
+                'description' => $request->description,
+                'price' => (double) $request->price,
+                'discount' => (int) $request->discount,
+                'is_show' => (int) $request->is_show,
+                'discount_price' => (double) ($request->price - (($request->price * ($request->discount / 100)) * 100 / 100))
+            ];
+
+            if (isset($request->image_url)) {
+                $request->file = $request->image_url;
+                $image = $this->awsS3Service->uploadFile($request, Constant::IMAGE_FOLDER);
+                $newData['image'] = $image;
+            }
+
+            $course = $this->course->create($newData);
+
+            return $this->responseSuccess($course);
+        } catch (\Exception $ex) {
+            $this->awsS3Service->removeFile($image);
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
     public function update($request, $id)
     {
         try {
@@ -72,7 +104,7 @@ class CourseService extends BaseService
                 'description' => $request->description,
                 'price' => (double) $request->price,
                 'discount' => (int) $request->discount,
-                'is_show' => $request->is_show,
+                'is_show' => (int) $request->is_show,
                 'discount_price' => (double) ($request->price - (($request->price * ($request->discount / 100)) * 100 / 100))
             ];
 

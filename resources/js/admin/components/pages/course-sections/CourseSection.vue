@@ -4,9 +4,11 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">
-                            Danh sách phần học
-                        </h1>
+                        <div class="col-sm-6">
+                            <a href="/" class="btn btn-primary" @click="openForm">
+                                <i class="id-icon fas fa-plus mr-2"></i>Thêm mới
+                            </a>
+                        </div>
                         <span v-if="dataList">
                             <div v-if="dataList.course_name">
                                 <b>Khóa học: </b>
@@ -249,14 +251,20 @@
             openForm(e, index, data) {
                 e.preventDefault();
 
+                if (typeof (index) !== 'undefined') {
+                    this.data = data;
+                    this.data['index'] = index;
+                } else {
+                    this.data = null;
+                }
+
                 this.isForm = true;
-                this.data = data;
-                this.data['index'] = index;
             },
 
             closeForm(e) {
                 e.preventDefault();
 
+                this.data = null;
                 this.isForm = false;
             },
 

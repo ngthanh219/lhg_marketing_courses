@@ -8,14 +8,17 @@ let actions = {
     login: authentication.login,
 
     getUsers: user.getUsers,
+    createUser: user.createUser,
     updateUser: user.updateUser,
     deleteUser: user.deleteUser,
 
     getCourses: course.getCourses,
+    createCourse: course.createCourse,
     updateCourse: course.updateCourse,
     deleteCourse: course.deleteCourse,
 
     getCourseSections: courseSection.getCourseSections,
+    createCourseSection: courseSection.createCourseSection,
     updateCourseSection: courseSection.updateCourseSection,
     deleteCourseSection: courseSection.deleteCourseSection,
 

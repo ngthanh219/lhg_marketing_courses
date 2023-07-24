@@ -1,5 +1,5 @@
 <template>
-    <div class="popup-component">
+    <div class="popup-component" v-bind:class="{ 'transition-active': !isTransitionActive }">
         <div class="pc-form" v-bind:class="{ 'transition-active': isTransitionActive }">
             <div class="content">
                 <div class="container-fluid" style="width: 80%">
