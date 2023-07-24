@@ -1,5 +1,5 @@
 <template>
-    <div class="popup-component">
+    <div class="popup-component" v-bind:class="{ 'transition-active': !isTransitionActive }">
         <div class="pc-form" v-bind:class="{ 'transition-active': isTransitionActive }">
             <div class="content">
                 <div class="container-fluid" style="width: 60%">
@@ -39,13 +39,13 @@
                                             <label>Email</label>
                                             <input type="text" class="form-control form-control-border" placeholder="xxx" v-model="formData.email">
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group" v-if="userData != null">
                                             <div class="custom-control custom-checkbox">
                                                 <input class="custom-control-input" type="checkbox" id="customCheckbox2" v-model="formData.is_change_password" :checked="formData.is_change_password == 1">
                                                 <label for="customCheckbox2" class="custom-control-label cursor-pointer">Đổi mật khẩu</label>
                                             </div>
                                         </div>
-                                        <div class="form-group" v-if="formData.is_change_password == 1">
+                                        <div class="form-group" v-if="formData.is_change_password == 1 || userData == null">
                                             <label>Mật khẩu</label>
                                             <input type="text" class="form-control form-control-border" placeholder="xxx" v-model="formData.password">
                                         </div>
@@ -73,6 +73,7 @@
         name: "UserInformation",
         props: {
             closeForm: Function,
+            getUserData: Function,
             userData: Object
         },
         data() {
@@ -104,7 +105,13 @@
 
             setTimeout(() => {
                 this.isTransitionActive = true;
-                this.$helper.mergeArrayData(this.userData, this.formData)
+
+                if (this.userData) {
+                    this.$helper.mergeArrayData(this.userData, this.formData)
+                } else {
+                    this.formData.is_login = 0;
+                    this.formData.role_id = 1;
+                }
             }, 200);
         },
         methods: {
@@ -117,23 +124,44 @@
                 }, 400);
             },
 
-            handleData(e) {
+            async handleData(e) {
                 e.preventDefault();
 
                 if (this.userData) {
                     if (this.$helper.checkChangeFormData(this.userData, this.formData) || this.formData.is_change_password == 1) {
                         this.$helper.setPageLoading(true);
-                        this.update();
+                        await this.update();
                     }
                 } else {
-                    this.$helper.setPageLoading(true);
-                    this.create();
+                    if (this.$helper.checkChangeFormData(null, this.formData)) {
+                        this.$helper.setPageLoading(true);
+                        var transaction = await this.create();
+
+                        if (transaction) {
+                            this.getUserData();
+                            this.closeFormComponent(e);
+                        } else {
+                            this.$helper.setPageLoading(false);
+                        }
+                    }
                 }
             },
 
-            create() {
-                console.log('create');
-                this.$helper.setPageLoading(false);
+            async create() {
+                var transaction = false;
+                await this.$store.dispatch("createUser", {
+                    request: this.$helper.appendFormData(this.formData),
+                    error: this.formDataError
+                })
+                .then(res => {
+                    transaction = true;
+                    this.$helper.setNotification(1, 'Tạo mới thành công');
+                })
+                .catch(err => {
+
+                });
+
+                return transaction;
             },
 
             async update() {

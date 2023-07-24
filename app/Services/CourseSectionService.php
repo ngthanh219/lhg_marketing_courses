@@ -70,7 +70,7 @@ class CourseSectionService extends BaseService
         }
     }
 
-    public function update($request, $id)
+    public function create($request)
     {
         try {
             $course = $this->course->find($request->course_id);
@@ -79,10 +79,36 @@ class CourseSectionService extends BaseService
                 return $this->responseError(__('messages.course.not_exist'), 400, ErrorCode::PARAM_INVALID);
             }
 
+            $newData = [
+                'course_id' => (int) $request->course_id,
+                'name' => $request->name,
+                'description' => $request->description,
+                'is_show' => (int) $request->is_show,
+            ];
+
+            $courseSection = $this->courseSection->create($newData);
+
+            return $this->responseSuccess($courseSection);
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
+    public function update($request, $id)
+    {
+        try {
             $courseSection = $this->courseSection->find($id);
 
             if (!$courseSection) {
                 return $this->responseError(__('messages.course_section.not_exist'), 400, ErrorCode::PARAM_INVALID);
+            }
+
+            $course = $this->course->find($request->course_id);
+
+            if (!$course) {
+                return $this->responseError(__('messages.course.not_exist'), 400, ErrorCode::PARAM_INVALID);
             }
 
             $courseSection->update($request->only(

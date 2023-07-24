@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->integer('course_section_id')->nullable();
             $table->text('description')->nullable();
-            $table->text('source_url')->nullable();
+            $table->text('source')->nullable();
             $table->integer('duration')->nullable()->default(0);
             $table->tinyInteger('is_show')->default(Constant::IS_NOT_SHOW);
             $table->softDeletes();

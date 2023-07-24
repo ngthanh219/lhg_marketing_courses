@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateCourseRequest extends FormRequest
+class CreateCourseRequest extends FormRequest
 {
     public function authorize()
     {
@@ -13,18 +13,11 @@ class UpdateCourseRequest extends FormRequest
 
     public function rules()
     {
-        $image = '';
-
-        if ($this->input('is_change_image') === "true") {
-            $image = 'required|file|mimes:jpg,jpeg,png';
-        }
-
         return [
             'name' => 'required|max:255',
             'slogan' => 'max:255',
             'introduction' => 'max:1000',
-            'is_change_image' => 'required',
-            'image_url' => $image,
+            'image_url' => 'file|mimes:jpg,jpeg,png',
             'price' => 'required|integer|min:0',
             'discount' => 'required|integer|min:0|between:0,100',
             'is_show' => 'required|min:0|max:1'

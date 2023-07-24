@@ -16,6 +16,7 @@ Route::group([
         'prefix' => 'users'
     ], function () {
         Route::get('', [UserController::class, 'index']);
+        Route::post('', [UserController::class, 'create']);
         Route::put('{id}', [UserController::class, 'update']);
         Route::delete('{id}', [UserController::class, 'delete']);
     });
@@ -24,6 +25,7 @@ Route::group([
         'prefix' => 'courses'
     ], function () {
         Route::get('', [CourseController::class, 'index']);
+        Route::post('', [CourseController::class, 'create']);
         Route::post('{id}', [CourseController::class, 'update']);
         Route::delete('{id}', [CourseController::class, 'delete']);
     });
@@ -32,6 +34,7 @@ Route::group([
         'prefix' => 'course-sections'
     ], function () {
         Route::get('', [CourseSectionController::class, 'index']);
+        Route::post('', [CourseSectionController::class, 'create']);
         Route::post('{id}', [CourseSectionController::class, 'update']);
         Route::delete('{id}', [CourseSectionController::class, 'delete']);
     });
@@ -40,5 +43,7 @@ Route::group([
         'prefix' => 'videos'
     ], function () {
         Route::get('', [VideoController::class, 'index']);
+        Route::post('{id}', [VideoController::class, 'update']);
+        Route::delete('{id}', [VideoController::class, 'delete']);
     });
 });

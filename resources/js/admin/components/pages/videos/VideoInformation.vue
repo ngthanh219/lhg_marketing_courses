@@ -9,7 +9,7 @@
                                 <div class="card card-primary">
                                     <div class="card-header">
                                         <h3 class="card-title">
-                                            {{ courseSectionData ? 'Thông tin phần học' : 'Thêm mới phần học' }}
+                                            {{ videoData ? 'Thông tin video' : 'Thêm mới video' }}
                                         </h3>
                                     </div>
                                     <div class="card-body">
@@ -21,15 +21,38 @@
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <label>Khóa học</label>
+                                            <label>Phần học</label>
                                             <a class="cursor-pointer" @click="openModalList">
                                                 Lựa chọn
                                             </a>
-                                            <input type="text" class="form-control form-control-border" v-model="courseName" disabled>
+                                            <input type="text" class="form-control form-control-border" v-model="courseSectionName" disabled>
                                         </div>
                                         <div class="form-group">
-                                            <label>Tên phần học</label>
-                                            <input type="text" class="form-control form-control-border" placeholder="xxx" v-model="formData.name">
+                                            <label>Thời gian</label>
+                                            <input type="text" class="form-control form-control-border" placeholder="xxx" v-model="formData.duration">
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                <input 
+                                                    class="custom-control-input" 
+                                                    type="checkbox" 
+                                                    id="customCheckbox2" 
+                                                    v-model="formData.is_change_video"
+                                                >
+                                                <label for="customCheckbox2" class="custom-control-label cursor-pointer">Thay video</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" v-if="formData.is_change_video">
+                                            <label for="exampleInputFile">Video</label>
+                                            <div class="input-group">
+                                                <div class="custom-file">
+                                                    <input type="file" class="custom-file-input" id="exampleInputFile" @change="handleSource($event)">
+                                                    <label class="custom-file-label" for="exampleInputFile">Chọn file</label>
+                                                </div>
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Tải lên</span>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="form-group">
                                             <label>Mô tả</label>
@@ -38,9 +61,9 @@
                                     </div>
                                     <div class="card-footer">
                                         <button type="submit" class="btn btn-primary mr-2" v-bind:class="{
-                                            disabled: !this.$helper.checkChangeFormData(courseSectionData, formData)
+                                            disabled: !(this.$helper.checkChangeFormData(videoData, formData) || formData.is_change_video)
                                         }">
-                                            {{ courseSectionData ? 'Cập nhật' : 'Thêm mới' }}
+                                            {{ videoData ? 'Cập nhật' : 'Thêm mới' }}
                                         </button>
                                         <a class="btn btn-danger" @click="closeFormComponent">Hủy</a>
                                     </div>
@@ -48,13 +71,13 @@
                             </form>
                         </div>
                     </div>
-                    
-                    <CourseList
+
+                    <CourseSectionList
                         v-else
 
                         :closeModalList="closeModalList"
-                        :selectCourseData="selectCourseData"
-                        :courseId="formData.course_id"
+                        :selectCourseSectionData="selectCourseSectionData"
+                        :courseSectionId="formData.course_section_id"
                     />
                 </div>
             </div>
@@ -63,36 +86,39 @@
 </template>
 
 <script>
-    import CourseList from './CourseList.vue';
+    import CourseSectionList from './CourseSectionList.vue';
 
     export default {
-        name: "CourseSectionInformation",
+        name: "VideoInformation",
         components: {
-            CourseList
+            CourseSectionList
         },
         props: {
             closeForm: Function,
-            getCourseSectionData: Function,
-            courseSectionData: Object
+            getVideoData: Function,
+            videoData: Object
         },
         data() {
             return {
                 isTransitionActive: false,
                 formData: {
-                    course_id: null,
-                    name: '',
+                    course_section_id: '',
                     description: '',
+                    is_change_video: false,
+                    source: '',
+                    duration: 0,
                     is_show: 0
                 },
                 formDataError: {
                     message: '',
-                    course_id: '',
-                    name: '',
                     description: '',
-                    is_show: ''
+                    is_change_video: '',
+                    source: '',
+                    duration: 0,
+                    is_show: 0
                 },
                 isModalList: false,
-                courseName: null
+                courseSectionName: null
             }
         },
         mounted() {
@@ -100,11 +126,8 @@
 
             setTimeout(() => {
                 this.isTransitionActive = true;
-
-                if (this.courseSectionData) {
-                    this.$helper.mergeArrayData(this.courseSectionData, this.formData);
-                    this.courseName = this.courseSectionData.course_name;
-                }
+                this.$helper.mergeArrayData(this.videoData, this.formData);
+                this.courseSectionName = this.videoData.course_section_name;
             }, 200);
         },
         methods: {
@@ -120,14 +143,14 @@
             async handleData(e) {
                 e.preventDefault();
 
-                if (this.courseSectionData) {
-                    if (this.$helper.checkChangeFormData(this.courseSectionData, this.formData)) {
+                if (this.videoData) {
+                    if (this.$helper.checkChangeFormData(this.videoData, this.formData) || this.formData.is_change_video) {
                         this.$helper.setPageLoading(true);
                         await this.update();
 
-                        if (typeof (this.$helper.getQueryUrl().course_id) !== 'undefined') {
-                            if (this.$helper.getQueryUrl().course_id !== this.formData.course_id) {
-                                await this.getCourseSectionData();
+                        if (typeof (this.$helper.getQueryUrl().course_section_id) !== 'undefined') {
+                            if (this.$helper.getQueryUrl().course_section_id !== this.formData.course_section_id) {
+                                await this.getVideoData();
                                 this.closeFormComponent(e);
                             }
                         } else {
@@ -135,52 +158,32 @@
                         }
                     }
                 } else {
-                    if (this.$helper.checkChangeFormData(null, this.formData)) {
-                        this.$helper.setPageLoading(true);
-                        var transaction = await this.create();
-
-                        if (transaction) {
-                            await this.getCourseSectionData();
-                            this.closeFormComponent(e);
-                        } else {
-                            this.$helper.setPageLoading(false);
-                        }
-                    }
+                    this.$helper.setPageLoading(true);
+                    await this.create();
                 }
             },
 
             async create() {
-                var transaction = false;
-                await this.$store.dispatch("createCourseSection", {
-                    request: this.$helper.appendFormData(this.formData),
-                    error: this.formDataError
-                })
-                .then(res => {
-                    transaction = true;
-                    this.$helper.setNotification(1, 'Tạo mới thành công');
-                })
-                .catch(err => {
-
-                });
-
-                return transaction;
+                console.log('create');
+                this.$helper.setPageLoading(false);
             },
 
             async update() {
-                await this.$store.dispatch("updateCourseSection", {
-                    id: this.courseSectionData.id,
+                await this.$store.dispatch("updateVideo", {
+                    id: this.videoData.id,
                     request: this.$helper.appendFormData(this.formData),
                     error: this.formDataError
                 })
                 .then(res => {
-                    this.$helper.mergeArrayData(this.formData, this.courseSectionData);
+                    this.formData.is_change_video = 0;
+                    this.videoData.source_url = res.data.source_url;
+                    this.$helper.mergeArrayData(this.formData, this.videoData);
 
                     this.$helper.setNotification(1, 'Cập nhật thành công');
                 })
                 .catch(err => {
 
                 });
-                this.$helper.setPageLoading(false);
             },
 
             openModalList(e) {
@@ -193,9 +196,17 @@
                 this.isModalList = false;
             },
 
-            selectCourseData(id, name) {
-                this.formData.course_id = id;
-                this.courseName = name;
+            selectCourseSectionData(id, name) {
+                this.formData.course_section_id = id;
+                this.courseSectionName = name;
+            },
+
+            handleSource(e) {
+                var self = this;
+                const reader = new FileReader();
+
+                reader.readAsDataURL(e.target.files[0]);
+                self.formData.source = e.target.files[0];
             }
         }
     }
