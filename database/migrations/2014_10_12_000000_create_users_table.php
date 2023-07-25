@@ -16,9 +16,9 @@ return new class extends Migration
             $table->id();
             $table->integer('role_id')->default(Constant::ROLE_CLIENT);
             $table->string('name')->nullable();
-            $table->string('phone')->unique()->default();
+            $table->string('phone')->unique()->nullable();
             $table->string('email')->unique();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->string('verification_code')->nullable();
             $table->timestamp("verification_code_at")->nullable();
             $table->timestamp('email_verified_at')->nullable();

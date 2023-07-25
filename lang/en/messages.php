@@ -12,6 +12,8 @@ return [
     "auth" => [
         "auth_error" => "Not authentication",
         "login_error" => "Email or password was invalid",
+        "not_verified_email" => "Your account has not been verified",
+        "logged_email" => "Your account is already logged in on another device",
         "is_login" => [
             "logged_in" => "Logged in",
             "not_logged_in" => "Not logged"
@@ -31,6 +33,7 @@ return [
         "not_exist" => "This user does not exist",
         "email_exist" => "This email was used by other user",
         "phone_exist" => "This phone was used by other user",
+        "expired_verification_code" => "Verification code has expired",
     ],
     "video" => [
         "not_exist" => "This video does not exist",

@@ -150,4 +150,18 @@ class CourseService extends BaseService
             return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
         }
     }
+
+    public function getCoursesClient($request)
+    {
+        try {
+            $courses = $this->course->withCount('courseSections')->orderByDesc('id');
+            $data = $this->pagination($courses, $request);
+
+            return $this->responseSuccess($data);
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
 }

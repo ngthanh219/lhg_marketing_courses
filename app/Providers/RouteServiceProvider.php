@@ -72,7 +72,8 @@ class RouteServiceProvider extends ServiceProvider
 
     protected function mapApiClientRoutes()
     {
-        Route::namespace('App\Http\Controllers\Client')
+        Route::prefix('api/v1/')
+            ->namespace('App\Http\Controllers\Client')
             ->group(base_path('routes/client/api.php'));
     }
 }

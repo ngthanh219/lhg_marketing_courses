@@ -170,6 +170,7 @@ return [
         'course_id'             => 'khóa học đang chọn',
         'course_section_id'     => 'phần học đang chọn',
         'duration'              => 'thời gian',
-        'source'                => 'video'
+        'source'                => 'video',
+        'verification_code'     => 'mã xác thực'
     ],
 ];
