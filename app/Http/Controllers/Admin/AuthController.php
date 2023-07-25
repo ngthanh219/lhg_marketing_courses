@@ -19,6 +19,6 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        return $this->authService->login($request);
+        return $this->authService->loginAdmin($request);
     }
 }
