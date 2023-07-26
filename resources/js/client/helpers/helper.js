@@ -24,7 +24,7 @@ let helper = {
 
     redirectPage(path, query = {}) {
         router.push({
-            path: '/admin/' + path,
+            path: '/' + path,
             query: query
         })
     },

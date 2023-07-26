@@ -8,12 +8,26 @@
                             <img src="https://marketing-courses-stg.s3.ap-southeast-1.amazonaws.com/general/logo.png" class="logo-default-site">
                         </a>
                     </div>
-                    <form v-on:submit="login">
+                    <form v-on:submit="register">
                         <div class="input-group">
                             <input type="email" class="form-control" placeholder="Email" name="email" v-model="formData.email">
                             <span class="fas fa-envelope"></span>
                         </div>
                         <div class="error text-danger text-bold text-sm" v-if="formDataError.email">{{formDataError.email}}</div>
+
+                        <div class="input-group">
+                            <input type="text" class="form-control end-text" placeholder="Mã xác thực" v-model="formData.verification_code" @keypress="this.$helper.isNumber">
+                            <span class="fa-text underline">
+                                <a class="cursor-pointer oblique" @click="sendVerifyCode" v-if="!isSendVerifyCode">Gửi mã</a>
+                            </span>
+                        </div>
+                        <div class="error text-danger text-bold text-sm" v-if="formDataError.verification_code">{{formDataError.verification_code}}</div>
+
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Số điện thoại" v-model="formData.phone" @keypress="this.$helper.isNumber">
+                            <span class="fas fa-phone"></span>
+                        </div>
+                        <div class="error text-danger text-bold text-sm" v-if="formDataError.phone">{{formDataError.phone}}</div>
 
                         <div class="input-group">
                             <input type="password" class="form-control" placeholder="Mật khẩu" name="password" v-model="formData.password">
@@ -22,7 +36,7 @@
                         <div class="error text-danger text-bold text-sm" v-if="formDataError.password">{{formDataError.password}}</div>
 
                         <div class="input-group">
-                            <button type="submit" class="btn btn-primary btn-block" v-if="!isLoginClick">Đăng nhập</button>
+                            <button type="submit" class="btn btn-primary btn-block" v-if="!isRegisterClick">Đăng ký tài khoản</button>
                             <div class="btn btn-primary btn-block btn-loading disabled" v-else>
                                 <div class="loading">
                                     <BtnLoading />
@@ -40,21 +54,26 @@
     import BtnLoading from '../../commons/loading/BtnLoading.vue';
 
     export default {
-        name: 'User',
+        name: 'Register',
         components: {
             BtnLoading
         },
         data() {
             return {
-                isLoginClick: false,
+                isSendVerifyCode: false,
+                isRegisterClick: false,
                 formData: {
                     email: '',
-                    password: ''
+                    password: '',
+                    phone: '',
+                    verification_code: '',
                 },
                 formDataError: {
                     message: '',
                     email: '',
-                    password: ''
+                    password: '',
+                    phone: '',
+                    verification_code: '',
                 },
             }
         },
@@ -66,26 +85,46 @@
             }
         },
         methods: {
-            async login(e) {
+            async sendVerifyCode(e) {
                 e.preventDefault();
 
-                this.isLoginClick = true;
-                if (this.isLoginClick) {
-                    await this.$store.dispatch('login', {
+                this.isSendVerifyCode = true;
+                if (this.isSendVerifyCode) {
+                    await this.$store.dispatch('sendVerifyCode', {
                         request: this.$helper.appendFormData(this.formData),
                         error: this.formDataError
                     })
                     .then(res => {
-                        this.$helper.setAuth(res.data);
-                        this.$helper.redirectPage('');
+                        this.$helper.setNotification(1, 'Đã gửi mã xác thực về email của bạn');
                     })
                     .catch(err => {
                         
                     });
 
-                    this.isLoginClick = false;
+                    this.isSendVerifyCode = false;
                 }
-            }
+            },
+
+            async register(e) {
+                e.preventDefault();
+
+                this.isRegisterClick = true;
+                if (this.isRegisterClick) {
+                    await this.$store.dispatch('register', {
+                        request: this.$helper.appendFormData(this.formData),
+                        error: this.formDataError
+                    })
+                    .then(res => {
+                        this.$helper.setNotification(1, 'Đăng ký thành công');
+                        this.$helper.redirectPage('dang-nhap');
+                    })
+                    .catch(err => {
+                        
+                    });
+
+                    this.isRegisterClick = false;
+                }
+            },
         }
     }
 </script>

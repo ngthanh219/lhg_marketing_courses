@@ -65,12 +65,12 @@ class UserService extends BaseService
     public function create($request)
     {
         try {
-            $existEmail = $this->user->where('email', $request->email)->first();
+            $existEmail = $this->user->where('email', $request->email)->withTrashed()->first();
             if ($existEmail) {
                 return $this->responseError(__('messages.user.email_exist'), 400, ErrorCode::PARAM_INVALID);
             }
 
-            $existPhone = $this->user->where('phone', $request->phone)->first();
+            $existPhone = $this->user->where('phone', $request->phone)->withTrashed()->first();
             if ($existPhone) {
                 return $this->responseError(__('messages.user.phone_exist'), 400, ErrorCode::PARAM_INVALID);
             }
