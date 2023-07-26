@@ -8,7 +8,10 @@
                             <img src="https://marketing-courses-stg.s3.ap-southeast-1.amazonaws.com/general/logo.png" alt="">
                         </router-link>
                     </div>
-                    <ul class="navbar-menu" v-bind:class="{'show-menu' : isShowMenu}">
+                    <ul class="navbar-menu" v-bind:class="[
+                        {'show-menu' : isShowMenu},
+                        {'content' : isActiveTransactionMenu},
+                    ]">
                         <li>
                             <router-link to="/trang-chu">Trang chủ</router-link>
                         </li>
@@ -18,43 +21,39 @@
                         <li>
                             <input type="text" class="search" placeholder="Tìm khóa học">
                         </li>
+                        <li class="toggler-active" v-if="!$store.state.auth.accessToken">
+                            <router-link to="/dang-nhap">
+                                <span>Đăng nhập</span>
+                            </router-link>
+                        </li>
+                        <li class="toggler-active" v-if="!$store.state.auth.accessToken">
+                            <router-link to="/dang-ky">
+                                <span>Đăng ký</span>
+                            </router-link>
+                        </li>
+                        <li class="toggler-active" v-if="$store.state.auth.accessToken">
+                            <router-link to="/dang-nhap">
+                                <span>Tài khoản: Thanhnt6@gmail.com</span>
+                            </router-link>
+                        </li>
                     </ul>
                 </div>
                 <div class="right-wrapper">
-                    <div class="info-box" v-if="$store.state.auth.accessToken">
+                    <div class="navbar-menu" v-if="$store.state.auth.accessToken">
                         <div class="col">
-                            <label>Thanhnt6@gmail.com</label>
-                        </div>
-                        <img src="#">
-                    </div>
-                    <div class="dropdown-actions" v-if="$store.state.auth.accessToken">
-                        <div class="avatar-box">
-                            <img src="#">
-                        </div>
-                        <div class="actions-box">
-                            <p>
-                                <router-link to="/">Trang cá nhân</router-link>
-                            </p>
-                            <form action="#">
-                                <p>
-                                    <a>Đăng xuất</a>
-                                </p>
-                            </form>
+                            <label>Tài khoản: Thanhnt6@gmail.com</label>
                         </div>
                     </div>
-
                     <ul class="navbar-menu" v-if="!$store.state.auth.accessToken">
                         <li class="information-user">
                             <router-link to="/dang-nhap">
-                                <i class="fas fa-user"></i>
                                 <span>Đăng nhập</span>
                             </router-link>
                         </li>
                         <li class="information-user">
-                            <a to="/register">
-                                <i class="fas fa-user-plus"></i>
+                            <router-link to="/dang-ky">
                                 <span>Đăng ký</span>
-                            </a>
+                            </router-link>
                         </li>
                     </ul>
                 </div>
@@ -74,6 +73,7 @@
         data() {
             return {
                 isShowMenu: false,
+                isActiveTransactionMenu: false,
             }
         },
         mounted() {
@@ -86,7 +86,20 @@
             showMenu(e) {
                 e.preventDefault();
                 
-                this.isShowMenu = !this.isShowMenu;
+                if (!this.isShowMenu) {
+                    this.isShowMenu = true;
+
+                    setTimeout(() => {
+                        this.isActiveTransactionMenu = true;
+                    }, 50);
+                } else {
+                    this.isActiveTransactionMenu = false;
+
+                    setTimeout(() => {
+                        this.isShowMenu = false;
+                    }, 300);
+                }
+                
             }
         }
     }

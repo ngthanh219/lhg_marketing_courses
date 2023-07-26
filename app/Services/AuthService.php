@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Helpers\GeneralHelper;
+use App\Jobs\SendVerificationCodeJob;
 use App\Libraries\Constant;
 use App\Libraries\ErrorCode;
 use App\Libraries\Message;
@@ -105,7 +106,7 @@ class AuthService extends BaseService
     public function sendVerifyCode($request)
     {
         try {
-            $user = $this->user->where('email', $request->email)->first();
+            $user = $this->user->where('email', $request->email)->withTrashed()->first();
             $verficationCode = rand(10000, 99999);
 
             if ($user) {
@@ -125,8 +126,8 @@ class AuthService extends BaseService
                     'verification_code_at' => now()
                 ]);
             }
-            
-            Mail::to($request->email)->send(new SendVerificationCodeMail($verficationCode));
+
+            SendVerificationCodeJob::dispatch($request->email, $verficationCode);
 
             return $this->responseSuccess();
         } catch (\Exception $ex) {
