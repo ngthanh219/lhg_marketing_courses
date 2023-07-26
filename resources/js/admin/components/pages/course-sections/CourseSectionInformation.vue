@@ -126,7 +126,7 @@
                         await this.update();
 
                         if (typeof (this.$helper.getQueryUrl().course_id) !== 'undefined') {
-                            if (this.$helper.getQueryUrl().course_id !== this.formData.course_id) {
+                            if (this.$helper.getQueryUrl().course_id != this.formData.course_id) {
                                 await this.getCourseSectionData();
                                 this.closeFormComponent(e);
                             }

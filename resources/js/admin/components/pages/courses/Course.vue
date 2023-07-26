@@ -75,7 +75,7 @@
                                             <th style="width: 250px">Giá</th>
                                             <th style="width: 250px">Giảm giá</th>
                                             <th style="width: 250px">Giá khuyến mãi</th>
-                                            <th style="width: 250px">Trạng thái</th>
+                                            <th style="width: 250px">Trạng thái hiển thị</th>
                                             <th style="width: 250px">Ngày tạo</th>
                                             <th style="width: 100px"></th>
                                         </tr>

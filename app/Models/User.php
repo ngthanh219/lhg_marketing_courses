@@ -42,4 +42,9 @@ class User extends Authenticatable
     {
         return Carbon::parse($value)->format("d-m-Y H:i:s");
     }
+
+    public function courseUsers()
+    {
+        return $this->hasMany(CourseUser::class, 'user_id', 'id');
+    }
 }

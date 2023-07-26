@@ -4,11 +4,9 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <div class="col-sm-6">
-                            <a href="/" class="btn btn-primary" @click="openForm">
-                                <i class="id-icon fas fa-plus mr-2"></i>Thêm mới
-                            </a>
-                        </div>
+                        <a href="/" class="btn btn-primary" @click="openForm">
+                            <i class="id-icon fas fa-plus mr-2"></i>Thêm mới
+                        </a>
                         <span v-if="dataList">
                             <div v-if="dataList.course_name">
                                 <b>Khóa học: </b>
@@ -87,7 +85,7 @@
                                             </th>
                                             <th style="width: 600px">Tên phần học</th>
                                             <th style="width: 250px">Số lượng video</th>
-                                            <th style="width: 250px">Trạng thái</th>
+                                            <th style="width: 250px">Trạng thái hiển thị</th>
                                             <th>Ngày tạo</th>
                                             <th style="width: 100px"></th>
                                         </tr>

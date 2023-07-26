@@ -8,23 +8,23 @@
                 <div class="row">
                     <div class="col-md-2">
                         <div class="form-group input-group-sm">
-                            <label>Tên phần học</label>
-                            <input type="text" class="form-control" placeholder="Tên phần học" v-model="query.name">
+                            <label>Thông tin</label>
+                            <input type="text" class="form-control" placeholder="Email, số điện thoại" v-model="query.information">
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group input-group-sm">
                             <label>Trạng thái</label>
-                            <select class="form-control" v-model="query.is_show">
+                            <select class="form-control" v-model="query.is_login">
                                 <option value="2">Tất cả</option>
-                                <option value="0">Đang hiển thị</option>
-                                <option value="1">Đã ẩn</option>
+                                <option value="0">Chưa đăng nhập</option>
+                                <option value="1">Đã đăng nhập</option>
                             </select>
                         </div>
                     </div>
                     <div class="col-md-6 d-flex align-items-end">
                         <div class="form-group input-group-sm">
-                            <a href="/" class="btn btn-sm btn-primary" @click="filter">Lọc</a>
+                            <a href="/" class="btn btn-primary" @click="filter">Lọc</a>
                         </div>
                     </div>
                 </div>
@@ -40,16 +40,16 @@
                                 v-if="dataList"
                                 :dataList="dataList"
                                 :query="query"
-                                :getData="getCourseSectionData"
+                                :getData="getUserData"
                             />
 
                             <div class="card-body data-table table-responsive p-0">
                                 <table class="table text-center table-hover table-head-fixed text-nowrap">
                                     <thead>
                                         <tr>
-                                            <th style="width: 50px"></th>
+                                            <th></th>
                                             <th style="width: 25px">
-                                                <a href="/" @click="sortCourseSectionData($event, 'id_sort')">
+                                                <a href="/" @click="sortUserData($event, 'id_sort')">
                                                     ID
                                                     <i
                                                         class="id-icon fas"
@@ -59,26 +59,30 @@
                                                     />
                                                 </a>
                                             </th>
-                                            <th style="width: 600px">Tên phần học</th>
-                                            <th style="width: 250px">Trạng thái hiển thị</th>
+                                            <th style="width: 250px">Họ tên</th>
+                                            <th style="width: 250px">Số điện thoại</th>
+                                            <th style="width: 250px">Email</th>
+                                            <th style="width: 250px">Trạng thái đăng nhập</th>
                                         </tr>
                                     </thead>
                                     <tbody class="table-data" v-if="dataList">
                                         <tr v-for="data, index in dataList.list">
                                             <td>
-                                                <a class="btn btn-sm btn-danger" v-if="data.id === courseSectionId">Đang chọn</a>
-                                                <a class="btn btn-sm btn-outline-primary" @click="selectData($event, data.id, data.name)" v-else>Chọn</a>
+                                                <a class="btn btn-sm btn-danger" v-if="data.id === userId">Đang chọn</a>
+                                                <a class="btn btn-sm btn-outline-primary" @click="selectData($event, data.id, data.email)" v-else>Chọn</a>
                                             </td>
                                             <td>{{ data.id }}</td>
                                             <td>{{ data.name }}</td>
+                                            <td>{{ data.phone }}</td>
+                                            <td>{{ data.email }}</td>
                                             <td>
                                                 <span 
                                                     class="badge" 
                                                     v-bind:class="[
-                                                        data.is_show == 0 ? 'alert-success' : 'alert-secondary'
+                                                        data.is_login == 1 ? 'alert-success' : 'alert-secondary'
                                                     ]"
                                                 >
-                                                    {{ data.is_show == 0 ? 'Đang hiển thị' : 'Đã ẩn' }}
+                                                    {{ data.is_login == 1 ? 'Đã đăng nhập' : 'Chưa đăng nhập' }}
                                                 </span>
                                             </td>
                                         </tr>
@@ -102,14 +106,14 @@
     import TablePagination from '../../commons/pagination/TablePagination.vue';
 
     export default {
-        name: "CourseSectionList",
+        name: "UserList",
         components: { 
             TablePagination
         },
         props: {
             closeModalList: Function,
-            selectCourseSectionData: Function,
-            courseSectionId: Number
+            selectUserData: Function,
+            userId: Number
         },
         data() {
             return {
@@ -120,8 +124,8 @@
                     id_sort: "desc",
                     name: "",
                     is_show: 2,
-                    course_id: null,
-                    is_deleted: 0
+                    is_deleted: 0,
+                    is_login: 2,
                 },
                 formDataError: {
                     message: ""
@@ -129,12 +133,12 @@
             };
         },
         mounted() {
-            this.getCourseSectionData();
+            this.getUserData();
         },
         methods: {
-            async getCourseSectionData() {
+            async getUserData() {
                 this.$helper.setPageLoading(true);
-                await this.$store.dispatch("getCourseSections", {
+                await this.$store.dispatch("getUsers", {
                     query: this.$helper.getQueryString(this.query),
                     error: this.formDataError
                 })
@@ -157,10 +161,10 @@
                     this.query.page = 1;
                 }
 
-                this.getCourseSectionData();
+                this.getUserData();
             },
 
-            sortCourseSectionData(e, queryParam) {
+            sortUserData(e, queryParam) {
                 e.preventDefault();
 
                 if (this.query[queryParam] == "desc") {
@@ -169,20 +173,19 @@
                     this.query[queryParam] = "desc";
                 }
 
-                this.getCourseSectionData();
+                this.getUserData();
             },
 
             closeModal(e) {
                 e.preventDefault();
 
-                this.closeModalList();
+                this.closeModalList('user');
             },
 
             selectData(e, id, name) {
                 e.preventDefault();
 
-                this.selectCourseSectionData(id, name);
-                // this.closeModalList();
+                this.selectUserData(id, name);
             }
         }
     }

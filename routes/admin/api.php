@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\CourseSectionController;
+use App\Http\Controllers\Admin\CourseUserController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VideoController;
 use Illuminate\Support\Facades\Route;
@@ -46,5 +47,14 @@ Route::group([
         Route::post('', [VideoController::class, 'create']);
         Route::post('{id}', [VideoController::class, 'update']);
         Route::delete('{id}', [VideoController::class, 'delete']);
+    });
+
+    Route::group([
+        'prefix' => 'course-users'
+    ], function () {
+        Route::get('', [CourseUserController::class, 'index']);
+        Route::post('', [CourseUserController::class, 'create']);
+        Route::post('{id}', [CourseUserController::class, 'update']);
+        Route::delete('{id}', [CourseUserController::class, 'delete']);
     });
 });

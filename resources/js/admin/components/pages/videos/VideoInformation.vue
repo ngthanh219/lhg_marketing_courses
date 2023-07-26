@@ -154,7 +154,7 @@
                         await this.update();
 
                         if (typeof (this.$helper.getQueryUrl().course_section_id) !== 'undefined') {
-                            if (this.$helper.getQueryUrl().course_section_id !== this.formData.course_section_id) {
+                            if (this.$helper.getQueryUrl().course_section_id != this.formData.course_section_id) {
                                 await this.getVideoData();
                                 this.closeFormComponent(e);
                             }

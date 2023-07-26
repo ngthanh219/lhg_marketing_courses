@@ -24,7 +24,8 @@ return [
         "fail" => "Thất bại"
     ],
     "course" => [
-        "not_exist" => "Khóa học này không tồn tại"
+        "not_exist" => "Khóa học này không tồn tại",
+        "registered_user" => "Bạn đã đăng ký khóa học này"
     ],
     "course_section" => [
         "not_exist" => "Phần học này không tồn tại"
@@ -38,4 +39,8 @@ return [
     "video" => [
         "not_exist" => "Video này không tồn tại"
     ],
+    "course_user" => [
+        "not_exist" => "Khóa học của người dùng này không tồn tại",
+        "registered_user" => "Dữ liệu này đã có trong hệ thống"
+    ]
 ];

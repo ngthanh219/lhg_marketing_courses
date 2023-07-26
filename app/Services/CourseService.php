@@ -6,17 +6,29 @@ use App\Helpers\GeneralHelper;
 use App\Libraries\Constant;
 use App\Libraries\ErrorCode;
 use App\Models\Course;
+use App\Models\CourseSection;
+use App\Models\CourseUser;
+use App\Models\Video;
 
 class CourseService extends BaseService
 {
     protected $course;
+    protected $courseSection;
+    protected $video;
+    protected $courseUser;
     protected $awsS3Service;
 
     public function __construct(
         Course $course,
+        CourseSection $courseSection,
+        Video $video,
+        CourseUser $courseUser,
         AWSS3Service $awsS3Service
     ) {
         $this->course = $course;
+        $this->courseSection = $courseSection;
+        $this->video = $video;
+        $this->courseUser = $courseUser;
         $this->awsS3Service = $awsS3Service;
     }
 
@@ -154,10 +166,133 @@ class CourseService extends BaseService
     public function getCoursesClient($request)
     {
         try {
-            $courses = $this->course->withCount('courseSections')->orderByDesc('id');
+            $courses = $this->course->withCount('courseSections')
+                ->where('is_show', Constant::IS_SHOW)
+                ->select([
+                    'id',
+                    'name',
+                    'slug',
+                    'discount'
+                ])
+                ->orderByDesc('id');
             $data = $this->pagination($courses, $request);
 
             return $this->responseSuccess($data);
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
+    public function getCourseDetailClient($courseSlug)
+    {
+        try {
+            $course = $this->course->where('slug', $courseSlug)
+                ->where('is_show', Constant::IS_SHOW)
+                ->first();
+
+            if (!$course) {
+                return $this->responseError(__('messages.course.not_exist'), 400, ErrorCode::PARAM_INVALID);
+            }
+
+            $course->my_course = Constant::COURSE_USER_NO_ACTION;
+            $user = auth()->guard('api')->user();
+
+            if ($user) {
+                $courseUser = $this->courseUser->where('user_id', $user->id)
+                    ->where('course_id', $course->id)
+                    ->where('is_show', Constant::IS_SHOW)
+                    ->first();
+
+                if ($courseUser) {
+                    $course->my_course = $courseUser->status;
+                }
+            }
+
+            $course->load([
+                'courseSections' => function ($courseSection) use ($course) {
+                    $courseSection->with([
+                        'videos' => function ($video) use ($course) {
+                            $videoField = [
+                                'id',
+                                'course_section_id',
+                                'name',
+                                'duration'
+                            ];
+
+                            if ($course->my_course === Constant::COURSE_USER_USING) {
+                                $videoField[] = 'source';
+                            }
+
+                            $video->where('is_show', Constant::IS_SHOW)->select($videoField);
+                        }
+                    ])->where('is_show', Constant::IS_SHOW)->select([
+                        'id',
+                        'course_id',
+                        'name',
+                        'slug'
+                    ]);
+                }
+            ]);
+
+            $totalCourseSection = $this->courseSection->where('course_id', $course->id)
+                ->where('is_show', Constant::IS_SHOW)
+                ->pluck('id');
+
+            $totalDuration = $this->video->whereIn('course_section_id', $totalCourseSection)
+                ->where('is_show', Constant::IS_SHOW)
+                ->sum('duration');
+
+            $response = [
+                'course' => $course,
+                'total_course_section' => count($totalCourseSection),
+                'total_video_duration' => (int) $totalDuration
+            ];
+
+            return $this->responseSuccess($response);
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
+    public function registerCourseClient($request)
+    {
+        try {
+            $user = auth()->guard('api')->user();
+            $course = $this->course->where('slug', $request->course_slug)
+                ->where('is_show', Constant::IS_SHOW)
+                ->first();
+
+            if (!$course) {
+                return $this->responseError(__('messages.course.not_exist'), 400, ErrorCode::PARAM_INVALID);
+            }
+            
+            $courseUser = $this->courseUser->where('user_id', $user->id)
+                ->where('course_id', $course->id)
+                ->first();
+
+            if ($courseUser) {
+                return $this->responseError(__('messages.course.registered_user'), 400, ErrorCode::PARAM_INVALID);
+            }
+
+            $courseUser = $this->courseUser->create([
+                'user_id' => $user->id,
+                'course_id' => $course->id,
+                'price' => $course->price,
+                'discount' => $course->discount,
+                'discount_price' => $course->discount_price,
+                'status' => Constant::COURSE_USER_PENDING,
+                'is_show' => Constant::IS_SHOW
+            ]);
+
+            // TODO: handle send mail to Admin
+
+            return $this->responseSuccess([
+                'status' => $courseUser->status
+            ]);
         } catch (\Exception $ex) {
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 

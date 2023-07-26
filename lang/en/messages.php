@@ -24,7 +24,8 @@ return [
         "fail" => "Failed"
     ],
     "course" => [
-        "not_exist" => "This course does not exist"
+        "not_exist" => "This course does not exist",
+        "registered_user" => "You have registered this course"
     ],
     "course_section" => [
         "not_exist" => "This section does not exist"
@@ -38,4 +39,8 @@ return [
     "video" => [
         "not_exist" => "This video does not exist",
     ],
+    "course_user" => [
+        "not_exist" => "Course of this user does not exist",
+        "registered_user" => "This data is already in the system"
+    ]
 ];

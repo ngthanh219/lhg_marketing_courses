@@ -20,4 +20,14 @@ class CourseController extends Controller
     {
         return $this->courseService->getCoursesClient($request);
     }
+
+    public function getCourseDetail($courseSlug)
+    {
+        return $this->courseService->getCourseDetailClient($courseSlug);
+    }
+
+    public function registerCourse(Request $request)
+    {
+        return $this->courseService->registerCourseClient($request);
+    }
 }

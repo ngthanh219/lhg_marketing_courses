@@ -4,41 +4,24 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <a href="/" class="btn btn-sm btn-primary" @click="openForm">
+                        <a href="/" class="btn btn-primary" @click="openForm">
                             <i class="id-icon fas fa-plus mr-2"></i>Thêm mới
                         </a>
-                        <span v-if="dataList">
-                            <div v-if="dataList.course_name">
-                                <b>Khóa học: </b>
-                                <span class="underline">{{ dataList.course_name }}</span>
-                            </div>
-                        </span>
-                        <span v-if="dataList">
-                            <div v-if="dataList.course_section_name">
-                                <b>Phần: </b> 
-                                <span class="underline sm">{{ dataList.course_section_name }}</span> - 
-                                <router-link to="/admin/videos" class="underline oblique" @click="clearFilter($event, 'course_section_id')">
-                                    clear
-                                </router-link>
-                            </div>
-                        </span>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item">
                                 Trang chủ
                             </li>
-                            <li class="breadcrumb-item active">
-                                Danh sách video
-                            </li>
+                            <li class="breadcrumb-item active">Khóa học người dùng</li>
                         </ol>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-2">
                         <div class="form-group input-group-sm">
-                            <label>Nhập mô tả</label>
-                            <input type="text" class="form-control" placeholder="Mô tả" v-model="query.description">
+                            <label>Tên người dùng</label>
+                            <input type="text" class="form-control" placeholder="Tên khóa học" v-model="query.name">
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -57,8 +40,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                </div>
             </div>
         </div>
         <section class="content">
@@ -71,7 +52,7 @@
                                 v-if="dataList"
                                 :dataList="dataList"
                                 :query="query"
-                                :getData="getVideoData"
+                                :getData="getCourseUserData"
                             />
 
                             <div class="card-body data-table table-responsive p-0">
@@ -79,7 +60,7 @@
                                     <thead>
                                         <tr>
                                             <th style="width: 25px">
-                                                <a href="/" @click="sortVideoData($event, 'id_sort')">
+                                                <a href="/" @click="sortCourseUserData($event, 'id_sort')">
                                                     ID
                                                     <i
                                                         class="id-icon fas"
@@ -89,22 +70,35 @@
                                                     />
                                                 </a>
                                             </th>
-                                            <th style="width: 500px">Mô tả</th>
-                                            <th style="width: 150px">Link video</th>
-                                            <th style="width: 150px">Thời lượng (h:m:s)</th>
+                                            <th style="width: 250px">Người dùng</th>
+                                            <th style="width: 250px">Khóa học</th>
+                                            <th style="width: 250px">Giá</th>
+                                            <th style="width: 250px">Giảm giá</th>
+                                            <th style="width: 250px">Giá khuyến mãi</th>
+                                            <th style="width: 250px">Trạng thái khóa học</th>
                                             <th style="width: 250px">Trạng thái hiển thị</th>
-                                            <th style="width: 150px">Ngày tạo</th>
+                                            <th style="width: 250px">Ngày tạo</th>
                                             <th style="width: 100px"></th>
                                         </tr>
                                     </thead>
                                     <tbody class="table-data" v-if="dataList">
                                         <tr v-for="data, index in dataList.list">
                                             <td>{{ data.id }}</td>
-                                            <td>{{ data.description }}</td>
+                                            <td>{{ data.user_email }}</td>
+                                            <td>{{ data.course_name }}</td>
+                                            <td>{{ data.price.toLocaleString() + 'đ' }}</td>
+                                            <td>{{ data.discount }}%</td>
+                                            <td>{{ data.discount_price.toLocaleString() + 'đ' }}</td>
                                             <td>
-                                                <a class="underline" :href="data.source_url" target="_blank">Xem</a>
+                                                <span 
+                                                    class="badge" 
+                                                    v-bind:class="[
+                                                        data.status == 0 ? 'alert-success' : 'alert-secondary'
+                                                    ]"
+                                                >
+                                                    {{ data.status == 0 ? 'Đang sử dụng' : 'Đang chờ xác thực' }}
+                                                </span>
                                             </td>
-                                            <td>{{ this.$helper.formatDuration(data.duration) }}</td>
                                             <td>
                                                 <span 
                                                     class="badge" 
@@ -159,25 +153,25 @@
             </div>
         </section>
 
-        <VideoInformation
+        <CourseUserInformation
             v-if="isForm"
 
             :closeForm="closeForm"
-            :videoData="data"
-            :getVideoData="getVideoData"
+            :courseUserData="data"
+            :getCourseUserData="getCourseUserData"
         />
     </div>
 </template>
 
 <script>
     import TablePagination from '../../commons/pagination/TablePagination.vue';
-    import VideoInformation from './VideoInformation.vue';
+    import CourseUserInformation from './CourseUserInformation.vue';
 
     export default {
-        name: "Video",
+        name: "Course",
         components: { 
             TablePagination,
-            VideoInformation
+            CourseUserInformation
         },
         data() {
             return {
@@ -186,9 +180,9 @@
                     limit: 15,
                     page: 1,
                     id_sort: "desc",
-                    description: "",
+                    // status_sort: "asc",
+                    name: "",
                     is_show: 2,
-                    course_section_id: null,
                     is_deleted: 0
                 },
                 formDataError: {
@@ -201,12 +195,12 @@
         mounted() {
             this.$helper.getCurrentQuery(this.query);
 
-            this.getVideoData();
+            this.getCourseUserData();
         },
         methods: {
-            async getVideoData() {
+            async getCourseUserData() {
                 this.$helper.setPageLoading(true);
-                await this.$store.dispatch("getVideos", {
+                await this.$store.dispatch("getCourseUsers", {
                     query: this.$helper.getQueryString(this.query),
                     error: this.formDataError
                 })
@@ -222,24 +216,19 @@
                 e.preventDefault();
 
                 this.$helper.pushQueryUrl(this.query);
+
                 if (this.query.page >= this.dataList.total_page) {
                     this.query.page = this.dataList.total_page;
                 }
+
                 if (this.query.page == 0) {
                     this.query.page = 1;
                 }
 
-                this.getVideoData();
+                this.getCourseUserData();
             },
 
-            clearFilter(e, param) {
-                e.preventDefault();
-
-                this.query[param] = null;
-                this.getVideoData();
-            },
-
-            sortVideoData(e, queryParam) {
+            sortCourseUserData(e, queryParam) {
                 e.preventDefault();
 
                 if (this.query[queryParam] == "desc") {
@@ -249,7 +238,7 @@
                 }
 
                 this.$helper.pushQueryUrl(this.query);
-                this.getVideoData();
+                this.getCourseUserData();
             },
 
             openForm(e, index, data) {
@@ -275,16 +264,16 @@
             async deleteData(e, id) {
                 e.preventDefault();
 
-                var alertMessage = 'Bạn muốn xóa video này?';
+                var alertMessage = 'Bạn muốn xóa thông tin này?';
                 var successMessage = 'Xóa thành công';
                 if (this.query.is_deleted == 1) {
-                    alertMessage = 'Bạn muốn khôi phục video này?';
+                    alertMessage = 'Bạn muốn khôi phục thông tin này?';
                     successMessage = 'Khôi phục thành công';
                 }
 
                 if (confirm(alertMessage)) {
                     this.$helper.setPageLoading(true);
-                    await this.$store.dispatch("deleteVideo", {
+                    await this.$store.dispatch("deleteCourseUser", {
                         id: id,
                         error: this.formDataError
                     })
@@ -295,7 +284,7 @@
 
                     });
 
-                    this.getVideoData();
+                    this.getCourseUserData();
                 }
             }
         }
