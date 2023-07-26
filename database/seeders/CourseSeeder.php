@@ -26,7 +26,7 @@ class CourseSeeder extends Seeder
                 'image' => null,
                 'price' => 4350000,
                 'discount' => 0,
-                'discount_price' => 0,
+                'discount_price' => (double) (4350000 - ((4350000 * (0 / 100)) * 100 / 100)),
                 'is_show' => Constant::IS_SHOW,
                 'created_at' => now(),
                 'updated_at' => now()
@@ -40,7 +40,7 @@ class CourseSeeder extends Seeder
                 'image' => null,
                 'price' => 4350000,
                 'discount' => 0,
-                'discount_price' => 0,
+                'discount_price' => (double) (4350000 - ((4350000 * (0 / 100)) * 100 / 100)),
                 'is_show' => Constant::IS_SHOW,
                 'created_at' => now(),
                 'updated_at' => now()
@@ -54,7 +54,7 @@ class CourseSeeder extends Seeder
                 'image' => null,
                 'price' => 4350000,
                 'discount' => 0,
-                'discount_price' => 0,
+                'discount_price' => (double) (4350000 - ((4350000 * (0 / 100)) * 100 / 100)),
                 'is_show' => Constant::IS_SHOW,
                 'created_at' => now(),
                 'updated_at' => now()
@@ -68,7 +68,7 @@ class CourseSeeder extends Seeder
                 'image' => null,
                 'price' => 4350000,
                 'discount' => 0,
-                'discount_price' => 0,
+                'discount_price' => (double) (4350000 - ((4350000 * (0 / 100)) * 100 / 100)),
                 'is_show' => Constant::IS_SHOW,
                 'created_at' => now(),
                 'updated_at' => now()

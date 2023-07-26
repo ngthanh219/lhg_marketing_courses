@@ -6,8 +6,10 @@ use App\Libraries\Constant;
 use App\Libraries\ErrorCode;
 use App\Services\BaseService;
 use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-class AdminAuthentication
+class ClientAuthentication
 {
     protected $baseService;
 
@@ -21,7 +23,7 @@ class AdminAuthentication
     {
         try {
             if (auth()->guard('api')->check()) {
-                if (auth()->guard('api')->user()->role_id === Constant::ROLE_ADMIN) {
+                if (auth()->guard('api')->user()->role_id === Constant::ROLE_CLIENT) {
                     return $next($request);
                 }
             }

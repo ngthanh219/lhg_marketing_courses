@@ -28,4 +28,8 @@ class Constant
 
     const IS_NOT_CHANGE_VIDEO = 0;
     const IS_CHANGE_VIDEO = 1;
+
+    const COURSE_USER_USING = 0;
+    const COURSE_USER_PENDING = 1;
+    const COURSE_USER_NO_ACTION = 2;
 }

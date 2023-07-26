@@ -32,9 +32,9 @@
                         </router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link to="/admin/billing" class="nav-link">
-                            <i class="nav-icon fa fa-shopping-cart"></i>
-                            <p>Quản lý hóa đơn</p>
+                        <router-link to="/admin/course-users" class="nav-link">
+                            <i class="nav-icon far fa-plus-square"></i>
+                            <p>Khóa học của người dùng</p>
                         </router-link>
                     </li>
                 </ul>

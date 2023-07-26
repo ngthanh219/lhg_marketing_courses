@@ -22,6 +22,10 @@ class UserService extends BaseService
         try {
             $users = $this->user;
 
+            if (isset($request->role_id)) {
+                $users = $users->where('role_id', $request->role_id);
+            }
+
             if (isset($request->id_sort)) {
                 $users = $users->orderBy('id', $request->id_sort);
             }
@@ -33,7 +37,7 @@ class UserService extends BaseService
                     $key = 'phone';
                 }
 
-                $users = $users->where($key, $request->information);
+                $users = $users->where($key, 'like', '%' . $request->information . '%');
             }
 
             if (isset($request->is_login)) {

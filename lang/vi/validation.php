@@ -171,6 +171,9 @@ return [
         'course_section_id'     => 'phần học đang chọn',
         'duration'              => 'thời gian',
         'source'                => 'video',
-        'verification_code'     => 'mã xác thực'
+        'verification_code'     => 'mã xác thực',
+        'user_id'               => 'người dùng',
+        'status'                => 'trạng thái',
+        'billing_image_url'         => 'hóa đơn chuyển tiền',
     ],
 ];

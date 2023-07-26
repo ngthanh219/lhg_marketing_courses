@@ -6,7 +6,7 @@ import User from "../components/pages/users/User.vue";
 import Course from "../components/pages/courses/Course.vue";
 import CourseSection from "../components/pages/course-sections/CourseSection.vue";
 import Video from "../components/pages/videos/Video.vue";
-import Billing from "../components/pages/billing/Billing.vue";
+import CourseUser from "../components/pages/course-users/CourseUser.vue";
 
 const routes = [
     {
@@ -40,9 +40,9 @@ const routes = [
                 component: Video
             },
             {
-                path: 'billing',
-                name: 'Billing',
-                component: Billing
+                path: 'course-users',
+                name: 'CourseUser',
+                component: CourseUser
             },
             {
                 path: ':pathMatch(.*)*',

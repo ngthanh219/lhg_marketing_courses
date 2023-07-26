@@ -3,6 +3,7 @@ import course from './api/course.js';
 import user from './api/user.js';
 import courseSection from './api/course-section.js';
 import video from './api/video.js';
+import courseUser from './api/course-user.js';
 
 let actions = {
     login: authentication.login,
@@ -26,6 +27,11 @@ let actions = {
     createVideo: video.createVideo,
     updateVideo: video.updateVideo,
     deleteVideo: video.deleteVideo,
+
+    getCourseUsers: courseUser.getCourseUsers,
+    createCourseUser: courseUser.createCourseUser,
+    updateCourseUser: courseUser.updateCourseUser,
+    deleteCourseUser: courseUser.deleteCourseUser,
 }
 
 export default actions;

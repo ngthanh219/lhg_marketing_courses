@@ -15,6 +15,7 @@ return new class extends Migration
         Schema::create('videos', function (Blueprint $table) {
             $table->id();
             $table->integer('course_section_id')->nullable();
+            $table->text('name')->nullable();
             $table->text('description')->nullable();
             $table->text('source')->nullable();
             $table->integer('duration')->nullable()->default(0);

@@ -18,6 +18,7 @@ class VideoSeeder extends Seeder
             [
                 'id' => 1,
                 'course_section_id' => 1,
+                'name' => 'Bài 1: Tạo Kênh TikTok Bằng Email',
                 'description' => 'Video 1',
                 'source' => 'videos/ex.mp4',
                 'duration' => 30,
@@ -28,6 +29,7 @@ class VideoSeeder extends Seeder
             [
                 'id' => 2,
                 'course_section_id' => 1,
+                'name' => 'Bài 2: Tạo avata Thu Hút Kết Nối Youtube Vào Kênh',
                 'description' => 'Video 2',
                 'source' => 'videos/ex.mp4',
                 'duration' => 30,
@@ -38,6 +40,7 @@ class VideoSeeder extends Seeder
             [
                 'id' => 3,
                 'course_section_id' => 1,
+                'name' => 'Bài 3: Chỉnh Sửa Thông Tin & Chính Sách TikTok',
                 'description' => 'Video 3',
                 'source' => 'videos/ex.mp4',
                 'duration' => 30,
@@ -48,6 +51,7 @@ class VideoSeeder extends Seeder
             [
                 'id' => 4,
                 'course_section_id' => 1,
+                'name' => 'Bài 4: Các Chính Sách & Chuẩn Bị Khi Quay Video',
                 'description' => 'Video 4',
                 'source' => 'videos/ex.mp4',
                 'duration' => 30,

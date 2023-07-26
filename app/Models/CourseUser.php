@@ -9,41 +9,52 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Course extends Model
+class CourseUser extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name',
-        'slogan',
-        'introduction',
-        'description',
-        'image',
+        'user_id',
+        'course_id',
         'price',
         'discount',
         'discount_price',
-        'is_show'
+        'billing_image',
+        'status',
+        'is_show',
     ];
 
     protected $hidden = [
-        'image',
+        'billing_image',
         'deleted_at',
         'updated_at'
     ];
 
     protected $appends = [
-        'image_url'
+        'billing_image_url',
+        'user_email',
+        'course_name',
     ];
 
-    public function getImageUrlAttribute()
+    public function getBillingImageUrlAttribute()
     {
         $awsS3Service = new AWSS3Service();
 
-        if ($this->image) {
-            return $awsS3Service->getFile($this->image, Constant::EXPIRE_IMAGE);
+        if ($this->billing_image) {
+            return $awsS3Service->getFile($this->billing_image, Constant::EXPIRE_IMAGE);
         }
 
         return null;
+    }
+
+    public function getUserEmailAttribute()
+    {
+        return User::find($this->user_id)->email;
+    }
+
+    public function getCourseNameAttribute()
+    {
+        return Course::find($this->course_id)->name;
     }
 
     public function getCreatedAtAttribute($value)
@@ -56,13 +67,13 @@ class Course extends Model
         return Carbon::parse($value)->format("d-m-Y H:i:s");
     }
 
-    public function courseSections()
+    public function user()
     {
-        return $this->hasMany(CourseSection::class, 'course_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function courseUsers()
+    public function course()
     {
-        return $this->hasMany(CourseUser::class, 'course_id', 'id');
+        return $this->belongsTo(Course::class, 'course_id', 'id');
     }
 }

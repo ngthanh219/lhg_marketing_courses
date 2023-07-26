@@ -8,8 +8,8 @@
                 <div class="row">
                     <div class="col-md-2">
                         <div class="form-group input-group-sm">
-                            <label>Tên phần học</label>
-                            <input type="text" class="form-control" placeholder="Tên phần học" v-model="query.name">
+                            <label>Tên khóa học</label>
+                            <input type="text" class="form-control" placeholder="Tên khóa học" v-model="query.name">
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -40,16 +40,16 @@
                                 v-if="dataList"
                                 :dataList="dataList"
                                 :query="query"
-                                :getData="getCourseSectionData"
+                                :getData="getCourseData"
                             />
 
                             <div class="card-body data-table table-responsive p-0">
                                 <table class="table text-center table-hover table-head-fixed text-nowrap">
                                     <thead>
                                         <tr>
-                                            <th style="width: 50px"></th>
+                                            <th></th>
                                             <th style="width: 25px">
-                                                <a href="/" @click="sortCourseSectionData($event, 'id_sort')">
+                                                <a href="/" @click="sortCourseData($event, 'id_sort')">
                                                     ID
                                                     <i
                                                         class="id-icon fas"
@@ -59,18 +59,24 @@
                                                     />
                                                 </a>
                                             </th>
-                                            <th style="width: 600px">Tên phần học</th>
+                                            <th style="width: 250px">Tên khóa học</th>
+                                            <th style="width: 250px">Giá</th>
+                                            <th style="width: 250px">Giảm giá</th>
+                                            <th style="width: 250px">Giá khuyến mãi</th>
                                             <th style="width: 250px">Trạng thái hiển thị</th>
                                         </tr>
                                     </thead>
                                     <tbody class="table-data" v-if="dataList">
                                         <tr v-for="data, index in dataList.list">
                                             <td>
-                                                <a class="btn btn-sm btn-danger" v-if="data.id === courseSectionId">Đang chọn</a>
+                                                <a class="btn btn-sm btn-danger" v-if="data.id === courseId">Đang chọn</a>
                                                 <a class="btn btn-sm btn-outline-primary" @click="selectData($event, data.id, data.name)" v-else>Chọn</a>
                                             </td>
                                             <td>{{ data.id }}</td>
                                             <td>{{ data.name }}</td>
+                                            <td>{{ data.price.toLocaleString() + 'đ' }}</td>
+                                            <td>{{ data.discount }}%</td>
+                                            <td>{{ data.discount_price.toLocaleString() + 'đ' }}</td>
                                             <td>
                                                 <span 
                                                     class="badge" 
@@ -102,14 +108,14 @@
     import TablePagination from '../../commons/pagination/TablePagination.vue';
 
     export default {
-        name: "CourseSectionList",
+        name: "CourseList",
         components: { 
             TablePagination
         },
         props: {
             closeModalList: Function,
-            selectCourseSectionData: Function,
-            courseSectionId: Number
+            selectCourseData: Function,
+            courseId: Number
         },
         data() {
             return {
@@ -120,7 +126,6 @@
                     id_sort: "desc",
                     name: "",
                     is_show: 2,
-                    course_id: null,
                     is_deleted: 0
                 },
                 formDataError: {
@@ -129,12 +134,12 @@
             };
         },
         mounted() {
-            this.getCourseSectionData();
+            this.getCourseData();
         },
         methods: {
-            async getCourseSectionData() {
+            async getCourseData() {
                 this.$helper.setPageLoading(true);
-                await this.$store.dispatch("getCourseSections", {
+                await this.$store.dispatch("getCourses", {
                     query: this.$helper.getQueryString(this.query),
                     error: this.formDataError
                 })
@@ -157,10 +162,10 @@
                     this.query.page = 1;
                 }
 
-                this.getCourseSectionData();
+                this.getCourseData();
             },
 
-            sortCourseSectionData(e, queryParam) {
+            sortCourseData(e, queryParam) {
                 e.preventDefault();
 
                 if (this.query[queryParam] == "desc") {
@@ -169,20 +174,19 @@
                     this.query[queryParam] = "desc";
                 }
 
-                this.getCourseSectionData();
+                this.getCourseData();
             },
 
             closeModal(e) {
                 e.preventDefault();
 
-                this.closeModalList();
+                this.closeModalList('course');
             },
 
             selectData(e, id, name) {
                 e.preventDefault();
 
-                this.selectCourseSectionData(id, name);
-                // this.closeModalList();
+                this.selectCourseData(id, name);
             }
         }
     }
