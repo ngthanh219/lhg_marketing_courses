@@ -23,7 +23,7 @@ const store = createStore({
     getters,
     plugins: [
         createPersistedState({
-            key: 'c_admin'
+            key: 'c_user'
         })
     ],
 });
