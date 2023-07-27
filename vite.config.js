@@ -4,7 +4,7 @@ import vue from '@vitejs/plugin-vue';
 
 const ADMIN = "admin";
 const CLIENT = "client";
-var site = ADMIN;
+var site = CLIENT;
 
 export default defineConfig({
     plugins: [

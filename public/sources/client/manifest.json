@@ -1,0 +1,14 @@
+{
+  "resources/js/client/app.css": {
+    "file": "app-933b74a8.css",
+    "src": "resources/js/client/app.css"
+  },
+  "resources/js/client/app.js": {
+    "css": [
+      "app-933b74a8.css"
+    ],
+    "file": "app-b31cf5ba.js",
+    "isEntry": true,
+    "src": "resources/js/client/app.js"
+  }
+}
