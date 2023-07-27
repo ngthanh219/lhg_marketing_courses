@@ -31,7 +31,7 @@ const routes = [
                 component: Home,
             },
             {
-                path: '/khoa-hoc/:courseSlug',
+                path: '/:courseSlug',
                 name: 'Course',
                 component: Course
             },
