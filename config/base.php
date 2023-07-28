@@ -2,8 +2,8 @@
 
 return [
     'aws' => [
-        'storage' => [
-            'url' => env('AWS_URL')
+        's3' => [
+            'url' => env('AWS_URL') . '/'
         ]
     ]
 ];

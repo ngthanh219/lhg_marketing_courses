@@ -1,6 +1,6 @@
 <template>
-    <div class="page login-page">
-        <div class="login-box">
+    <div class="page form-page">
+        <div class="form-box">
             <div class="card">
                 <div class="card-body">
                     <div class="logo">
@@ -10,13 +10,13 @@
                     </div>
                     <form v-on:submit="register">
                         <div class="input-group">
-                            <input type="email" class="form-control" placeholder="Email" name="email" v-model="formData.email">
+                            <input type="email" class="form-control" placeholder="Email *" name="email" v-model="formData.email">
                             <span class="fas fa-envelope"></span>
                         </div>
                         <div class="error text-danger text-bold text-sm" v-if="formDataError.email">{{formDataError.email}}</div>
 
                         <div class="input-group">
-                            <input type="text" class="form-control end-text" placeholder="Mã xác thực" v-model="formData.verification_code" @keypress="this.$helper.isNumber">
+                            <input type="text" class="form-control end-text" placeholder="Mã xác thực *" v-model="formData.verification_code" @keypress="this.$helper.isNumber">
                             <span class="fa-text underline">
                                 <a class="cursor-pointer oblique" @click="sendVerifyCode" v-if="!isSendVerifyCode">Gửi mã</a>
                             </span>
@@ -24,13 +24,13 @@
                         <div class="error text-danger text-bold text-sm" v-if="formDataError.verification_code">{{formDataError.verification_code}}</div>
 
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Số điện thoại" v-model="formData.phone" @keypress="this.$helper.isNumber">
+                            <input type="text" class="form-control" placeholder="Số điện thoại *" v-model="formData.phone" @keypress="this.$helper.isNumber">
                             <span class="fas fa-phone"></span>
                         </div>
                         <div class="error text-danger text-bold text-sm" v-if="formDataError.phone">{{formDataError.phone}}</div>
 
                         <div class="input-group">
-                            <input type="password" class="form-control" placeholder="Mật khẩu" name="password" v-model="formData.password">
+                            <input type="password" class="form-control" placeholder="Mật khẩu *" name="password" v-model="formData.password">
                             <span class="fas fa-lock"></span>
                         </div>
                         <div class="error text-danger text-bold text-sm" v-if="formDataError.password">{{formDataError.password}}</div>

@@ -47,7 +47,7 @@
                                 <table class="table text-center table-hover table-head-fixed text-nowrap">
                                     <thead>
                                         <tr>
-                                            <th></th>
+                                            <th style="width: 25px"></th>
                                             <th style="width: 25px">
                                                 <a href="/" @click="sortCourseData($event, 'id_sort')">
                                                     ID

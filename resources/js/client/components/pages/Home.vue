@@ -34,8 +34,13 @@
                 </div>
             </div>
         </div>
-
-        <CourseContent />
+        
+        <div class="w-content page">
+            <div class="wc-box">
+                <div class="title">Tất cả khóa học</div>
+                <CourseContent />
+            </div>
+        </div>
 
         <SecondBanner />
 

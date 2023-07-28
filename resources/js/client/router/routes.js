@@ -4,7 +4,9 @@ import NotFoundV1 from "../components/pages/not-found/NotFoundV1.vue";
 import Login from "../components/pages/auth/Login.vue";
 import Register from "../components/pages/auth/Register.vue";
 import Home from "../components/pages/Home.vue";
-import Course from "../components/pages/courses/Course.vue";
+import CourseList from "../components/pages/courses/CourseList.vue";
+import CourseDetail from "../components/pages/courses/CourseDetail.vue";
+import RegisterCourse from "../components/pages/register-course/RegisterCourse.vue";
 
 const routes = [
     {
@@ -31,9 +33,19 @@ const routes = [
                 component: Home,
             },
             {
+                path: '/courses',
+                name: 'CourseList',
+                component: CourseList
+            },
+            {
                 path: '/:courseSlug',
-                name: 'Course',
-                component: Course
+                name: 'CourseDetail',
+                component: CourseDetail
+            },
+            {
+                path: '/:courseSlug/dang-ky',
+                name: 'RegisterCourse',
+                component: RegisterCourse
             },
         ]
     },
