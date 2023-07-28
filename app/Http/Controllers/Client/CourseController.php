@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterCourseRequest;
 use App\Services\CourseService;
 use Illuminate\Http\Request;
 
@@ -26,7 +27,7 @@ class CourseController extends Controller
         return $this->courseService->getCourseDetailClient($courseSlug);
     }
 
-    public function registerCourse(Request $request)
+    public function registerCourse(RegisterCourseRequest $request)
     {
         return $this->courseService->registerCourseClient($request);
     }

@@ -20,6 +20,7 @@ class CourseUser extends Model
         'discount',
         'discount_price',
         'billing_image',
+        'discription',
         'status',
         'is_show',
     ];
@@ -38,13 +39,7 @@ class CourseUser extends Model
 
     public function getBillingImageUrlAttribute()
     {
-        $awsS3Service = new AWSS3Service();
-
-        if ($this->billing_image) {
-            return $awsS3Service->getFile($this->billing_image, Constant::EXPIRE_IMAGE);
-        }
-
-        return null;
+        return $this->billing_image ? config('base.aws.s3.url') . $this->billing_image : null;
     }
 
     public function getUserEmailAttribute()

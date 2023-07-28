@@ -149,13 +149,53 @@ textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
     font-style: oblique;
 }
 
-.login-page {
+.mg-0 {
+    margin: 0 auto;
+}
+
+.custom-file-input {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.custom-file-input input[type="file"] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    cursor: pointer;
+    height: 100%;
+    width: 100%;
+}
+
+.input-group {
+    position: relative;
+    margin-top: 15px;
+
+    .form-control {
+        display: block;
+        width: -webkit-fill-available;
+        color: #495057;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        outline: none;
+        padding: 10px 30px 10px 10px;
+    }
+}
+
+.form-page {
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100vh;
 
-    .login-box {
+    .form-box {
         width: 360px;
 
         .card {
@@ -184,7 +224,7 @@ textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
                     }
                 }
 
-                .login-box-msg {
+                .form-box-msg {
                     margin: 0;
                     padding: 0 20px 20px;
                     text-align: center;
@@ -195,17 +235,8 @@ textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
                 }
 
                 .input-group {
-                    position: relative;
-                    margin-top: 15px;
-
                     .form-control {
-                        display: block;
                         width: 87%;
-                        color: #495057;
-                        border: 1px solid #ced4da;
-                        border-radius: 0.25rem;
-                        outline: none;
-                        padding: 10px 30px 10px 10px;
                     }
 
                     span {
@@ -256,7 +287,7 @@ header {
             }
 
             .left-wrapper {
-                width: 70%;
+                width: 75%;
                 display: flex;
 
                 .logo {
@@ -271,7 +302,7 @@ header {
             }
 
             .right-wrapper {
-                width: 30%;
+                width: 25%;
                 display: flex;
                 align-items: center;
                 justify-content: flex-end;
@@ -380,7 +411,7 @@ header {
         .banner {
             background-position: center !important;
             background-size: cover !important;
-            height: 450px;
+            height: 500px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -536,6 +567,7 @@ header {
         }
 
         .w-content {
+            padding-top: 20px;
             padding-bottom: 50px;
 
             .wc-box {
@@ -568,6 +600,8 @@ header {
                                     border-top-left-radius: 5px;
                                     border-top-right-radius: 5px;
                                     width: 100%;
+                                    height: 175px;
+                                    object-fit: cover;
                                 }
                             }
 
@@ -581,6 +615,7 @@ header {
                                     text-align: left;
                                     font-weight: bold;
                                     margin-bottom: 40px;
+                                    height: 40px;
                                 }
 
                                 .detail {
@@ -607,6 +642,8 @@ header {
                                     .price {
                                         display: flex;
                                         flex-direction: column;
+                                        line-height: 10px;
+                                        justify-content: center;
 
                                         span {
                                             font-size: 15px;
@@ -634,6 +671,10 @@ header {
                         outline: 0 none;
                     }
                 }
+            }
+
+            .wc-box .wc-information {
+                width: 100%;
             }
 
             .wc-information {
@@ -768,6 +809,101 @@ header {
                                 }
                             }
                         }
+
+                        .video {
+                            position: relative;
+
+                            .video-controls {
+                                display: flex;
+                                flex-direction: column;
+                                justify-content: space-between;
+                                padding: 0 10px 10px 10px;
+                                position: absolute;
+                                bottom: 4px;
+                                left: 0;
+                                right: 0;
+                                z-index: 999999;
+                                background: hsla(0, 0%, 8%, 0.7);
+                                opacity: 0;
+                                transition: .3s all ease;
+
+                                input {
+                                    width: 100%;
+                                }
+
+                                .option {
+                                    display: flex;
+                                    justify-content: space-between;
+                                    padding-top: 5px;
+
+                                    .left, .right {
+                                        display: flex;
+                                        justify-content: space-between;
+                                        align-items: center;
+                                    }
+
+                                    a, i, .video-duration {
+                                        color: white;
+                                        font-size: 12px;
+                                    }
+                                    
+                                    .left a, .right .volume {
+                                        margin-right: 10px;
+                                    }
+
+                                    .right .volume {
+                                        display: flex;
+                                        align-items: center;
+                                    }
+                                }
+
+                                .custom-range {
+                                    height: 5px;
+                                    cursor: pointer;
+                                }
+                            }
+                        }
+
+                        .video:fullscreen {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+
+                        .video:hover {
+                            .video-controls {
+                                opacity: 1;
+                            }
+                        }
+
+                        .form-information {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: flex-start;
+                            margin-top: 20px;
+
+                            form {
+                                width: 50%;
+                            }
+
+                            .fi-description {
+                                width: 45%;
+                            }
+                        }
+
+                        .pay {
+                            flex-direction: column;
+
+                            .description {
+                                font-size: 17px !important;
+                                margin-bottom: 15px;
+                            }
+
+                            .image {
+                                width: 50%;
+                                margin: 0 auto;
+                            }
+                        }
                     }
                 }
             }
@@ -822,9 +958,9 @@ header {
                             flex-direction: column;
 
                             .btn {
-                                margin-bottom: 10px;
+                                margin-bottom: 15px;
                                 font-size: 16px;
-                                line-height: 30px;
+                                line-height: 40px;
                             }
                         }
                     }
@@ -837,8 +973,9 @@ header {
                             font-size: 14px;
 
                             i {
-                                width: 17px;
+                                width: 20px;
                                 font-size: 13px;
+                                text-align: center;
                             }
 
                             strong {
@@ -853,12 +990,17 @@ header {
 }
 
 footer {
-    padding: 15px;
-    background: #f3f5f6;
-    border-top: 1px solid #e1e1e1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 300px 0 10px 0;
+    // background: #f3f5f6;
+
+    .content {
+        width: 100%;
+        border-top: 1px solid #e1e1e1;
+        padding-top: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 }
 
 @media only screen and (max-width: 1350px) {
@@ -899,7 +1041,7 @@ footer {
             }
 
             .content {
-                height: 300px;
+                height: 350px;
                 opacity: 1;
             }
 
@@ -938,7 +1080,7 @@ footer {
 }
 
 @media only screen and (max-width: 1020px) {
-    .c-detail {
+    .c-detail, .form-information {
         flex-direction: column-reverse;
     }
 
@@ -952,6 +1094,12 @@ footer {
         .wc-general-information {
             margin-bottom: 20px;
             width: 100% !important;
+        }
+
+        .form-information {
+            form {
+                width: 100% !important;
+            }
         }
     }
 
@@ -1055,7 +1203,7 @@ footer {
                 .wc-information {
                     .box-card {
                         .tab-detail {
-                            .description {
+                            h3, .description {
                                 padding-left: 0px !important;
                                 text-align: center;
                             }

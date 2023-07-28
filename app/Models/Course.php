@@ -37,13 +37,7 @@ class Course extends Model
 
     public function getImageUrlAttribute()
     {
-        $awsS3Service = new AWSS3Service();
-
-        if ($this->image) {
-            return $awsS3Service->getFile($this->image, Constant::EXPIRE_IMAGE);
-        }
-
-        return null;
+        return $this->image ? config('base.aws.s3.url') . $this->image : null;
     }
 
     public function getCreatedAtAttribute($value)

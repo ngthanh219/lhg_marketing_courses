@@ -172,7 +172,10 @@ class CourseService extends BaseService
                     'id',
                     'name',
                     'slug',
-                    'discount'
+                    'image',
+                    'price',
+                    'discount',
+                    'discount_price'
                 ])
                 ->orderByDesc('id');
             $data = $this->pagination($courses, $request);
@@ -278,12 +281,20 @@ class CourseService extends BaseService
                 return $this->responseError(__('messages.course.registered_user'), 400, ErrorCode::PARAM_INVALID);
             }
 
+            $billingImage = null;
+            if (isset($request->billing_image_url)) {
+                $request->file = $request->billing_image_url;
+                $billingImage = $this->awsS3Service->uploadFile($request, Constant::IMAGE_FOLDER);
+            }
+
             $courseUser = $this->courseUser->create([
                 'user_id' => $user->id,
                 'course_id' => $course->id,
                 'price' => $course->price,
                 'discount' => $course->discount,
                 'discount_price' => $course->discount_price,
+                'billing_image' => $billingImage,
+                'description' => $request->description,
                 'status' => Constant::COURSE_USER_PENDING,
                 'is_show' => Constant::IS_SHOW
             ]);
@@ -294,6 +305,7 @@ class CourseService extends BaseService
                 'status' => $courseUser->status
             ]);
         } catch (\Exception $ex) {
+            $this->awsS3Service->removeFile($billingImage);
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 
             return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);

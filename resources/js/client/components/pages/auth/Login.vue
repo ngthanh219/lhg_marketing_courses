@@ -1,6 +1,6 @@
 <template>
-    <div class="page login-page">
-        <div class="login-box">
+    <div class="page form-page">
+        <div class="form-box">
             <div class="card">
                 <div class="card-body">
                     <div class="logo">
@@ -10,13 +10,13 @@
                     </div>
                     <form v-on:submit="login">
                         <div class="input-group">
-                            <input type="email" class="form-control" placeholder="Email" name="email" v-model="formData.email">
+                            <input type="email" class="form-control" placeholder="Email *" name="email" v-model="formData.email">
                             <span class="fas fa-envelope"></span>
                         </div>
                         <div class="error text-danger text-bold text-sm" v-if="formDataError.email">{{formDataError.email}}</div>
 
                         <div class="input-group">
-                            <input type="password" class="form-control" placeholder="Mật khẩu" name="password" v-model="formData.password">
+                            <input type="password" class="form-control" placeholder="Mật khẩu *" name="password" v-model="formData.password">
                             <span class="fas fa-lock"></span>
                         </div>
                         <div class="error text-danger text-bold text-sm" v-if="formDataError.password">{{formDataError.password}}</div>

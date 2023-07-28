@@ -16,7 +16,10 @@
                             <router-link to="/trang-chu">Trang chủ</router-link>
                         </li>
                         <li>
-                            <router-link to="/hoc-tiktok">Hướng Dẫn Vào Học</router-link>
+                            <router-link to="/courses">Khóa học</router-link>
+                        </li>
+                        <li>
+                            <a href="#">Hướng Dẫn Vào Học</a>
                         </li>
                         <li>
                             <input type="text" class="search" placeholder="Tìm khóa học">
