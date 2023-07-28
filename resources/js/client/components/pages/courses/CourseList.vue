@@ -1,5 +1,5 @@
 <template>
-    <div class="wrapper grey-br">
+    <div class="wrapper">
         <div class="w-content page">
             <div class="wc-box">
                 <div class="title">Tất cả khóa học</div>
@@ -24,6 +24,7 @@
                 <CourseContent />
             </div>
         </div>
+        <br v-for="index in 16">
     </div>
 </template>
 

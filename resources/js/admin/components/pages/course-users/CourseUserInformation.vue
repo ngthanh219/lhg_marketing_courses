@@ -133,7 +133,7 @@
                     is_change_billing_image: false,
                     billing_image_url: '',
                     status: 1,
-                    is_show: 1
+                    is_show: 0
                 },
                 formDataError: {
                     message: '',

@@ -37,8 +37,8 @@
                 <div class="row">
                     <div class="col-md-2">
                         <div class="form-group input-group-sm">
-                            <label>Nhập mô tả</label>
-                            <input type="text" class="form-control" placeholder="Mô tả" v-model="query.description">
+                            <label>Nhập tên video</label>
+                            <input type="text" class="form-control" placeholder="tên video" v-model="query.name">
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -89,7 +89,7 @@
                                                     />
                                                 </a>
                                             </th>
-                                            <th style="width: 500px">Mô tả</th>
+                                            <th style="width: 400px">Tên video</th>
                                             <th style="width: 150px">Link video</th>
                                             <th style="width: 150px">Thời lượng (h:m:s)</th>
                                             <th style="width: 250px">Trạng thái hiển thị</th>
@@ -100,7 +100,7 @@
                                     <tbody class="table-data" v-if="dataList">
                                         <tr v-for="data, index in dataList.list">
                                             <td>{{ data.id }}</td>
-                                            <td>{{ data.description }}</td>
+                                            <td>{{ data.name }}</td>
                                             <td>
                                                 <a class="underline" :href="data.source_url" target="_blank">Xem</a>
                                             </td>
@@ -148,7 +148,7 @@
                                     </tbody>
                                     <tbody v-if="dataList && dataList.list.length == 0">
                                         <tr>
-                                            <td colspan="8">Không có dữ liệu</td>
+                                            <td colspan="10">Không có dữ liệu</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -163,6 +163,7 @@
             v-if="isForm"
 
             :closeForm="closeForm"
+            :courseSectionData="courseSectionData"
             :videoData="data"
             :getVideoData="getVideoData"
         />
@@ -186,7 +187,7 @@
                     limit: 15,
                     page: 1,
                     id_sort: "desc",
-                    description: "",
+                    name: "",
                     is_show: 2,
                     course_section_id: null,
                     is_deleted: 0
@@ -195,7 +196,11 @@
                     message: ""
                 },
                 isForm: false,
-                data: null
+                data: null,
+                courseSectionData: {
+                    id: null,
+                    name: null
+                }
             };
         },
         mounted() {
@@ -212,6 +217,11 @@
                 })
                 .then(res => {
                     this.dataList = res.data;
+
+                    if (res.data.course_name) {
+                        this.courseSectionData.id = parseInt(this.$helper.getQueryUrl().course_section_id);
+                        this.courseSectionData.name = res.data.course_section_name;
+                    }
                 })
                 .catch(err => {
                 });
@@ -236,6 +246,8 @@
                 e.preventDefault();
 
                 this.query[param] = null;
+                this.courseSectionData.id = null;
+                this.courseSectionData.name = null;
                 this.getVideoData();
             },
 

@@ -1,6 +1,6 @@
 <template>
-    <header>
-        <div class="header-full-br">
+    <header v-bind:class="{'h-fixed' : isShowMenu}">
+        <div class="header-full-br" >
             <div class="header-center-content">
                 <div class="left-wrapper">
                     <div class="logo">

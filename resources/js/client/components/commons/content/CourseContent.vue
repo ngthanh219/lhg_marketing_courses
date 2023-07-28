@@ -2,8 +2,12 @@
     <div class="card-list">
         <div class="card-item" v-if="dataList" v-for="data in dataList.list">
             <router-link :to="'/' + data.slug">
+
                 <div class="c-image">
                     <img :src="data.image_url" alt="">
+                    <label class="percent-off-label">
+                        <strong>-{{ data.discount }}% </strong>
+                    </label>
                 </div>
                 <div class="c-info">
                     <div class="theme text-line-2">{{ data.name }}</div>
@@ -29,6 +33,9 @@
                     </div>
                 </div>
             </router-link>
+        </div>
+        <div class="card-item" v-else v-for="index in 6">
+            <br v-for="index in 16">
         </div>
     </div>
 </template>

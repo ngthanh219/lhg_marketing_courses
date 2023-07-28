@@ -26,6 +26,8 @@
 
                 <Video 
                     :videoSrc="videoSrc"
+                    :isLoadVideo="isLoadVideo"
+                    :setIsLoadVideo="setIsLoadVideo"
                 />
 
                 <CourseSection
@@ -95,14 +97,8 @@
         data() {
             return {
                 videoSrc: '',
+                isLoadVideo: false,
                 data: null,
-                query: {
-                    limit: 15,
-                    page: 1,
-                    id_sort: "desc",
-                    name: "",
-                    is_deleted: 0
-                },
                 formDataError: {
                     message: ""
                 }
@@ -126,24 +122,13 @@
                 this.$helper.setPageLoading(false);
             },
 
-            filter(e) {
-                e.preventDefault();
-
-                this.$helper.pushQueryUrl(this.query);
-
-                if (this.query.page >= this.dataList.total_page) {
-                    this.query.page = this.dataList.total_page;
-                }
-
-                if (this.query.page == 0) {
-                    this.query.page = 1;
-                }
-
-                this.getCourseData();
-            },
-
             setVideoSrc(videoSrc) {
+                this.isLoadVideo = true;
                 this.videoSrc = videoSrc;
+            },
+            
+            setIsLoadVideo(val) {
+                this.isLoadVideo = val;
             }
         }
     }

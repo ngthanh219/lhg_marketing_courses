@@ -73,6 +73,7 @@
         props: {
             closeForm: Function,
             getCourseSectionData: Function,
+            courseData: Object,
             courseSectionData: Object
         },
         data() {
@@ -100,6 +101,11 @@
 
             setTimeout(() => {
                 this.isTransitionActive = true;
+
+                if (this.courseData) {
+                    this.formData.course_id = this.courseData.id;
+                    this.courseName = this.courseData.name;
+                }
 
                 if (this.courseSectionData) {
                     this.$helper.mergeArrayData(this.courseSectionData, this.formData);

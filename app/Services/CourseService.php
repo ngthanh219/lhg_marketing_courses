@@ -9,6 +9,7 @@ use App\Models\Course;
 use App\Models\CourseSection;
 use App\Models\CourseUser;
 use App\Models\Video;
+use Illuminate\Support\Str;
 
 class CourseService extends BaseService
 {
@@ -73,6 +74,7 @@ class CourseService extends BaseService
             $image = null;
             $newData = [
                 'name' => $request->name,
+                'slug' => Str::slug($request->name),
                 'slogan' => $request->slogan,
                 'introduction' => $request->introduction,
                 'description' => $request->description,
@@ -111,6 +113,7 @@ class CourseService extends BaseService
             $image = null;
             $updatedData = [
                 'name' => $request->name,
+                'slug' => Str::slug($request->name),
                 'slogan' => $request->slogan,
                 'introduction' => $request->introduction,
                 'description' => $request->description,

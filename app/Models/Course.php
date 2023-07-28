@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Course extends Model
 {
@@ -15,6 +16,7 @@ class Course extends Model
 
     protected $fillable = [
         'name',
+        'slug',
         'slogan',
         'introduction',
         'description',
@@ -37,7 +39,7 @@ class Course extends Model
 
     public function getImageUrlAttribute()
     {
-        return $this->image ? config('base.aws.s3.url') . $this->image : null;
+        return $this->image != null ? (config('base.aws.s3.url') . $this->image) : null;
     }
 
     public function getCreatedAtAttribute($value)

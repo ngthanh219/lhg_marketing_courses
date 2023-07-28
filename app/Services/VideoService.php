@@ -57,8 +57,8 @@ class VideoService extends BaseService
                 $videos = $videos->orderBy('id', $request->id_sort);
             }
 
-            if (isset($request->description)) {
-                $videos = $videos->where('description', 'like', '%' . $request->description . '%');
+            if (isset($request->name)) {
+                $videos = $videos->where('name', 'like', '%' . $request->name . '%');
             }
 
             if (isset($request->is_show)) {
@@ -98,7 +98,7 @@ class VideoService extends BaseService
             $source = null;
             $newData = [
                 'course_section_id' => (int) $request->course_section_id,
-                'description' => $request->description,
+                'name' => $request->name,
                 'duration' => (int) $request->duration,
                 'is_show' => (int) $request->is_show
             ];
@@ -138,7 +138,7 @@ class VideoService extends BaseService
             $source = null;
             $updatedData = [
                 'course_section_id' => $request->course_section_id,
-                'description' => $request->description,
+                'name' => $request->name,
                 'duration' => $request->duration,
                 'is_show' => $request->is_show
             ];

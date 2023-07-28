@@ -28,6 +28,10 @@
                                             <input type="text" class="form-control form-control-border" v-model="courseSectionName" disabled>
                                         </div>
                                         <div class="form-group">
+                                            <label>Tên video</label>
+                                            <input type="text" class="form-control form-control-border" placeholder="xxx" v-model="formData.name">
+                                        </div>
+                                        <div class="form-group">
                                             <label>Thời gian</label>
                                             <input type="text" class="form-control form-control-border" placeholder="xxx" v-model="formData.duration">
                                         </div>
@@ -53,10 +57,6 @@
                                                     <span class="input-group-text">Tải lên</span>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Mô tả</label>
-                                            <textarea class="form-control" rows="10" v-model="formData.description" placeholder="xxx"></textarea>
                                         </div>
                                     </div>
                                     <div class="card-footer">
@@ -96,6 +96,7 @@
         props: {
             closeForm: Function,
             getVideoData: Function,
+            courseSectionData: Object,
             videoData: Object
         },
         data() {
@@ -103,7 +104,7 @@
                 isTransitionActive: false,
                 formData: {
                     course_section_id: null,
-                    description: '',
+                    name: '',
                     is_change_video: false,
                     source: '',
                     duration: 0,
@@ -111,7 +112,7 @@
                 },
                 formDataError: {
                     message: '',
-                    description: '',
+                    name: '',
                     is_change_video: '',
                     source: '',
                     duration: 0,
@@ -126,6 +127,11 @@
 
             setTimeout(() => {
                 this.isTransitionActive = true;
+
+                if (this.courseSectionData) {
+                    this.formData.course_section_id = this.courseSectionData.id;
+                    this.courseSectionName = this.courseSectionData.name;
+                }
 
                 if (this.videoData) {
                     this.$helper.mergeArrayData(this.videoData, this.formData);
@@ -210,6 +216,7 @@
                 .catch(err => {
 
                 });
+                this.$helper.setPageLoading(false);
             },
 
             openModalList(e) {
