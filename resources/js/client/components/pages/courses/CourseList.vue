@@ -55,7 +55,7 @@
 
         },
         methods: {
-            sortCourse(e, val) {
+            async sortCourse(e, val) {
                 e.preventDefault();
 
                 if (this.sortValue != val) {
@@ -71,9 +71,9 @@
                         query.price_sort = 'desc';
                     }
 
-                    this.setIsShowLoadPage(true);
                     this.$refs.courseContent.setDataListNull();
-                    this.$refs.courseContent.getCoursesDataWithQuery(query);
+                    await this.$refs.courseContent.getCoursesDataWithQuery(query);
+                    this.$refs.courseContent.checkPage();
                 }
             },
 
