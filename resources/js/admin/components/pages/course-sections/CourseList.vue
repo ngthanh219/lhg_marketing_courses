@@ -69,7 +69,7 @@
                                     <tbody class="table-data" v-if="dataList">
                                         <tr v-for="data, index in dataList.list">
                                             <td>
-                                                <a class="btn btn-sm btn-danger" v-if="data.id === courseId">Đang chọn</a>
+                                                <a class="btn btn-sm btn-danger" v-if="data.id == courseId">Đang chọn</a>
                                                 <a class="btn btn-sm btn-outline-primary" @click="selectData($event, data.id, data.name)" v-else>Chọn</a>
                                             </td>
                                             <td>{{ data.id }}</td>
@@ -91,7 +91,7 @@
                                     </tbody>
                                     <tbody v-if="dataList && dataList.list.length == 0">
                                         <tr>
-                                            <td colspan="8">Không có dữ liệu</td>
+                                            <td colspan="10">Không có dữ liệu</td>
                                         </tr>
                                     </tbody>
                                 </table>

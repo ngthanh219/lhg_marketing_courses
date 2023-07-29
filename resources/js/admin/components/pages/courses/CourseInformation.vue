@@ -70,12 +70,19 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="form-group" v-if="courseData !== null">
+                                        <div class="form-group" v-if="courseData != null">
                                             <div class="form-preview-image">
-                                                Ảnh hiện tại{{ courseData.image_url != null || previewImage ? '' : ': Chưa có' }}
+                                                Ảnh hiện tại{{ courseData.image_url != null || previewImage != null  ? '' : ': Chưa có' }}
 
                                                 <img class="img-fluid mb-3" v-if="previewImage != null" :src="previewImage" alt="Photo">
-                                                <img class="img-fluid mb-3" v-if="!previewImage && courseData.image_url" :src="courseData.image_url" alt="Photo">
+                                                <img class="img-fluid mb-3" v-if="previewImage == null && courseData.image_url" :src="courseData.image_url" alt="Photo">
+                                            </div>
+                                        </div>
+                                        <div class="form-group" v-if="courseData == null">
+                                            <div class="form-preview-image">
+                                                Ảnh hiện tại{{  previewImage ? '' : ': Chưa có' }}
+
+                                                <img class="img-fluid mb-3" v-if="previewImage !== null" :src="previewImage" alt="Photo">
                                             </div>
                                         </div>
                                     </div>
@@ -118,7 +125,7 @@
                     image_url: '',
                     price: 0,
                     discount: 0,
-                    is_show: 1
+                    is_show: 0
                 },
                 formDataError: {
                     message: '',

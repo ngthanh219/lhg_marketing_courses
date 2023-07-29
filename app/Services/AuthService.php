@@ -83,6 +83,8 @@ class AuthService extends BaseService
 
         DB::beginTransaction();
         try {
+            DB::table('oauth_access_tokens')->where('user_id', $user->id)->delete();
+            
             $user->update([
                 'is_login' => Constant::IS_LOGGED
             ]);

@@ -140,7 +140,7 @@
                                     </tbody>
                                     <tbody v-if="dataList && dataList.list.length == 0">
                                         <tr>
-                                            <td colspan="8">Không có dữ liệu</td>
+                                            <td colspan="10">Không có dữ liệu</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -155,6 +155,7 @@
             v-if="isForm"
 
             :closeForm="closeForm"
+            :courseData="courseData"
             :courseSectionData="data"
             :getCourseSectionData="getCourseSectionData"
         />
@@ -187,7 +188,11 @@
                     message: ""
                 },
                 isForm: false,
-                data: null
+                data: null,
+                courseData: {
+                    id: null,
+                    name: null
+                }
             };
         },
         mounted() {
@@ -204,6 +209,11 @@
                 })
                 .then(res => {
                     this.dataList = res.data;
+
+                    if (res.data.course_name) {
+                        this.courseData.id = parseInt(this.$helper.getQueryUrl().course_id);
+                        this.courseData.name = res.data.course_name;
+                    }
                 })
                 .catch(err => {
                 });
@@ -230,6 +240,8 @@
                 e.preventDefault();
 
                 this.query[param] = null;
+                this.courseData.id = null;
+                this.courseData.name = null;
                 this.getCourseSectionData();
             },
 

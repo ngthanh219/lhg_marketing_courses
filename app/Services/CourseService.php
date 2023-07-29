@@ -9,6 +9,7 @@ use App\Models\Course;
 use App\Models\CourseSection;
 use App\Models\CourseUser;
 use App\Models\Video;
+use Illuminate\Support\Str;
 
 class CourseService extends BaseService
 {
@@ -73,6 +74,7 @@ class CourseService extends BaseService
             $image = null;
             $newData = [
                 'name' => $request->name,
+                'slug' => Str::slug($request->name),
                 'slogan' => $request->slogan,
                 'introduction' => $request->introduction,
                 'description' => $request->description,
@@ -111,6 +113,7 @@ class CourseService extends BaseService
             $image = null;
             $updatedData = [
                 'name' => $request->name,
+                'slug' => Str::slug($request->name),
                 'slogan' => $request->slogan,
                 'introduction' => $request->introduction,
                 'description' => $request->description,
@@ -166,8 +169,17 @@ class CourseService extends BaseService
     public function getCoursesClient($request)
     {
         try {
-            $courses = $this->course->withCount('courseSections')
-                ->where('is_show', Constant::IS_SHOW)
+            $courses = $this->course;
+
+            if (isset($request->name)) {
+                $courses = $courses->where('name', 'like', '%' . $request->name . '%');
+            }
+
+            if (isset($request->price_sort)) {
+                $courses = $courses->orderBy('discount_price', $request->price_sort);
+            }
+
+            $courses = $courses->where('is_show', Constant::IS_SHOW)
                 ->select([
                     'id',
                     'name',
@@ -239,17 +251,21 @@ class CourseService extends BaseService
                 }
             ]);
 
-            $totalCourseSection = $this->courseSection->where('course_id', $course->id)
+            $courseSections = $this->courseSection->where('course_id', $course->id)
                 ->where('is_show', Constant::IS_SHOW)
                 ->pluck('id');
 
-            $totalDuration = $this->video->whereIn('course_section_id', $totalCourseSection)
+            $totalVideo = $this->video->whereIn('course_section_id', $courseSections)
+                ->where('is_show', Constant::IS_SHOW)
+                ->count('id');
+
+            $totalDuration = $this->video->whereIn('course_section_id', $courseSections)
                 ->where('is_show', Constant::IS_SHOW)
                 ->sum('duration');
 
             $response = [
                 'course' => $course,
-                'total_course_section' => count($totalCourseSection),
+                'total_course_section' => (int) $totalVideo,
                 'total_video_duration' => (int) $totalDuration
             ];
 

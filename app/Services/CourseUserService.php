@@ -165,6 +165,14 @@ class CourseUserService extends BaseService
                     return $this->responseError(__('messages.course_user.not_exist'), 400, ErrorCode::PARAM_INVALID);
                 }
 
+                $availableCourseUser = $this->courseUser->where('user_id', $courseUser->user_id)
+                    ->where('course_id', $courseUser->course_id)
+                    ->first();
+
+                if ($availableCourseUser) {
+                    return $this->responseError(__('messages.course_user.not_restore'), 400, ErrorCode::PARAM_INVALID);
+                }
+
                 $courseUser->restore();
             } else {
                 $courseUser->delete();

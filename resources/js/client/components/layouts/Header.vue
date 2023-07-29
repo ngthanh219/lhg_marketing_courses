@@ -1,6 +1,6 @@
 <template>
-    <header>
-        <div class="header-full-br">
+    <header v-bind:class="{'h-fixed' : isShowMenu}">
+        <div class="header-full-br" >
             <div class="header-center-content">
                 <div class="left-wrapper">
                     <div class="logo">
@@ -36,7 +36,7 @@
                         </li>
                         <li class="toggler-active" v-if="$store.state.auth.accessToken">
                             <router-link to="/dang-nhap">
-                                <span>Tài khoản: Thanhnt6@gmail.com</span>
+                                <span>Tài khoản: {{ $store.state.auth.user.email }}</span>
                             </router-link>
                         </li>
                     </ul>
@@ -44,7 +44,7 @@
                 <div class="right-wrapper">
                     <div class="navbar-menu" v-if="$store.state.auth.accessToken">
                         <div class="col">
-                            <label>Tài khoản: Thanhnt6@gmail.com</label>
+                            <label>Tài khoản: {{ $store.state.auth.user.email }}</label>
                         </div>
                     </div>
                     <ul class="navbar-menu" v-if="!$store.state.auth.accessToken">

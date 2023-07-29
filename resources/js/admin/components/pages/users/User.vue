@@ -129,7 +129,7 @@
                                     </tbody>
                                     <tbody v-if="dataList && dataList.list.length == 0">
                                         <tr>
-                                            <td colspan="8">Không có dữ liệu</td>
+                                            <td colspan="10">Không có dữ liệu</td>
                                         </tr>
                                     </tbody>
                                 </table>

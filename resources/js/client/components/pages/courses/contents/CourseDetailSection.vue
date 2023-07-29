@@ -3,7 +3,7 @@
         <div class="tab-detail pd-tab">
             <h3>Nội dung khóa học</h3>
             <div class="section">
-                <div class="s-card" v-for="courseSection, index in courseSections" v-bind:key="index">
+                <div class="s-card" v-for="courseSection, courseSectionIndex in courseSections" v-bind:key="courseSectionIndex">
                     <div
                         class="sc-theme c-flex cursor-pointer"
                         v-if="courseSection.videos.length != 0"
@@ -20,10 +20,10 @@
                     </div>
                     <div
                         class="sc-item c-flex cursor-pointer"
-                        v-for="video, index in courseSection.videos"
-                        v-bind:key="index"
-                        @click="openVideo($event, video)"
-                        v-bind:class="{'active': index === 2 }"
+                        v-for="video, videoIndex in courseSection.videos"
+                        v-bind:key="videoIndex"
+                        @click="openVideo($event, video, (`${courseSectionIndex}n${videoIndex}`))"
+                        v-bind:class="{'active': (`${courseSectionIndex}n${videoIndex}`) == isVideoActiveVal }"
                     >
                         <div class="name">
                             <i class="fa fa-play"></i>
@@ -43,14 +43,14 @@
 
 <script>
     export default {
-        name: 'CourseSection',
+        name: 'CourseDetailSection',
         props: {
             setVideoSrc: Function,
             courseSections: Array,
         },
         data() {
             return {
-                
+                isVideoActiveVal: ''
             }
         },
         mounted() {
@@ -67,10 +67,21 @@
                 return total;
             },
             
-            openVideo(e, video) {
+            openVideo(e, video, isVideoActiveVal) {
                 e.preventDefault();
                 
-                this.setVideoSrc(video.source_url);
+                if (this.$store.state.auth.accessToken == null) {
+                    this.$helper.redirectPage('dang-nhap');
+                }
+                
+                if (video.source_url != null && this.isVideoActiveVal != isVideoActiveVal) {
+                    var filePath = video.source;
+                    var query = this.$helper.getQueryString(video.source_url);
+                    var sourceUrl = this.$env.s3Url + filePath + query;
+
+                    this.setVideoSrc(sourceUrl);
+                    this.isVideoActiveVal = isVideoActiveVal;
+                }
             },
         }
     }

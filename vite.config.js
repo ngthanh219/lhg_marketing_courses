@@ -24,6 +24,10 @@ export default defineConfig({
             input: {
                 app: 'resources/js/' + site + '/app.js', 
             },
+            output: {
+                entryFileNames: 'app.js',
+                assetFileNames: 'app.css',
+            },
         },
     }
 });

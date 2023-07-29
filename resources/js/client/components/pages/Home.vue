@@ -39,6 +39,10 @@
             <div class="wc-box">
                 <div class="title">Tất cả khóa học</div>
                 <CourseContent />
+
+                <div class="action flex-center">
+                    <router-link to="/courses" class="btn btn-primary">Xem thêm</router-link>
+                </div>
             </div>
         </div>
 

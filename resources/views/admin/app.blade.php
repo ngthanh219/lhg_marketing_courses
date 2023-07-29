@@ -8,14 +8,14 @@
     @include('admin.link')
 
     @if ($env === 'production')
-	    <link rel="stylesheet" href="{{ asset('sources/admin/app-d799c7aa.css') }}">
+	    <link rel="stylesheet" href="{{ asset('sources/admin/app.css') }}">
     @endif
 </head>
 <body class="sidebar-mini control-sidebar-slide-open layout-navbar-fixed layout-fixed">
     <div id="app"></div>
 
     @if ($env === 'production')
-	    <script src="{{ asset('sources/admin/app-be4b0f79.js?' . strtotime("now")) }}"></script>
+	    <script src="{{ asset('sources/admin/app.js?' . strtotime("now")) }}"></script>
     @else
         @vite('resources/js/admin/app.js')
     @endif
