@@ -43,27 +43,49 @@
 <script>
     export default {
         name: 'CourseContent',
+        props: {
+            filterValue: Number,
+            setIsShowLoadPage: Function
+        },
         data() {
             return {
                 dataList: null,
                 query: {
                     limit: 15,
                     page: 1,
-                    id_sort: "desc",
-                    name: "",
-                    is_deleted: 0
+                    price_sort: "",
+                    name: ""
                 },
                 formDataError: {
                     message: ""
-                }
+                },
             };
         },
         async mounted() {
-            this.$helper.getCurrentQuery(this.query);
-
             await this.getCoursesData();
+
+            if (typeof(this.setIsShowLoadPage) === 'function' && this.dataList.total_page == 1) {
+                this.setIsShowLoadPage(false);
+            }
         },
         methods: {
+            setDataListNull() {
+                this.dataList = null;
+            },
+
+            getData() {
+                return {
+                    dataList: this.dataList,
+                    query: this.query
+                };
+            },
+
+            async getCoursesDataWithQuery(query) {
+                this.$helper.mergeArrayData(query, this.query);
+
+                await this.getCoursesData();
+            },
+
             async getCoursesData() {
                 this.$helper.setPageLoading(true);
                 await this.$store.dispatch("getCourses", {
@@ -71,27 +93,17 @@
                     error: this.formDataError
                 })
                 .then(res => {
-                    this.dataList = res.data;
+                    if (this.dataList == null) {
+                        this.dataList = res.data;
+                    } else {
+                        for (var index in res.data.list) {
+                            this.dataList.list.push(res.data.list[index]);
+                        }
+                    }
                 })
                 .catch(err => {
                 });
                 this.$helper.setPageLoading(false);
-            },
-
-            filter(e) {
-                e.preventDefault();
-
-                this.$helper.pushQueryUrl(this.query);
-
-                if (this.query.page >= this.dataList.total_page) {
-                    this.query.page = this.dataList.total_page;
-                }
-
-                if (this.query.page == 0) {
-                    this.query.page = 1;
-                }
-
-                this.getCourseData();
             }
         }
     }

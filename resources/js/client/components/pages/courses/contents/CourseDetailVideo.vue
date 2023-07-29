@@ -37,7 +37,7 @@
 
 <script>
     export default {
-        name: 'Video',
+        name: 'CourseDetailVideo',
         props: {
             videoSrc: String,
             isLoadVideo: Boolean,
@@ -68,9 +68,15 @@
                 this.isVideoPlayed = false;
                 this.volume = 0.3;
                 this.currentDuration = 0;
+                this.totalDuration = 0;
                 this.clearCanvas();
                 this.createCanvas();
                 this.setIsLoadVideo(false);
+            }
+        },
+        beforeUnmount() {
+            if (this.video) {
+                this.clearCanvas();
             }
         },
         methods: {

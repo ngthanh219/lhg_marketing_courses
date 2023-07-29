@@ -41,6 +41,7 @@ return [
     ],
     "course_user" => [
         "not_exist" => "Khóa học của người dùng này không tồn tại",
-        "registered_user" => "Dữ liệu này đã có trong hệ thống"
+        "registered_user" => "Dữ liệu này đã có trong hệ thống",
+        "not_restore" => "Không thể khôi phục, vì thông tin này đã được đăng ký lại"
     ]
 ];

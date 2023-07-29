@@ -66,11 +66,11 @@
                                             </div>
                                         </div>
                                         <div class="form-group" v-if="courseUserData !== null">
-                                            <div class="form-preview-image">
+                                            <div class="form-preview-image" style="height: 300px;">
                                                 Ảnh hiện tại{{ courseUserData.billing_image_url != null || previewImage ? '' : ': Chưa có' }}
 
-                                                <img class="img-fluid mb-3" v-if="previewImage != null" :src="previewImage" alt="Photo">
-                                                <img class="img-fluid mb-3" v-if="!previewImage && courseUserData.billing_image_url" :src="courseUserData.billing_image_url" alt="Photo">
+                                                <img style="height: 100%;" class="img-fluid mb-3" v-if="previewImage != null" :src="previewImage" alt="Photo">
+                                                <img style="height: 100%;" class="img-fluid mb-3" v-if="!previewImage && courseUserData.billing_image_url" :src="courseUserData.billing_image_url" alt="Photo">
                                             </div>
                                         </div>
                                     </div>

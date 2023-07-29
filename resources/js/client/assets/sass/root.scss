@@ -52,7 +52,7 @@ textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
     padding: 0.25rem 0.5rem;
     border-radius: 0.2rem;
     cursor: pointer;
-    width: 100%;
+    // width: 100%;
     border: none;
     line-height: 27px;
     font-size: 14px;
@@ -189,6 +189,12 @@ textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
     }
 }
 
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .form-page {
     display: flex;
     align-items: center;
@@ -237,6 +243,10 @@ textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
                 .input-group {
                     .form-control {
                         width: 87%;
+                    }
+
+                    .btn {
+                        width: 100%;
                     }
 
                     span {
@@ -731,7 +741,7 @@ header {
                                     transition: .1s all ease;
                                 }
 
-                                a:hover {
+                                a:hover, a.active {
                                     background: hsla(0, 0%, 8%, 0.9);
                                     color: white;
                                 }
@@ -773,10 +783,6 @@ header {
                                         }
                                     }
 
-                                    .total {
-                                        color: #6a80e0;
-                                    }
-
                                     .duration {
                                         font-size: 14px;
                                         text-align: end;
@@ -802,6 +808,10 @@ header {
                                         padding: 3px;
                                         border-radius: 3px;
                                     }
+
+                                    .total {
+                                        color: #6a80e0;
+                                    }
                                 }
 
                                 .sc-item {
@@ -820,8 +830,12 @@ header {
                                     border-bottom: 1px solid #6a80e0;
                                     border-bottom-left-radius: 20px;
 
-                                    .name, i, .n-content, .duration {
+                                    .name, i, .n-content, .duration, .total {
                                         font-weight: bold;
+                                        color: #6a80e0;
+                                    }
+
+                                    .total {
                                         color: #6a80e0;
                                     }
                                 }

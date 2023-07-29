@@ -8,6 +8,7 @@ let actions = {
 
     getCourses: course.getCourses,
     getCourseDetail: course.getCourseDetail,
+    registerCourse: course.registerCourse,
 }
 
 export default actions;

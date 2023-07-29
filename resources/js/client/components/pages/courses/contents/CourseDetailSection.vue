@@ -43,7 +43,7 @@
 
 <script>
     export default {
-        name: 'CourseSection',
+        name: 'CourseDetailSection',
         props: {
             setVideoSrc: Function,
             courseSections: Array,
@@ -70,8 +70,16 @@
             openVideo(e, video, isVideoActiveVal) {
                 e.preventDefault();
                 
-                if (this.isVideoActiveVal != isVideoActiveVal) {
-                    this.setVideoSrc(video.source_url);
+                if (this.$store.state.auth.accessToken == null) {
+                    this.$helper.redirectPage('dang-nhap');
+                }
+                
+                if (video.source_url != null && this.isVideoActiveVal != isVideoActiveVal) {
+                    var filePath = video.source;
+                    var query = this.$helper.getQueryString(video.source_url);
+                    var sourceUrl = this.$env.s3Url + filePath + query;
+
+                    this.setVideoSrc(sourceUrl);
                     this.isVideoActiveVal = isVideoActiveVal;
                 }
             },

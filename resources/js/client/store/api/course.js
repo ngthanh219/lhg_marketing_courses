@@ -28,6 +28,20 @@ let course = {
             })
         });
     },
+
+    registerCourse({state}, form) {
+        return new Promise((resolve, reject) => {
+            axios.defaults.headers.common = {'Authorization': `Bearer ` + state.auth.accessToken}
+            axios.post(actionParams.API + 'register-course', form.request)
+            .then((res) => {
+                actionParams.resetFormError(form.error);
+                resolve(res.data);
+            })
+            .catch((err) => {
+                reject(actionParams.getError(err, form.error));
+            })
+        });
+    },
 }
 
 export default course;

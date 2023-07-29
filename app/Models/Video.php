@@ -23,7 +23,7 @@ class Video extends Model
     ];
 
     protected $hidden = [
-        'source',
+        // 'source',
         'deleted_at',
         'updated_at'
     ];
@@ -40,10 +40,18 @@ class Video extends Model
 
     public function getSourceUrlAttribute()
     {  
-        $awsS3Service = new AWSS3Service();
-
         if ($this->source) {
-            return $awsS3Service->getFile($this->source, Constant::EXPIRE_VIDEO);
+            $awsS3Service = new AWSS3Service();
+            $sourceUrl = $awsS3Service->getFile($this->source, Constant::EXPIRE_VIDEO);
+
+            if (auth()->guard('api')->user()->role_id == Constant::ROLE_ADMIN) {
+                return $sourceUrl;
+            } else {
+                $query = parse_url($sourceUrl, PHP_URL_QUERY);
+                parse_str($query, $queryParams);
+
+                return $queryParams;
+            }
         }
 
         return null;

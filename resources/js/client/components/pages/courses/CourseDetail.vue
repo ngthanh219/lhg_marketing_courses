@@ -24,75 +24,39 @@
                     </div>
                 </div>
 
-                <Video 
+                <CourseDetailVideo 
                     :videoSrc="videoSrc"
                     :isLoadVideo="isLoadVideo"
                     :setIsLoadVideo="setIsLoadVideo"
                 />
 
-                <CourseSection
+                <CourseDetailSection
                     :courseSections="data.course.course_sections"
                     :setVideoSrc="setVideoSrc"
                 />
             </div>
-            <div class="wc-general-information">
-                <div class="gi-card">
-                    <div class="gic-image">
-                        <img :src="data.course.image_url" alt="">
-                    </div>
-                    <div class="gic-action">
-                        <div class="price-box-theme">
-                            <div class="price">
-                                <strong>
-                                    {{ data.course.discount != 0 ? data.course.discount_price.toLocaleString() : data.course.price.toLocaleString() }}<sup>đ</sup>
-                                </strong>
-                                <del v-if="data.course.discount != 0">
-                                    {{ data.course.price.toLocaleString() }}<sup>đ</sup>
-                                </del>
-                            </div>
-                            <span class="discount-price">-{{ data.course.discount }}%</span>
-                        </div>
-                        <div class="btn-action">
-                            <router-link to="/hoc-tiktok/dang-ky" class="btn btn-danger">Đăng ký học</router-link>
-                        </div>
-                    </div>
-                    <div class="gic-info">
-                        <div class="gic-info-item">
-                            <i class="fa fa-clock"></i>
-                            Thời lượng: 
-                            <strong>{{ this.$helper.formatDuration(data.total_video_duration) }}</strong>
-                        </div>
-                        <div class="gic-info-item">
-                            <i class="fa fa-play"></i>
-                            Giáo trình: 
-                            <strong>{{ data.total_course_section }} bài giảng</strong>
-                        </div>
-                        <div class="gic-info-item">
-                            <i class="fa fa-globe"></i>
-                            Học mọi lúc mọi nơi
-                        </div>
-                        <div class="gic-info-item">
-                            <i class="fa fa-mobile-alt"></i>
-                            Học trên mọi thiết bị: Mobile, TV, PC
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+            <CourseDetailRegister
+                :courseDetailData="data"
+            />
         </div>
     </div>
+    <br v-else v-for="index in 50">
 </template>
 
 <script>
     import MenuBanner from '../../commons/banner/MenuBanner.vue';
-    import Video from '../../commons/content/Video.vue';
-    import CourseSection from '../../commons/content/CourseSection.vue';
+    import CourseDetailVideo from './contents/CourseDetailVideo.vue';
+    import CourseDetailSection from './contents/CourseDetailSection.vue';
+    import CourseDetailRegister from './contents/CourseDetailRegister.vue';
 
     export default {
         name: 'CourseDetail',
         components: {
             MenuBanner,
-            Video,
-            CourseSection
+            CourseDetailVideo,
+            CourseDetailSection,
+            CourseDetailRegister
         },
         data() {
             return {
