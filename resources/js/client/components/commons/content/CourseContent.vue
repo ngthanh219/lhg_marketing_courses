@@ -64,11 +64,19 @@
         async mounted() {
             await this.getCoursesData();
 
-            if (typeof(this.setIsShowLoadPage) === 'function' && this.dataList.total_page == 1) {
-                this.setIsShowLoadPage(false);
-            }
+            this.checkPage();
         },
         methods: {
+            checkPage() {
+                if (typeof(this.setIsShowLoadPage) === 'function') {
+                    if (this.dataList.total_page <= 1) {
+                        this.setIsShowLoadPage(false);
+                    } else {
+                        this.setIsShowLoadPage(true);
+                    }
+                }
+            },
+            
             setDataListNull() {
                 this.dataList = null;
             },
