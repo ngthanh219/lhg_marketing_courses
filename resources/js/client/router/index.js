@@ -6,13 +6,13 @@ const router = createRouter({
     history: createWebHistory(),
     routes,
     linkActiveClass: 'active',
-    scrollBehavior: (to) => {
-        if (to.hash) {
-            return {selector: to.hash}
+    scrollBehavior: (to, from, savedPosition) => {
+        if (savedPosition) {
+            return savedPosition;
         } else {
-            return {x: 0, y: 0}
+            return { left: 0, top: 0 };
         }
     }
 });
-  
+
 export default router;

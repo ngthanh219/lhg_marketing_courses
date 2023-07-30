@@ -34,8 +34,12 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Mô tả</label>
-                                            <textarea class="form-control" rows="10" v-model="formData.description" placeholder="xxx"></textarea>
+                                            <textarea id="summernote" ref="description" v-model="formData.description"></textarea>
                                         </div>
+                                        <!-- <div class="form-group">
+                                            <label>Mô tả</label>
+                                            <textarea class="form-control" rows="10" v-model="formData.description" placeholder="xxx"></textarea>
+                                        </div> -->
                                         <div class="form-group">
                                             <label>Giá: {{ parseInt(formData.price).toLocaleString() }}đ</label>
                                             <input type="text" class="form-control form-control-border" placeholder="xxx" v-model="formData.price" @keypress="this.$helper.isNumber($event)">
@@ -87,9 +91,10 @@
                                         </div>
                                     </div>
                                     <div class="card-footer">
-                                        <button type="submit" class="btn btn-primary mr-2" v-bind:class="{
+                                        <!-- <button type="submit" class="btn btn-primary mr-2" v-bind:class="{
                                             disabled: !(this.$helper.checkChangeFormData(courseData, formData) || formData.is_change_image)
-                                        }">
+                                        }"> -->
+                                        <button type="submit" class="btn btn-primary mr-2">
                                             {{ courseData ? 'Cập nhật' : 'Thêm mới' }}
                                         </button>
                                         <a class="btn btn-danger" @click="closeFormComponent">Hủy</a>
@@ -152,6 +157,18 @@
                 } else {
                     this.formData.is_change_image = true;
                 }
+
+                const toolbarOptions = [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    ['color', ['forecolor', 'backcolor']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['height', ['height']]
+                ];
+                $('#summernote').summernote({
+                    toolbar: toolbarOptions
+                });
+                $('#summernote').summernote('code', this.formData.description);
             }, 200);
         },
         methods: {
@@ -166,6 +183,8 @@
 
             async handleData(e) {
                 e.preventDefault();
+
+                this.formData.description = $('#summernote').summernote('code');
 
                 if (this.courseData) {
                     if (this.$helper.checkChangeFormData(this.courseData, this.formData) || this.formData.is_change_image == 1) {

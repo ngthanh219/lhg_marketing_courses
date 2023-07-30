@@ -40,7 +40,7 @@
                                     Chọn ảnh xác nhận đã thanh toán
                                     <input type="file" class="form-control" placeholder="Ảnh thanh toán" @change="handlePreviewImage($event)">
                                 </div>
-                                <div class="form-group" v-if="formData.billing_image_url">
+                                <div class="input-group" v-if="formData.billing_image_url != ''">
                                     <button @click="cancelImage" class="btn btn-danger">Xóa ảnh</button>
                                     <div class="form-preview-image">
                                         <img class="img-fluid mb-3" :src="previewImage" alt="Photo">
@@ -162,11 +162,13 @@
 
                 reader.readAsDataURL(e.target.files[0]);
                 self.formData.billing_image_url = e.target.files[0];
+
+                e.target.value = null;
             },
 
             cancelImage(e) {
                 e.preventDefault();
-                this.formData.billing_image_url = null;
+                this.formData.billing_image_url = '';
                 this.previewImage = null;
             }
         }

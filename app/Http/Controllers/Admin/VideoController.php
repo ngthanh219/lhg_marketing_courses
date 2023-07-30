@@ -37,4 +37,9 @@ class VideoController extends Controller
     {
         return $this->videoService->delete($request, $id);
     }
+
+    public function uploadFile(Request $request)
+    {
+        return $this->videoService->uploadFile($request);
+    }
 }

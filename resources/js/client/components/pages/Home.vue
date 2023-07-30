@@ -15,7 +15,7 @@
                             <img src="https://edubit.vn/views/themes/default/img/rs1.png" alt="">
                         </div>
                         <p>Học mọi lúc mọi nơi</p>
-                        <span>Chỉ cần có điện thoại máy tính bảng, laptop hoặc TV kết nối internet</span>
+                        <span>Chỉ cần có máy tính, laptop hoặc TV kết nối internet</span>
                     </div>
                     <div class="rb-item">
                         <div class="image">

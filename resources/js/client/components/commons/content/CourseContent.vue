@@ -13,9 +13,11 @@
                     <div class="theme text-line-2">{{ data.name }}</div>
                     <div class="detail">
                         <div class="lecture">
-                            <div class="name">Nguyễn Thành</div>
+                            <div class="name">
+                                Khóa học
+                            </div>
                             <div class="rate">
-                                <i class="fas fa-fw fa-star" v-for="index in 5"></i> (6)
+                                <i class="fas fa-fw fa-star" v-for="index in 5"></i>
                             </div>
                         </div>
                         <div class="price">
@@ -95,7 +97,7 @@
             },
 
             async getCoursesData() {
-                this.$helper.setPageLoading(true);
+                // this.$helper.setPageLoading(true);
                 await this.$store.dispatch("getCourses", {
                     query: this.$helper.getQueryString(this.query),
                     error: this.formDataError
