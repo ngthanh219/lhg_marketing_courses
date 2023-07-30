@@ -13,6 +13,8 @@ Route::post('login', [AuthController::class, 'login']);
 Route::group([
     'middleware' => 'admin.auth'
 ], function () {
+    Route::post('upload-file', [VideoController::class, "uploadFile"]);
+
     Route::group([
         'prefix' => 'users'
     ], function () {

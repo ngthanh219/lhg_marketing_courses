@@ -14,12 +14,6 @@
 <body class="sidebar-mini control-sidebar-slide-open layout-navbar-fixed layout-fixed">
     <div id="app"></div>
 
-    @if ($env === 'production')
-	    <script src="{{ asset('sources/admin/app.js?' . strtotime("now")) }}"></script>
-    @else
-        @vite('resources/js/admin/app.js')
-    @endif
-
     @include('admin.script')
 </body>
 </html>

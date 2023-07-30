@@ -187,6 +187,15 @@ textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
         outline: none;
         padding: 10px 30px 10px 10px;
     }
+
+    .form-preview-image {
+        height: 300px;
+
+        img {
+            height: 100%;
+            object-fit: contain;
+        }
+    }
 }
 
 .flex-center {
@@ -657,6 +666,10 @@ header {
                                     margin-bottom: 10px;
 
                                     .lecture {
+                                        display: flex;
+                                        flex-direction: column;
+                                        justify-content: flex-end;
+
                                         .name {
                                             font-size: 14px;
                                             margin-bottom: 5px;
@@ -758,6 +771,25 @@ header {
                         .description {
                             font-size: 14px;
                             padding-left: 10px;
+                            line-height: 25px;
+                            text-align: justify;
+
+                            h1, h2, h3, h4, h5 {
+                                font-size: unset;
+                            }
+
+                            ul {
+                                display: flex;
+                                flex-direction: column;
+
+                                li {
+                                    list-style: disc;
+                                }
+                            }
+
+                            p {
+                                margin: 10px 0;
+                            }
                         }
 
                         .section {

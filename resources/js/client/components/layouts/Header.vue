@@ -1,22 +1,22 @@
 <template>
-    <header v-bind:class="{'h-fixed' : isShowMenu}">
+    <header>
         <div class="header-full-br" >
             <div class="header-center-content">
                 <div class="left-wrapper">
                     <div class="logo">
-                        <router-link to="/">
+                        <a class="cursor-pointer" @click="redirectPage($event, '')">
                             <img src="https://marketing-courses-stg.s3.ap-southeast-1.amazonaws.com/general/logo.png" alt="">
-                        </router-link>
+                        </a>
                     </div>
                     <ul class="navbar-menu" v-bind:class="[
                         {'show-menu' : isShowMenu},
                         {'content' : isActiveTransactionMenu},
                     ]">
                         <li>
-                            <router-link to="/trang-chu">Trang chủ</router-link>
+                            <a class="cursor-pointer" @click="redirectPage($event, 'trang-chu')">Trang chủ</a>
                         </li>
                         <li>
-                            <router-link to="/courses">Khóa học</router-link>
+                            <a class="cursor-pointer" @click="redirectPage($event, 'courses')">Khóa học</a>
                         </li>
                         <li>
                             <a href="#">Hướng Dẫn Vào Học</a>
@@ -25,19 +25,19 @@
                             <input type="text" class="search" placeholder="Tìm khóa học">
                         </li>
                         <li class="toggler-active" v-if="!$store.state.auth.accessToken">
-                            <router-link to="/dang-nhap">
+                            <a class="cursor-pointer" @click="redirectPage($event, 'dang-nhap')">
                                 <span>Đăng nhập</span>
-                            </router-link>
+                            </a>
                         </li>
                         <li class="toggler-active" v-if="!$store.state.auth.accessToken">
-                            <router-link to="/dang-ky">
+                            <a class="cursor-pointer" @click="redirectPage($event, 'dang-ky')">
                                 <span>Đăng ký</span>
-                            </router-link>
+                            </a>
                         </li>
                         <li class="toggler-active" v-if="$store.state.auth.accessToken">
-                            <router-link to="/dang-nhap">
+                            <a class="cursor-pointer">
                                 <span>Tài khoản: {{ $store.state.auth.user.email }}</span>
-                            </router-link>
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -49,14 +49,14 @@
                     </div>
                     <ul class="navbar-menu" v-if="!$store.state.auth.accessToken">
                         <li class="information-user">
-                            <router-link to="/dang-nhap">
+                            <a class="cursor-pointer" @click="redirectPage($event, 'dang-nhap')">
                                 <span>Đăng nhập</span>
-                            </router-link>
+                            </a>
                         </li>
                         <li class="information-user">
-                            <router-link to="/dang-ky">
+                            <a class="cursor-pointer" @click="redirectPage($event, 'dang-ky')">
                                 <span>Đăng ký</span>
-                            </router-link>
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -96,13 +96,24 @@
                         this.isActiveTransactionMenu = true;
                     }, 50);
                 } else {
-                    this.isActiveTransactionMenu = false;
-
-                    setTimeout(() => {
-                        this.isShowMenu = false;
-                    }, 300);
+                    this.closeHeader();
                 }
-                
+            },
+
+            closeHeader() {
+                this.isActiveTransactionMenu = false;
+
+                setTimeout(() => {
+                    this.isShowMenu = false;
+                }, 400);
+            },
+
+            redirectPage(e, path) {
+                e.preventDefault();
+
+                this.$helper.redirectPage(path);
+                this.isActiveTransactionMenu = false;
+                this.closeHeader();
             }
         }
     }

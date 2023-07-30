@@ -7,3 +7,4 @@
 <link rel="stylesheet" href="{{ asset('assets/admin/AdminLTE/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/admin/AdminLTE/plugins/jqvmap/jqvmap.min.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/admin/AdminLTE/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/admin/AdminLTE/plugins/summernote/summernote-bs4.min.css') }}">

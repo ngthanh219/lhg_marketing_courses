@@ -18,9 +18,7 @@
                 <div class="box-card">
                     <div class="tab-detail pd-tab">
                         <h3>Bạn sẽ học được gì</h3>
-                        <div class="description">
-                            {{ data.course.description }}
-                        </div>
+                        <div class="description" v-html="data.course.description"></div>
                     </div>
                 </div>
 
