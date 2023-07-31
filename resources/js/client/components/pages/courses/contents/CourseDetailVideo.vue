@@ -2,7 +2,6 @@
     <div class="box-card">
         <div class="tab-detail pd-tab">
             <h3>Video</h3>
-            <!-- <video src="https://marketing-courses-stg.s3.ap-southeast-1.amazonaws.com/videos/sofia.mp4" controls></video> -->
             <div class="text-center" v-if="!videoSrc">Lựa chọn video để xem</div>
 
             <div class="video" v-bind:class="{'active-controls': currentDuration == 0}" ref="video" v-else>

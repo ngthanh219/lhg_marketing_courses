@@ -23,7 +23,7 @@ class Video extends Model
     ];
 
     protected $hidden = [
-        // 'source',
+        'source',
         'deleted_at',
         'updated_at'
     ];

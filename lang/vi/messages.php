@@ -25,7 +25,8 @@ return [
     ],
     "course" => [
         "not_exist" => "Khóa học này không tồn tại",
-        "registered_user" => "Bạn đã đăng ký khóa học này"
+        "registered_user" => "Bạn đã đăng ký khóa học này",
+        "exist" => "Khóa học này đã tồn tại",
     ],
     "course_section" => [
         "not_exist" => "Phần học này không tồn tại"
@@ -43,5 +44,9 @@ return [
         "not_exist" => "Khóa học của người dùng này không tồn tại",
         "registered_user" => "Dữ liệu này đã có trong hệ thống",
         "not_restore" => "Không thể khôi phục, vì thông tin này đã được đăng ký lại"
-    ]
+    ],
+    "post" => [
+        "not_exist" => "Bài viết này không tồn tại",
+        "exist" => "Bài viết này đã tồn tại",
+    ],
 ];

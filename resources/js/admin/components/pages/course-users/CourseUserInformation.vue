@@ -41,6 +41,10 @@
                                             </a>
                                             <input type="text" class="form-control form-control-border" v-model="courseName" disabled>
                                         </div>
+                                        <div class="form-group">
+                                            <label>Mô tả</label>
+                                            <textarea class="form-control" v-model="courseUserData.description" disabled></textarea>
+                                        </div>
                                         <div class="form-group" v-if="courseUserData != null">
                                             <div class="custom-control custom-checkbox">
                                                 <input 

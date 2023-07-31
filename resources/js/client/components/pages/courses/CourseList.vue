@@ -1,8 +1,10 @@
 <template>
     <div class="wrapper">
+        <MenuBanner
+            :pageName="'Tất cả khóa học'"
+        />
         <div class="w-content page">
             <div class="wc-box">
-                <div class="title">Tất cả khóa học</div>
                 <div class="wc-information">
                     <div class="box-card">
                         <div class="tab-detail">
@@ -39,11 +41,13 @@
 
 <script>
     import CourseContent from '../../commons/content/CourseContent.vue';
+    import MenuBanner from '../../commons/banner/MenuBanner.vue';
 
     export default {
         name: 'CourseList',
         components: {
-            CourseContent
+            CourseContent,
+            MenuBanner
         },
         data() {
             return {

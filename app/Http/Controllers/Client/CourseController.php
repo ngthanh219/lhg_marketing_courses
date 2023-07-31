@@ -31,4 +31,9 @@ class CourseController extends Controller
     {
         return $this->courseService->registerCourseClient($request);
     }
+
+    public function decryptVideo(Request $request)
+    {
+        return $this->courseService->decryptVideo($request);
+    }
 }

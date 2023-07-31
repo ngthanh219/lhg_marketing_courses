@@ -37,6 +37,12 @@
                             <p>Khóa học của người dùng</p>
                         </router-link>
                     </li>
+                    <li class="nav-item">
+                        <router-link to="/admin/posts" class="nav-link">
+                            <i class="nav-icon far fa-newspaper"></i>
+                            <p>Quản lý bài viết</p>
+                        </router-link>
+                    </li>
                 </ul>
             </nav>
         </div>

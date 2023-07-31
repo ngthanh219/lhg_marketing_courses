@@ -67,7 +67,7 @@
                 return total;
             },
             
-            openVideo(e, video, isVideoActiveVal) {
+            async openVideo(e, video, isVideoActiveVal) {
                 e.preventDefault();
                 
                 if (this.$store.state.auth.accessToken == null) {
@@ -75,14 +75,41 @@
                 }
                 
                 if (video.source_url != null && this.isVideoActiveVal != isVideoActiveVal) {
-                    var filePath = video.source;
-                    var query = this.$helper.getQueryString(video.source_url);
-                    var sourceUrl = this.$env.s3Url + filePath + query;
-
-                    this.setVideoSrc(sourceUrl);
-                    this.isVideoActiveVal = isVideoActiveVal;
+                    this.$helper.setPageLoading(true);
+                    await this.$store.dispatch("getDV", {
+                        request: this.$helper.appendFormData({
+                            id: video.id
+                        }),
+                        error: {
+                            message: ''
+                        }
+                    })
+                    .then(res => {
+                        this.deVideo(video.source_url, res.data);
+                        this.isVideoActiveVal = isVideoActiveVal;
+                    })
+                    .catch(err => {
+                    });
+                    this.$helper.setPageLoading(false);
                 }
             },
+
+            deVideo(sourceUrl, data) {
+                var n = data.n;
+                var query = this.$helper.getQueryString(sourceUrl);
+
+                if (n != null) {
+                    n = n.reverse();
+                    var filePath = 'videos/';
+
+                    for (var i in n) {
+                        filePath += n[i];
+                    }
+
+                    filePath += '.mp4';
+                    this.setVideoSrc(this.$env.s3Url + filePath + query);
+                }
+            }
         }
     }
 </script>

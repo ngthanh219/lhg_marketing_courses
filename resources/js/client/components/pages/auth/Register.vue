@@ -5,7 +5,7 @@
                 <div class="card-body">
                     <div class="logo">
                         <a href="https://khoahoc.nguyencanh.net">
-                            <img src="https://marketing-courses-stg.s3.ap-southeast-1.amazonaws.com/general/logo.png" class="logo-default-site">
+                            <img :src="this.$env.s3Url + 'logos/logo.png'" class="logo-default-site">
                         </a>
                     </div>
                     <form v-on:submit="register">
