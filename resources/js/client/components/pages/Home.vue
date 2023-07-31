@@ -41,7 +41,7 @@
                 <CourseContent />
 
                 <div class="action flex-center">
-                    <router-link to="/courses" class="btn btn-primary">Xem thêm</router-link>
+                    <router-link to="/khoa-hoc" class="btn btn-primary">Xem thêm</router-link>
                 </div>
             </div>
         </div>
@@ -82,8 +82,17 @@
                 </div>
             </div>
         </div>
+        
+        <div class="w-content page">
+            <div class="wc-box">
+                <div class="title">Bài viết nổi bật</div>
+                <PostContent />
 
-        <PostContent />
+                <div class="action flex-center">
+                    <router-link to="/bai-viet" class="btn btn-primary">Xem thêm</router-link>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 

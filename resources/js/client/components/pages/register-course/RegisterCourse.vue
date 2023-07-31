@@ -14,7 +14,7 @@
                                 Thanh toán bằng phương thức chuyển khoản hoặc quét mã QR
                             </div>
                             <div class="image">
-                                <img src="https://marketing-courses-stg.s3.ap-southeast-1.amazonaws.com/images/qr.png" alt="">
+                                <img :src="this.$env.s3Url + 'qrs/qr.png'" alt="">
                             </div>
                         </div>
                     </div>

@@ -4,38 +4,38 @@
             <div class="header-center-content">
                 <div class="left-wrapper">
                     <div class="logo">
-                        <a class="cursor-pointer" @click="redirectPage($event, '')">
-                            <img src="https://marketing-courses-stg.s3.ap-southeast-1.amazonaws.com/general/logo.png" alt="">
-                        </a>
+                        <router-link to="/trang-chu" @click="redirectPage">
+                            <img :src="this.$env.s3Url + 'logos/logo.png'" alt="">
+                        </router-link>
                     </div>
                     <ul class="navbar-menu" v-bind:class="[
                         {'show-menu' : isShowMenu},
                         {'content' : isActiveTransactionMenu},
                     ]">
                         <li>
-                            <a class="cursor-pointer" @click="redirectPage($event, 'trang-chu')">Trang chủ</a>
+                            <router-link to="/trang-chu" @click="redirectPage">Trang chủ</router-link>
                         </li>
                         <li>
-                            <a class="cursor-pointer" @click="redirectPage($event, 'courses')">Khóa học</a>
+                            <router-link to="/khoa-hoc" @click="redirectPage">Khóa học</router-link>
                         </li>
                         <li>
-                            <a href="#">Hướng Dẫn Vào Học</a>
+                            <router-link to="/huong-dan-vao-hoc" @click="redirectPage">Hướng Dẫn Vào Học</router-link>
                         </li>
                         <li>
                             <input type="text" class="search" placeholder="Tìm khóa học">
                         </li>
                         <li class="toggler-active" v-if="!$store.state.auth.accessToken">
-                            <a class="cursor-pointer" @click="redirectPage($event, 'dang-nhap')">
+                            <router-link to="/dang-nhap" @click="redirectPage">
                                 <span>Đăng nhập</span>
-                            </a>
+                            </router-link>
                         </li>
                         <li class="toggler-active" v-if="!$store.state.auth.accessToken">
-                            <a class="cursor-pointer" @click="redirectPage($event, 'dang-ky')">
+                            <router-link to="/dang-ky" @click="redirectPage">
                                 <span>Đăng ký</span>
-                            </a>
+                            </router-link>
                         </li>
                         <li class="toggler-active" v-if="$store.state.auth.accessToken">
-                            <a class="cursor-pointer">
+                            <a>
                                 <span>Tài khoản: {{ $store.state.auth.user.email }}</span>
                             </a>
                         </li>
@@ -49,14 +49,14 @@
                     </div>
                     <ul class="navbar-menu" v-if="!$store.state.auth.accessToken">
                         <li class="information-user">
-                            <a class="cursor-pointer" @click="redirectPage($event, 'dang-nhap')">
+                            <router-link to="/dang-nhap" @click="redirectPage">
                                 <span>Đăng nhập</span>
-                            </a>
+                            </router-link>
                         </li>
                         <li class="information-user">
-                            <a class="cursor-pointer" @click="redirectPage($event, 'dang-ky')">
+                            <router-link to="/dang-ky" @click="redirectPage">
                                 <span>Đăng ký</span>
-                            </a>
+                            </router-link>
                         </li>
                     </ul>
                 </div>
@@ -108,10 +108,9 @@
                 }, 400);
             },
 
-            redirectPage(e, path) {
+            redirectPage(e) {
                 e.preventDefault();
 
-                this.$helper.redirectPage(path);
                 this.isActiveTransactionMenu = false;
                 this.closeHeader();
             }

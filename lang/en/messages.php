@@ -25,7 +25,8 @@ return [
     ],
     "course" => [
         "not_exist" => "This course does not exist",
-        "registered_user" => "You have registered this course"
+        "registered_user" => "You have registered this course",
+        "exist" => "This course already exists",
     ],
     "course_section" => [
         "not_exist" => "This section does not exist"
@@ -41,6 +42,11 @@ return [
     ],
     "course_user" => [
         "not_exist" => "Course of this user does not exist",
-        "registered_user" => "This data is already in the system"
-    ]
+        "registered_user" => "This data is already in the system",
+        "not_restore" => "It is not possible to restore, because this information has been re-registered"
+    ],
+    "post" => [
+        "not_exist" => "This post does not exist",
+        "exist" => "This post already exists",
+    ],
 ];

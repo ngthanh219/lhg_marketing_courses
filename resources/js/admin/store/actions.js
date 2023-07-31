@@ -4,6 +4,7 @@ import user from './api/user.js';
 import courseSection from './api/course-section.js';
 import video from './api/video.js';
 import courseUser from './api/course-user.js';
+import post from './api/post.js';
 
 let actions = {
     login: authentication.login,
@@ -32,6 +33,11 @@ let actions = {
     createCourseUser: courseUser.createCourseUser,
     updateCourseUser: courseUser.updateCourseUser,
     deleteCourseUser: courseUser.deleteCourseUser,
+
+    getPosts: post.getPosts,
+    createPost: post.createPost,
+    updatePost: post.updatePost,
+    deletePost: post.deletePost,
 }
 
 export default actions;

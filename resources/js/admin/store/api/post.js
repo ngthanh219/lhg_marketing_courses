@@ -1,10 +1,10 @@
 import actionParams from "./index";
 
-let course = {
-    getCourses({state}, form) {
+let post = {
+    getPosts({state}, form) {
         axios.defaults.headers.common = {'Authorization': `Bearer ` + state.auth.accessToken}
         return new Promise((resolve, reject) => {
-            axios.get(actionParams.API + 'courses' + form.query)
+            axios.get(actionParams.API + 'posts' + form.query)
             .then((res) => {
                 actionParams.resetFormError(form.error);
                 resolve(res.data);
@@ -15,10 +15,10 @@ let course = {
         });
     },
 
-    getCourseDetail({state}, form) {
+    createPost({state}, form) {
         axios.defaults.headers.common = {'Authorization': `Bearer ` + state.auth.accessToken}
         return new Promise((resolve, reject) => {
-            axios.get(actionParams.API + 'courses/' + form.slug)
+            axios.post(actionParams.API + 'posts', form.request)
             .then((res) => {
                 actionParams.resetFormError(form.error);
                 resolve(res.data);
@@ -29,10 +29,10 @@ let course = {
         });
     },
 
-    registerCourse({state}, form) {
+    updatePost({state}, form) {
+        axios.defaults.headers.common = {'Authorization': `Bearer ` + state.auth.accessToken}
         return new Promise((resolve, reject) => {
-            axios.defaults.headers.common = {'Authorization': `Bearer ` + state.auth.accessToken}
-            axios.post(actionParams.API + 'register-course', form.request)
+            axios.post(actionParams.API + 'posts/' + form.id, form.request)
             .then((res) => {
                 actionParams.resetFormError(form.error);
                 resolve(res.data);
@@ -43,10 +43,10 @@ let course = {
         });
     },
 
-    getDV({state}, form) {
+    deletePost({state}, form) {
+        axios.defaults.headers.common = {'Authorization': `Bearer ` + state.auth.accessToken}
         return new Promise((resolve, reject) => {
-            axios.defaults.headers.common = {'Authorization': `Bearer ` + state.auth.accessToken}
-            axios.post(actionParams.API + 'd-v', form.request)
+            axios.delete(actionParams.API + 'posts/' + form.id)
             .then((res) => {
                 actionParams.resetFormError(form.error);
                 resolve(res.data);
@@ -58,4 +58,4 @@ let course = {
     },
 }
 
-export default course;
+export default post;

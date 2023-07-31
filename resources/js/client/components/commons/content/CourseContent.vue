@@ -2,7 +2,6 @@
     <div class="card-list">
         <div class="card-item" v-if="dataList" v-for="data in dataList.list">
             <router-link :to="'/' + data.slug">
-
                 <div class="c-image">
                     <img :src="data.image_url" alt="">
                     <label class="percent-off-label">
@@ -97,7 +96,7 @@
             },
 
             async getCoursesData() {
-                // this.$helper.setPageLoading(true);
+                this.$helper.setPageLoading(true);
                 await this.$store.dispatch("getCourses", {
                     query: this.$helper.getQueryString(this.query),
                     error: this.formDataError

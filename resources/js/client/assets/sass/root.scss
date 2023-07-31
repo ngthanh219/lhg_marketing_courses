@@ -92,6 +92,10 @@ textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
     }
 }
 
+.no-border {
+    border: none !important;
+}
+
 .notification-dialog {
     position: fixed;
     bottom: 20px;

@@ -31,10 +31,10 @@
                                             <label>Tên phần học</label>
                                             <input type="text" class="form-control form-control-border" placeholder="xxx" v-model="formData.name">
                                         </div>
-                                        <div class="form-group">
+                                        <!-- <div class="form-group">
                                             <label>Mô tả</label>
                                             <textarea class="form-control" rows="10" v-model="formData.description" placeholder="xxx"></textarea>
-                                        </div>
+                                        </div> -->
                                     </div>
                                     <div class="card-footer">
                                         <button type="submit" class="btn btn-primary mr-2" v-bind:class="{

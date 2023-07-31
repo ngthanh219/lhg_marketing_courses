@@ -72,9 +72,16 @@ class CourseService extends BaseService
     {
         try {
             $image = null;
+            $slug = Str::slug($request->name);
+            $checkSlug = $this->course->where('slug', $slug)->withTrashed()->first();
+            
+            if ($checkSlug) {
+                return $this->responseError(__('messages.course.exist'), 400, ErrorCode::PARAM_INVALID);
+            }
+
             $newData = [
                 'name' => $request->name,
-                'slug' => Str::slug($request->name),
+                'slug' => $slug,
                 'slogan' => $request->slogan,
                 'introduction' => $request->introduction,
                 'description' => $request->description,
@@ -111,9 +118,19 @@ class CourseService extends BaseService
             }
 
             $image = null;
+            $slug = Str::slug($request->name);
+            $checkSlug = $this->course->where('id', '!=', $id)
+                ->where('slug', $slug)
+                ->withTrashed()
+                ->first();
+            
+            if ($checkSlug) {
+                return $this->responseError(__('messages.course.exist'), 400, ErrorCode::PARAM_INVALID);
+            }
+
             $updatedData = [
                 'name' => $request->name,
-                'slug' => Str::slug($request->name),
+                'slug' => $slug,
                 'slogan' => $request->slogan,
                 'introduction' => $request->introduction,
                 'description' => $request->description,
@@ -322,6 +339,46 @@ class CourseService extends BaseService
             ]);
         } catch (\Exception $ex) {
             $this->awsS3Service->removeFile($billingImage);
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
+    public function decryptVideo($request)
+    {
+        try {
+            $f = null;
+            $n = null;
+            $user = auth()->guard('api')->user();
+
+            if (isset($request->id)) {
+                $video = $this->video->find($request->id);
+
+                if (!$video) {
+                    return $this->responseError(__('messages.video.not_exist'), 400, ErrorCode::PARAM_INVALID);
+                }
+
+                $courseId = $video->load('courseSection')->courseSection->course_id;
+                $courseUser = $this->courseUser->where('user_id', $user->id)
+                    ->where('course_id', $courseId)
+                    ->first();
+
+                if (!$courseUser) {
+                    return $this->responseError(__('messages.course_user.not_exist'), 400, ErrorCode::PARAM_INVALID);
+                }
+
+                $folderName = 'videos/';
+                $ext = '.mp4';
+                $sourceWithoutFolder = str_replace($folderName, '', $video->source);
+                $sourceWithoutExtension = str_replace($ext, '', $sourceWithoutFolder);
+                $n = array_reverse(str_split($sourceWithoutExtension));
+            }
+            
+            return $this->responseSuccess([
+                'n' => $n
+            ]);
+        } catch (\Exception $ex) {
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 
             return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
