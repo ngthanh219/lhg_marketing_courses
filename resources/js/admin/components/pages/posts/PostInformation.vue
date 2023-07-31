@@ -132,11 +132,16 @@
                     ['style', ['bold', 'italic', 'underline', 'clear']],
                     ['font', ['strikethrough', 'superscript', 'subscript']],
                     ['color', ['forecolor', 'backcolor']],
+                    ['fontsize', ['fontsize']],
                     ['para', ['ul', 'ol', 'paragraph']],
-                    ['height', ['height']]
+                    ['height', ['height']],
+                    ['insert', ['link']]
                 ];
                 $('#summernote').summernote({
-                    toolbar: toolbarOptions
+                    toolbar: toolbarOptions,
+                    toolbarOptions: {
+                        fontsize: ['8', '9', '10', '11', '12', '14', '18', '24', '36', '48', '60', '72', '96'],
+                    },
                 });
                 $('#summernote').summernote('code', this.formData.content);
             }, 200);

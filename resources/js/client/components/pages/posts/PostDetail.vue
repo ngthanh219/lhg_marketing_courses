@@ -1,11 +1,12 @@
 <template>
     <div class="wrapper" v-if="data">
-        <MenuBanner
+        <!-- <MenuBanner
             :pageName="data.name"
-        />
+        /> -->
 
         <div class="w-content page">
             <div class="wc-box">
+                <div class="title">{{ data.name }}</div>
                 <div class="wc-information">
                     <div class="box-card">
                         <div class="tab-detail no-border">
@@ -16,7 +17,7 @@
             </div>
         </div>
     </div>
-    <br v-for="index in 50">
+    <br v-for="index in 30">
 </template>
 
 <script>

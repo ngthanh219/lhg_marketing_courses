@@ -1,10 +1,11 @@
 <template>
     <div class="wrapper">
-        <MenuBanner
+        <!-- <MenuBanner
             :pageName="'Tất cả bài viết'"
-        />
+        /> -->
         <div class="w-content page">
             <div class="wc-box">
+                <div class="title">Tất cả bài viết</div>
 
                 <PostContent
                     ref="postContent"

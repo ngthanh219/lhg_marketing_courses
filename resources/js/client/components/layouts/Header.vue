@@ -16,14 +16,17 @@
                             <router-link to="/trang-chu" @click="redirectPage">Trang chủ</router-link>
                         </li>
                         <li>
-                            <router-link to="/khoa-hoc" @click="redirectPage">Khóa học</router-link>
-                        </li>
-                        <li>
                             <router-link to="/huong-dan-vao-hoc" @click="redirectPage">Hướng Dẫn Vào Học</router-link>
                         </li>
                         <li>
-                            <input type="text" class="search" placeholder="Tìm khóa học">
+                            <router-link to="/khoa-hoc" @click="redirectPage">Khóa học</router-link>
                         </li>
+                        <li>
+                            <router-link to="/bai-viet" @click="redirectPage">Bài viết</router-link>
+                        </li>
+                        <!-- <li>
+                            <input type="text" class="search" placeholder="Tìm khóa học">
+                        </li> -->
                         <li class="toggler-active" v-if="!$store.state.auth.accessToken">
                             <router-link to="/dang-nhap" @click="redirectPage">
                                 <span>Đăng nhập</span>
