@@ -47,7 +47,6 @@
     import CourseDetailVideo from './contents/CourseDetailVideo.vue';
     import CourseDetailSection from './contents/CourseDetailSection.vue';
     import CourseDetailRegister from './contents/CourseDetailRegister.vue';
-    import MenuBanner from '../../commons/banner/MenuBanner.vue';
 
     export default {
         name: 'CourseDetail',

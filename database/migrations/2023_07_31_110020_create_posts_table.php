@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('image')->nullable();
             $table->text('name')->nullable();
             $table->text('slug')->unique()->nullable();
-            $table->text('content')->nullable();
+            $table->longText('content')->nullable();
             $table->tinyInteger('is_show')->default(Constant::IS_SHOW);
             $table->softDeletes();
             $table->timestamps();

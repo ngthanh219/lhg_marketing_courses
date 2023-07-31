@@ -7,15 +7,13 @@
                 </div>
                 <div class="c-info">
                     <div class="theme text-line-3">{{ post.name }}</div>
-                    <div class="detail">
-                        <div class="decription text-line-2">
-                            {{ post.content }}
-                        </div>
+                    <div class="detail" style="flex-direction: row-reverse;">
+                        <a>Đọc tiếp...</a>
                     </div>
                 </div>
             </router-link>
         </div>
-        <div class="card-item" v-else v-for="index in 6">
+        <div class="card-item" v-else>
             <br v-for="index in 16">
         </div>
     </div>
@@ -34,7 +32,7 @@ export default {
             query: {
                 limit: 15,
                 page: 1,
-                id_sort: "",
+                id_sort: "desc",
                 name: ""
             },
             formDataError: {
