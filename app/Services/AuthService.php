@@ -52,6 +52,20 @@ class AuthService extends BaseService
         }
     }
 
+    public function logoutAdmin($request)
+    {
+        try {
+            $user = auth()->guard('api')->user();
+            DB::table('oauth_access_tokens')->where('user_id', $user->id)->delete();
+
+            return $this->responseSuccess();
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
     public function loginClient($request)
     {
         try {

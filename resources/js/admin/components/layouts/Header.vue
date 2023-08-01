@@ -43,8 +43,25 @@
     export default {
         name: 'Header',
         methods: {
-            logout(e) {
+            async logout(e) {
                 e.preventDefault();
+
+                this.$helper.setPageLoading(true);
+                await this.$store.dispatch('logout', {
+                    error: {
+                        message: ''
+                    }
+                })
+                .then(res => {
+                    this.$helper.setAuth({
+                        user: null,
+                        access_token: null
+                    });
+                })
+                .catch(err => {
+                    
+                });
+                this.$helper.setPageLoading(false);
                 
                 this.$router.push({path: '/admin/login' });
             }

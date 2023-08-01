@@ -14,6 +14,7 @@ Route::post('login', [AuthController::class, 'login']);
 Route::group([
     'middleware' => 'admin.auth'
 ], function () {
+    Route::post('logout', [AuthController::class, 'logout']);
     Route::post('upload-file', [VideoController::class, "uploadFile"]);
 
     Route::group([
