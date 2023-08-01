@@ -52,7 +52,7 @@
                                 </div>
                                 <div class="input-group">
                                     <button type="submit" class="btn btn-danger btn-block" v-if="!isRegisterClick">Đăng ký khóa học ngay</button>
-                                    <div class="btn btn-danger btn-block btn-loading disabled" v-else>
+                                    <div class="btn btn-danger btn-block btn-loading disabled" v-else style="width: 145px">
                                         <div class="loading">
                                             <BtnLoading />
                                         </div>
@@ -60,28 +60,28 @@
                                 </div>
                             </form>
                             
-                            <div class="fi-description wc-general-information">
+                            <div class="fi-description wc-general-information" v-if="data">
                                 <div class="gi-card">
                                     <div class="gic-info">
                                         <h3>Thông tin khóa học</h3>
                                         <div class="gic-info-item">
                                             <i class="fa fa-book"></i>
-                                            Tên khóa học: <strong>Tạo kênh youtube chuẩn & thiết kế canva</strong>
+                                            Tên khóa học: <strong>{{ data.course.name }}</strong>
                                         </div>
                                         <div class="gic-info-item">
                                             <i class="fa fa-shopping-cart"></i>
                                             Giá đăng ký: 
-                                            <strong> 1.950.000<sup>đ</sup></strong>
+                                            <strong>{{ data.course.discount != 0 ? data.course.discount_price.toLocaleString() : data.course.price.toLocaleString() }}<sup>đ</sup></strong>
                                         </div>
                                         <div class="gic-info-item">
                                             <i class="fa fa-clock"></i>
                                             Thời lượng: 
-                                            <strong>13 phút</strong>
+                                            <strong>{{ this.$helper.formatDuration(data.total_video_duration) }}</strong>
                                         </div>
                                         <div class="gic-info-item">
                                             <i class="fa fa-play"></i>
                                             Giáo trình: 
-                                            <strong>3 bài giảng</strong>
+                                            <strong>{{ data.total_course_section }} bài giảng</strong>
                                         </div>
                                         <br>
                                     </div>
@@ -119,6 +119,7 @@
                     description: '',
                     billing_image_url: ''
                 },
+                data: null
             }
         },
         mounted() {
@@ -127,8 +128,23 @@
             }
 
             this.formData.course_slug = this.$route.params.courseSlug;
+            this.getCourseData();
         },
         methods: {
+            async getCourseData() {
+                this.$helper.setPageLoading(true);
+                await this.$store.dispatch("getCourseDetail", {
+                    slug: this.$route.params.courseSlug,
+                    error: this.formDataError
+                })
+                .then(res => {
+                    this.data = res.data;
+                })
+                .catch(err => {
+                });
+                this.$helper.setPageLoading(false);
+            },
+
             async register(e) {
                 e.preventDefault();
 
