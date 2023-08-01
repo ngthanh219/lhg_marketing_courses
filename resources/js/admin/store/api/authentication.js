@@ -13,6 +13,19 @@ let authentication = {
             })
         });
     },
+
+    logout({state}, form) {
+        return new Promise((resolve, reject) => {
+            axios.post(actionParams.API + 'logout')
+            .then((res) => {
+                actionParams.resetFormError(form.error);
+                resolve(res.data);
+            })
+            .catch((err) => {
+                reject(actionParams.getError(err, form.error));
+            })
+        });
+    },
 }
 
 export default authentication;

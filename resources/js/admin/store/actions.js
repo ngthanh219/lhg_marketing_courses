@@ -8,6 +8,7 @@ import post from './api/post.js';
 
 let actions = {
     login: authentication.login,
+    logout: authentication.logout,
 
     getUsers: user.getUsers,
     createUser: user.createUser,
