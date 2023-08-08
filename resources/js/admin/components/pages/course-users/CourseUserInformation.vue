@@ -41,7 +41,7 @@
                                             </a>
                                             <input type="text" class="form-control form-control-border" v-model="courseName" disabled>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group" v-if="courseUserData != null">
                                             <label>Mô tả</label>
                                             <textarea class="form-control" v-model="courseUserData.description" disabled></textarea>
                                         </div>

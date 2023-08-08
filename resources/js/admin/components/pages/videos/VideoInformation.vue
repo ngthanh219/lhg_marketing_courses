@@ -50,12 +50,27 @@
                                             <label for="exampleInputFile">Video</label>
                                             <div class="input-group">
                                                 <div class="custom-file">
-                                                    <input type="file" class="custom-file-input" id="exampleInputFile" @change="handleSource($event)">
+                                                    <input type="file" class="custom-file-input" id="exampleInputFile" @change="handleSource">
                                                     <label class="custom-file-label" for="exampleInputFile">Chọn file</label>
                                                 </div>
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">Tải lên</span>
                                                 </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" v-if="videoData != null">
+                                            <div class="form-preview-image">
+                                                {{ videoData.source_url != null || previewVideo != null  ? '' : 'Chưa có' }}
+
+                                                <video ref="video" class="img-fluid mb-3" v-if="previewVideo != null" :src="previewVideo" preload="auto" controls />
+                                                <video ref="video" class="img-fluid mb-3" v-if="previewVideo == null && videoData.source_url" :src="videoData.source_url" preload="auto" controls />
+                                            </div>
+                                        </div>
+                                        <div class="form-group" v-if="videoData == null">
+                                            <div class="form-preview-image">
+                                                {{  previewVideo ? '' : 'Chưa có' }}
+
+                                                <video ref="video" class="img-fluid mb-3" v-if="previewVideo !== null" :src="previewVideo" preload="auto" controls />
                                             </div>
                                         </div>
                                     </div>
@@ -118,6 +133,7 @@
                     duration: 0,
                     is_show: 0
                 },
+                previewVideo: null,
                 isModalList: false,
                 courseSectionName: null
             }
@@ -146,9 +162,15 @@
                 e.preventDefault();
 
                 this.isTransitionActive = false;
+                this.pauseVideo();
                 setTimeout(() => {
                     this.closeForm(e);
                 }, 400);
+            },
+            
+            pauseVideo() {
+                this.$refs.video.pause();
+                this.$refs.video.src = '';
             },
 
             async handleData(e) {
@@ -191,6 +213,7 @@
                 })
                 .then(res => {
                     transaction = true;
+                    this.pauseVideo();
                     this.$helper.setNotification(1, 'Tạo mới thành công');
                 })
                 .catch(err => {
@@ -207,8 +230,10 @@
                     error: this.formDataError
                 })
                 .then(res => {
+                    this.pauseVideo();
                     this.formData.is_change_video = 0;
                     this.videoData.source_url = res.data.source_url;
+                    this.previewVideo = res.data.source_url;
                     this.$helper.mergeArrayData(this.formData, this.videoData);
 
                     this.$helper.setNotification(1, 'Cập nhật thành công');
@@ -237,6 +262,10 @@
             handleSource(e) {
                 var self = this;
                 const reader = new FileReader();
+
+                reader.onload = (load) => {
+                    self.previewVideo = load.target.result;
+                }
 
                 reader.readAsDataURL(e.target.files[0]);
                 self.formData.source = e.target.files[0];

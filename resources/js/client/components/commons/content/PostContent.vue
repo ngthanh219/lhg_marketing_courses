@@ -13,7 +13,7 @@
                 </div>
             </router-link>
         </div>
-        <div class="card-item" v-else>
+        <div class="card-item" v-else v-for="index in 6">
             <br v-for="index in 16">
         </div>
     </div>
