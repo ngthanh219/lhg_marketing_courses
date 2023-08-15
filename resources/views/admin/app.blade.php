@@ -8,7 +8,7 @@
     @include('admin.link')
 
     @if ($env === 'production')
-	    <link rel="stylesheet" href="{{ asset('sources/admin/app.css') }}">
+	    <link rel="stylesheet" href="{{ asset('sources/admin/app.css?' . strtotime("now")) }}">
     @endif
 </head>
 <body class="sidebar-mini control-sidebar-slide-open layout-navbar-fixed layout-fixed">
