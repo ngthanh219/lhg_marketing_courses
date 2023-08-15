@@ -23,7 +23,7 @@ class ClientAuthentication
     {
         try {
             if (auth()->guard('api')->check()) {
-                if (auth()->guard('api')->user()->role_id === Constant::ROLE_CLIENT) {
+                if (auth()->guard('api')->user()->role_id == Constant::ROLE_CLIENT) {
                     return $next($request);
                 }
             }

@@ -21,7 +21,7 @@ class AdminAuthentication
     {
         try {
             if (auth()->guard('api')->check()) {
-                if (auth()->guard('api')->user()->role_id === Constant::ROLE_ADMIN) {
+                if (auth()->guard('api')->user()->role_id == Constant::ROLE_ADMIN) {
                     return $next($request);
                 }
             }
