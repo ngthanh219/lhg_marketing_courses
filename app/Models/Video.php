@@ -40,7 +40,8 @@ class Video extends Model
 
     public function getSourceUrlAttribute()
     {  
-        if ($this->source != null) {
+        return "bc.vn";
+        if ($this->source) {
             $awsS3Service = new AWSS3Service();
             $sourceUrl = $awsS3Service->getFile($this->source, Constant::EXPIRE_VIDEO);
 
