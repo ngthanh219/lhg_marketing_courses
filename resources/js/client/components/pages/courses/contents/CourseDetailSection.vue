@@ -75,14 +75,13 @@
                 }
                 
                 console.log('source_url: ' + video.source_url);
-                console.log('source_url: ' + video.source_url != null);
-
                 console.log('isVideoActiveVal: ' + isVideoActiveVal);
                 console.log('isVideoActiveVal: ' + this.isVideoActiveVal);
-                console.log('isVideoActiveVal: ' + this.isVideoActiveVal != isVideoActiveVal);
-                console.log(video.source_url !== null && this.isVideoActiveVal !== isVideoActiveVal);
 
-                if ((video.source_url != null) == true && (this.isVideoActiveVal != isVideoActiveVal) == true) {
+                console.log('condition 1: ' + video.source_url != null);
+                console.log('condition 2: ' + this.isVideoActiveVal != isVideoActiveVal);
+
+                if (video.source_url != null && this.isVideoActiveVal != isVideoActiveVal) {
                     console.log('correct');
                     this.$helper.setPageLoading(true);
                     await this.$store.dispatch("getDV", {
