@@ -82,7 +82,7 @@
                 console.log('condition 2: ' + this.isVideoActiveVal != isVideoActiveVal);
                 console.log('this ???');
 
-                if ((video.source_url != null) && (this.isVideoActiveVal != isVideoActiveVal)) {
+                if (video.source_url && this.isVideoActiveVal !== isVideoActiveVal) {
                     console.log('correct');
                     this.$helper.setPageLoading(true);
                     await this.$store.dispatch("getDV", {
