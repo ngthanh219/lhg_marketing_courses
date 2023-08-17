@@ -44,7 +44,7 @@ class Video extends Model
             $awsS3Service = new AWSS3Service();
             $sourceUrl = $awsS3Service->getFile($this->source, Constant::EXPIRE_VIDEO);
 
-            if (auth()->guard('api')->user()->role_id == Constant::ROLE_ADMIN) {
+            if (auth()->guard('api')->user()->role_id === Constant::ROLE_ADMIN) {
                 return $sourceUrl;
             } else {
                 $query = parse_url($sourceUrl, PHP_URL_QUERY);
