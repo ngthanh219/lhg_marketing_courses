@@ -73,6 +73,9 @@
                 if (this.$store.state.auth.accessToken == null) {
                     this.$helper.redirectPage('dang-nhap');
                 }
+
+                console.log(video);
+                console.log(isVideoActiveVal);
                 
                 if (video.source_url != null && this.isVideoActiveVal != isVideoActiveVal) {
                     this.$helper.setPageLoading(true);
