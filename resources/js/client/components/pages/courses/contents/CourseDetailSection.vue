@@ -78,8 +78,10 @@
                 console.log('isVideoActiveVal: ' + isVideoActiveVal);
                 console.log('isVideoActiveVal: ' + this.isVideoActiveVal);
 
-                console.log('condition 1: ' + video.source_url != null);
-                console.log('condition 2: ' + this.isVideoActiveVal != isVideoActiveVal);
+                console.log('condition 1: ');
+                console.log(video.source_url);
+                console.log('condition 2: ');
+                console.log(this.isVideoActiveVal !== isVideoActiveVal);
                 console.log('this ???');
 
                 if (video.source_url && this.isVideoActiveVal !== isVideoActiveVal) {
