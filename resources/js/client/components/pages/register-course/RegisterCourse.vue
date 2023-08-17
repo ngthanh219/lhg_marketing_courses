@@ -71,7 +71,7 @@
                                         <div class="gic-info-item">
                                             <i class="fa fa-shopping-cart"></i>
                                             Giá đăng ký: 
-                                            <strong>{{ data.course.discount != 0 ? data.course.discount_price.toLocaleString() : data.course.price.toLocaleString() }}<sup>đ</sup></strong>
+                                            <strong>{{ data.course.discount != 0 ? parseInt(data.course.discount_price).toLocaleString() : parseInt(data.course.price).toLocaleString() }}<sup>đ</sup></strong>
                                         </div>
                                         <div class="gic-info-item">
                                             <i class="fa fa-clock"></i>

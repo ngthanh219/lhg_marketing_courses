@@ -4,7 +4,7 @@
             <router-link :to="'/' + data.slug">
                 <div class="c-image">
                     <img :src="data.image_url" alt="">
-                    <label class="percent-off-label">
+                    <label class="percent-off-label" v-if="data.discount > 0">
                         <strong>-{{ data.discount }}% </strong>
                     </label>
                 </div>
@@ -22,12 +22,12 @@
                         <div class="price">
                             <span class="old" v-if="data.discount != 0">
                                 <del>
-                                    {{ data.price.toLocaleString() }}<sup>đ</sup>
+                                    {{ parseInt(data.price).toLocaleString() }}<sup>đ</sup>
                                 </del>
                             </span>
                             <span class="discount">
                                 <del>
-                                    {{ data.discount != 0 ? data.discount_price.toLocaleString() : data.price.toLocaleString() }}<sup>đ</sup>
+                                    {{ data.discount != 0 ? parseInt(data.discount_price).toLocaleString() : parseInt(data.price).toLocaleString() }}<sup>đ</sup>
                                 </del>
                             </span>
                         </div>
