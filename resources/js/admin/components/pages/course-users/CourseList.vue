@@ -69,14 +69,14 @@
                                     <tbody class="table-data" v-if="dataList">
                                         <tr v-for="data, index in dataList.list">
                                             <td>
-                                                <a class="btn btn-sm btn-danger" v-if="data.id === courseId">Đang chọn</a>
+                                                <a class="btn btn-sm btn-danger" v-if="data.id == courseId">Đang chọn</a>
                                                 <a class="btn btn-sm btn-outline-primary" @click="selectData($event, data.id, data.name)" v-else>Chọn</a>
                                             </td>
                                             <td>{{ data.id }}</td>
                                             <td>{{ data.name }}</td>
-                                            <td>{{ data.price.toLocaleString() + 'đ' }}</td>
+                                            <td>{{ parseInt(data.price).toLocaleString() + 'đ' }}</td>
                                             <td>{{ data.discount }}%</td>
-                                            <td>{{ data.discount_price.toLocaleString() + 'đ' }}</td>
+                                            <td>{{ parseInt(data.discount_price).toLocaleString() + 'đ' }}</td>
                                             <td>
                                                 <span 
                                                     class="badge" 

@@ -8,13 +8,13 @@
                 <div class="price-box-theme">
                     <div class="price">
                         <strong>
-                            {{ courseDetailData.course.discount != 0 ? courseDetailData.course.discount_price.toLocaleString() : courseDetailData.course.price.toLocaleString() }}<sup>đ</sup>
+                            {{ courseDetailData.course.discount > 0 ? parseInt(courseDetailData.course.discount_price).toLocaleString() : parseInt(courseDetailData.course.price).toLocaleString() }}<sup>đ</sup>
                         </strong>
-                        <del v-if="courseDetailData.course.discount != 0">
-                            {{ courseDetailData.course.price.toLocaleString() }}<sup>đ</sup>
+                        <del v-if="courseDetailData.course.discount > 0">
+                            {{ parseInt(courseDetailData.course.price).toLocaleString() }}<sup>đ</sup>
                         </del>
                     </div>
-                    <span class="discount-price">-{{ courseDetailData.course.discount }}%</span>
+                    <span class="discount-price" v-if="courseDetailData.course.discount > 0">-{{ courseDetailData.course.discount }}%</span>
                 </div>
                 <div class="btn-action">
                     <router-link :to="this.courseDetailData.course.slug + '/dang-ky'" class="btn btn-danger" v-if="courseDetailData.course.my_course == 2">Đăng ký học</router-link>
