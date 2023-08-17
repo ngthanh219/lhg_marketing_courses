@@ -40,11 +40,10 @@ class Video extends Model
 
     public function getSourceUrlAttribute()
     {  
-        if ($this->source) {
+        if ($this->source != null) {
             $awsS3Service = new AWSS3Service();
             $sourceUrl = $awsS3Service->getFile($this->source, Constant::EXPIRE_VIDEO);
 
-            return auth()->guard('api')->user()->role_id;
             if (auth()->guard('api')->user()->role_id == Constant::ROLE_ADMIN) {
                 return $sourceUrl;
             } else {
