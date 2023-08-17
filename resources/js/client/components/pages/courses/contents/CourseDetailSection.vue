@@ -74,11 +74,13 @@
                     this.$helper.redirectPage('dang-nhap');
                 }
                 
-                console.log(video.source_url);
-                console.log(isVideoActiveVal);
-                console.log(this.isVideoActiveVal);
-                console.log(video.source_url !== null);
-                console.log(this.isVideoActiveVal != isVideoActiveVal);
+                console.log('source_url: ' + video.source_url);
+                console.log('source_url: ' + video.source_url != null);
+
+                console.log('isVideoActiveVal: ' + isVideoActiveVal);
+                console.log('isVideoActiveVal: ' + this.isVideoActiveVal);
+                console.log('isVideoActiveVal: ' + this.isVideoActiveVal != isVideoActiveVal);
+
                 if (video.source_url != null && this.isVideoActiveVal != isVideoActiveVal) {
                     console.log('correct');
                     this.$helper.setPageLoading(true);
