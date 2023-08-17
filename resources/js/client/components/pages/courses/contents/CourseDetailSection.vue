@@ -80,6 +80,7 @@
                 console.log('isVideoActiveVal: ' + isVideoActiveVal);
                 console.log('isVideoActiveVal: ' + this.isVideoActiveVal);
                 console.log('isVideoActiveVal: ' + this.isVideoActiveVal != isVideoActiveVal);
+                console.log(video.source_url != null && this.isVideoActiveVal != isVideoActiveVal);
 
                 if (video.source_url != null && this.isVideoActiveVal != isVideoActiveVal) {
                     console.log('correct');
