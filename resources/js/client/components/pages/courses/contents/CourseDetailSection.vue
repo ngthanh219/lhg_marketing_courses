@@ -78,6 +78,7 @@
                 console.log(isVideoActiveVal);
                 
                 if (video.source_url != null && this.isVideoActiveVal != isVideoActiveVal) {
+                    console.log('correct');
                     this.$helper.setPageLoading(true);
                     await this.$store.dispatch("getDV", {
                         request: this.$helper.appendFormData({
@@ -94,6 +95,8 @@
                     .catch(err => {
                     });
                     this.$helper.setPageLoading(false);
+                } else {
+                    console.log('error');
                 }
             },
 
