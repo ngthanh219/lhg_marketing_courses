@@ -82,25 +82,24 @@
                 console.log('isVideoActiveVal: ' + this.isVideoActiveVal != isVideoActiveVal);
                 console.log(video.source_url !== null && this.isVideoActiveVal !== isVideoActiveVal);
 
-                if (video.source_url != null) {
-                    if (this.isVideoActiveVal != isVideoActiveVal) {
-                        this.$helper.setPageLoading(true);
-                        await this.$store.dispatch("getDV", {
-                            request: this.$helper.appendFormData({
-                                id: video.id
-                            }),
-                            error: {
-                                message: ''
-                            }
-                        })
-                        .then(res => {
-                            this.deVideo(video.source_url, res.data);
-                            this.isVideoActiveVal = isVideoActiveVal;
-                        })
-                        .catch(err => {
-                        });
-                        this.$helper.setPageLoading(false);
-                    }
+                if ((video.source_url != null) == true && (this.isVideoActiveVal != isVideoActiveVal) == true) {
+                    console.log('correct');
+                    this.$helper.setPageLoading(true);
+                    await this.$store.dispatch("getDV", {
+                        request: this.$helper.appendFormData({
+                            id: video.id
+                        }),
+                        error: {
+                            message: ''
+                        }
+                    })
+                    .then(res => {
+                        this.deVideo(video.source_url, res.data);
+                        this.isVideoActiveVal = isVideoActiveVal;
+                    })
+                    .catch(err => {
+                    });
+                    this.$helper.setPageLoading(false);
                 }
             },
 
