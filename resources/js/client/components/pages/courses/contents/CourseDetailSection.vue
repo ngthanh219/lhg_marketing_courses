@@ -74,17 +74,17 @@
                     this.$helper.redirectPage('dang-nhap');
                 }
                 
-                console.log('source_url: ' + video.source_url);
-                console.log('isVideoActiveVal: ' + isVideoActiveVal);
-                console.log('isVideoActiveVal: ' + this.isVideoActiveVal);
+                // console.log('source_url: ' + video.source_url);
+                // console.log('isVideoActiveVal: ' + isVideoActiveVal);
+                // console.log('isVideoActiveVal: ' + this.isVideoActiveVal);
 
-                console.log('condition 1: ');
-                console.log(video.source_url);
-                console.log('condition 2: ');
-                console.log(this.isVideoActiveVal !== isVideoActiveVal);
-                console.log('this ???');
+                // console.log('condition 1: ');
+                // console.log(video.source_url);
+                // console.log('condition 2: ');
+                // console.log(this.isVideoActiveVal !== isVideoActiveVal);
+                // console.log('this ???');
 
-                if (video.source_url && this.isVideoActiveVal !== isVideoActiveVal) {
+                if (video.source_url != null && this.isVideoActiveVal != isVideoActiveVal) {
                     console.log('correct');
                     this.$helper.setPageLoading(true);
                     await this.$store.dispatch("getDV", {
