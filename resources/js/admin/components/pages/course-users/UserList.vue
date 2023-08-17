@@ -126,6 +126,7 @@
                     is_show: 2,
                     is_deleted: 0,
                     is_login: 2,
+                    role_id: 1
                 },
                 formDataError: {
                     message: ""
