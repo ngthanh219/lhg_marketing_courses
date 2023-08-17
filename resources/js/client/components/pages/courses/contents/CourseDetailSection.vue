@@ -74,6 +74,10 @@
                     this.$helper.redirectPage('dang-nhap');
                 }
                 
+                console.log(video.source_url);
+                console.log(isVideoActiveVal);
+                console.log(this.isVideoActiveVal);
+                console.log(this.isVideoActiveVal !== isVideoActiveVal);
                 if (video.source_url !== null && this.isVideoActiveVal !== isVideoActiveVal) {
                     console.log('correct');
                     this.$helper.setPageLoading(true);
