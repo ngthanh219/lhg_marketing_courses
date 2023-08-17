@@ -253,7 +253,7 @@ class CourseService extends BaseService
                                 'duration'
                             ];
 
-                            if ($course->my_course === Constant::COURSE_USER_USING) {
+                            if ($course->my_course == Constant::COURSE_USER_USING) {
                                 $videoField[] = 'source';
                             }
 
