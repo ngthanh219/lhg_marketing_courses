@@ -86,9 +86,9 @@
                                             <td>{{ data.id }}</td>
                                             <td>{{ data.user_email }}</td>
                                             <td>{{ data.course_name }}</td>
-                                            <td>{{ data.price.toLocaleString() + 'đ' }}</td>
+                                            <td>{{ parseInt(data.price).toLocaleString() + 'đ' }}</td>
                                             <td>{{ data.discount }}%</td>
-                                            <td>{{ data.discount_price.toLocaleString() + 'đ' }}</td>
+                                            <td>{{ parseInt(data.discount_price).toLocaleString() + 'đ' }}</td>
                                             <td>
                                                 <span 
                                                     class="badge" 

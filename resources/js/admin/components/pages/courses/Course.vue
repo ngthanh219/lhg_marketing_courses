@@ -89,9 +89,9 @@
                                                     {{ data.course_sections_count + ' phần' }}
                                                 </router-link>
                                             </td>
-                                            <td>{{ data.price.toLocaleString() + 'đ' }}</td>
+                                            <td>{{ parseInt(data.price).toLocaleString() + 'đ' }}</td>
                                             <td>{{ data.discount }}%</td>
-                                            <td>{{ data.discount_price.toLocaleString() + 'đ' }}</td>
+                                            <td>{{ parseInt(data.discount_price).toLocaleString() + 'đ' }}</td>
                                             <td>
                                                 <span 
                                                     class="badge" 

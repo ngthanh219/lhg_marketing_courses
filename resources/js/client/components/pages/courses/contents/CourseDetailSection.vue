@@ -22,7 +22,7 @@
                         class="sc-item c-flex cursor-pointer"
                         v-for="video, videoIndex in courseSection.videos"
                         v-bind:key="videoIndex"
-                        @click="openVideo($event, video, (`${courseSectionIndex}n${videoIndex}`))"
+                        @click="openVideo($event, video, `${courseSectionIndex}n${videoIndex}`)"
                         v-bind:class="{'active': (`${courseSectionIndex}n${videoIndex}`) == isVideoActiveVal }"
                     >
                         <div class="name">
