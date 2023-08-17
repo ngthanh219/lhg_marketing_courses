@@ -23,7 +23,7 @@ class Video extends Model
     ];
 
     protected $hidden = [
-        // 'source',
+        'source',
         'deleted_at',
         'updated_at'
     ];
@@ -40,7 +40,7 @@ class Video extends Model
 
     public function getSourceUrlAttribute()
     {  
-        if (!empty($this->source)) {
+        if ($this->source) {
             $awsS3Service = new AWSS3Service();
             $sourceUrl = $awsS3Service->getFile($this->source, Constant::EXPIRE_VIDEO);
 
