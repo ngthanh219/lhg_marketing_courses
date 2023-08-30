@@ -56,8 +56,8 @@
             return {
                 isLoginClick: false,
                 formData: {
-                    email: 'admin1@gmail.com',
-                    password: '123456'
+                    email: '',
+                    password: ''
                 },
                 formDataError: {
                     message: '',
