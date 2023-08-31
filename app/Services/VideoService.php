@@ -3,11 +3,13 @@
 namespace App\Services;
 
 use App\Helpers\GeneralHelper;
+use App\Jobs\UploadVideoJob;
 use App\Libraries\Constant;
 use App\Libraries\ErrorCode;
 use App\Models\Course;
 use App\Models\CourseSection;
 use App\Models\Video;
+use Illuminate\Support\Facades\DB;
 
 class VideoService extends BaseService
 {
@@ -88,10 +90,13 @@ class VideoService extends BaseService
 
     public function create($request)
     {
+        DB::beginTransaction();
+
         try {
             $courseSection = $this->courseSection->find($request->course_section_id);
 
             if (!$courseSection) {
+                DB::rollBack();
                 return $this->responseError(__('messages.course_section.not_exist'), 400, ErrorCode::PARAM_INVALID);
             }
 
@@ -103,16 +108,23 @@ class VideoService extends BaseService
                 'is_show' => (int) $request->is_show
             ];
 
+            // if (isset($request->source)) {
+            //     $request->file = $request->source;
+            //     $source = $this->awsS3Service->uploadFile($request, Constant::VIDEO_FOLDER);
+            //     $newData['source'] = $source;
+            // }
+
+            return response()->json(file_get_contents($request->source));
+            $video = $this->video->create($newData);
             if (isset($request->source)) {
-                $request->file = $request->source;
-                $source = $this->awsS3Service->uploadFile($request, Constant::VIDEO_FOLDER);
-                $newData['source'] = $source;
+                UploadVideoJob::dispatch(file_get_contents($request->source), $request->source->getClientOriginalExtension(), $video->id);
             }
 
-            $video = $this->video->create($newData);
+            DB::commit();
 
             return $this->responseSuccess($video);
         } catch (\Exception $ex) {
+            DB::rollBack();
             $this->awsS3Service->removeFile($source);
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 

@@ -111,7 +111,7 @@
                                                             <i class="fas fa-eye"></i>
                                                             <div class="icon-wrap">Xem thông tin</div>
                                                         </a>
-                                                        <a class="action-detail-btn" @click="deleteData($event, data.id)">
+                                                        <a class="action-detail-btn" v-bind:class="{ 'disabled' : $store.state.auth.user.id == data.id }" @click="deleteData($event, data.id)">
                                                             <i 
                                                                 class="fas"
                                                                 v-bind:class="[
@@ -250,27 +250,29 @@
             async deleteData(e, id) {
                 e.preventDefault();
 
-                var alertMessage = 'Bạn muốn xóa tài khoản này?';
-                var successMessage = 'Xóa thành công';
-                if (this.query.is_deleted == 1) {
-                    alertMessage = 'Bạn muốn khôi phục tài khoản này?';
-                    successMessage = 'Khôi phục thành công';
-                }
+                if (this.$store.state.auth.user.id != id) {
+                    var alertMessage = 'Bạn muốn xóa tài khoản này?';
+                    var successMessage = 'Xóa thành công';
+                    if (this.query.is_deleted == 1) {
+                        alertMessage = 'Bạn muốn khôi phục tài khoản này?';
+                        successMessage = 'Khôi phục thành công';
+                    }
 
-                if (confirm(alertMessage)) {
-                    this.$helper.setPageLoading(true);
-                    await this.$store.dispatch("deleteUser", {
-                        id: id,
-                        error: this.formDataError
-                    })
-                    .then(res => {
-                        this.$helper.setNotification(1, successMessage);
-                    })
-                    .catch(err => {
+                    if (confirm(alertMessage)) {
+                        this.$helper.setPageLoading(true);
+                        await this.$store.dispatch("deleteUser", {
+                            id: id,
+                            error: this.formDataError
+                        })
+                        .then(res => {
+                            this.$helper.setNotification(1, successMessage);
+                        })
+                        .catch(err => {
 
-                    });
+                        });
 
-                    this.getUserData();
+                        this.getUserData();
+                    }
                 }
             }
         }

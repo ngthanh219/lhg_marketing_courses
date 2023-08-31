@@ -17,7 +17,7 @@ class CreateCourseRequest extends FormRequest
             'name' => 'required|max:255',
             'slogan' => 'max:255',
             'introduction' => 'max:1000',
-            'image_url' => 'file|mimes:jpg,jpeg,png',
+            'image_url' => 'file|mimes:jpg,jpeg,png|max:600',
             'price' => 'required|integer|min:0',
             'discount' => 'required|integer|min:0|between:0,100',
             'is_show' => 'required|integer|min:0|max:1'

@@ -15,7 +15,7 @@ class RegisterCourseRequest extends FormRequest
     {
         return [
             'description' => 'max:255',
-            'billing_image_url' => 'file|mimes:jpg,jpeg,png'
+            'billing_image_url' => 'file|mimes:jpg,jpeg,png|max:600'
         ];
     }
 }
