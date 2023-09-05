@@ -214,7 +214,7 @@
                 .then(res => {
                     transaction = true;
                     this.pauseVideo();
-                    this.$helper.setNotification(1, 'Tạo mới thành công');
+                    this.$helper.setNotification(1, 'Thông tin đã được tạo, video sẽ được tải lên sau ít phút');
                 })
                 .catch(err => {
 
@@ -236,7 +236,7 @@
                     this.previewVideo = res.data.source_url;
                     this.$helper.mergeArrayData(this.formData, this.videoData);
 
-                    this.$helper.setNotification(1, 'Cập nhật thành công');
+                    this.$helper.setNotification(1, 'Thông tin đã được cập nhật, video sẽ được tải lên sau ít phút');
                 })
                 .catch(err => {
 

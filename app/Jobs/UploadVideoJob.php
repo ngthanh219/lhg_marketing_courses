@@ -2,32 +2,34 @@
 
 namespace App\Jobs;
 
-use App\Libraries\Constant;
+use App\Helpers\GeneralHelper;
 use App\Models\Video;
+use App\Services\AWSS3Service;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
 class UploadVideoJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $file;
-    public $extension;
+    public $sourceUrl;
     public $videoId;
+    public $oldSourceUrl;
 
     /**
      * Create a new job instance.
      */
-    public function __construct($file, $extension, $videoId)
+    public function __construct($sourceUrl, $videoId, $oldSourceUrl = null)
     {
-        $this->file = $file;
-        $this->extension = $extension;
+        $this->sourceUrl = $sourceUrl;
         $this->videoId = $videoId;
+        $this->oldSourceUrl = $oldSourceUrl;
     }
 
     /**
@@ -35,12 +37,51 @@ class UploadVideoJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $fileName = time() . '.' . $this->extension;
-        $filePath = Constant::VIDEO_FOLDER . $fileName;
-        Storage::disk('s3')->put($filePath, $this->file);
+        GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Video is uploading', [
+            'source' => $this->sourceUrl
+        ], true);
 
-        Video::find($this->videoId)->update([
-            'source' => $filePath
-        ]);
+        try {
+            $video = Video::find($this->videoId);
+            $file = Storage::disk('public')->get($this->sourceUrl);
+            Storage::disk('s3')->put($this->sourceUrl, $file);
+            Storage::disk('public')->delete($this->sourceUrl);
+
+            if ($this->oldSourceUrl) {
+                GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Old video is deleting', [
+                    'source' => $this->oldSourceUrl
+                ], true);
+
+                $video->update([
+                    'source' => $this->sourceUrl
+                ]);
+
+                $expiration = now()->addMinutes(5); // Thời hạn của pre-signed URL (ví dụ: 5 phút)
+                $deleteUrl = Storage::disk('s3')->temporaryUrl($this->oldSourceUrl, $expiration, ['method' => 'DELETE']);
+                Http::delete($deleteUrl);
+                // $awsS3Service = new AWSS3Service();
+                // $awsS3Service->removeFile($this->oldSourceUrl);
+
+                GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Old video is deleted', [
+                    'source' => $this->oldSourceUrl
+                ], true);
+            }
+
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Video is uploaded', [
+                'source' => $this->sourceUrl
+            ], [], true);
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+            Storage::disk('public')->delete($this->sourceUrl);
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Video is deleted', [
+                'source' => $this->sourceUrl
+            ], [], true);
+
+            if (!$this->oldSourceUrl) {
+                $video->update([
+                    'source' => null
+                ]);
+            }
+        }
     }
 }

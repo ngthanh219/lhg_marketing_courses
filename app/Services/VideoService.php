@@ -10,6 +10,8 @@ use App\Models\Course;
 use App\Models\CourseSection;
 use App\Models\Video;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 class VideoService extends BaseService
 {
@@ -91,33 +93,32 @@ class VideoService extends BaseService
     public function create($request)
     {
         DB::beginTransaction();
-
         try {
             $courseSection = $this->courseSection->find($request->course_section_id);
-
             if (!$courseSection) {
                 DB::rollBack();
                 return $this->responseError(__('messages.course_section.not_exist'), 400, ErrorCode::PARAM_INVALID);
             }
 
-            $source = null;
+            $sourceUrl = null;
             $newData = [
                 'course_section_id' => (int) $request->course_section_id,
                 'name' => $request->name,
                 'duration' => (int) $request->duration,
-                'is_show' => (int) $request->is_show
+                'is_show' => (int) $request->is_show,
+                'source' => $sourceUrl
             ];
 
-            // if (isset($request->source)) {
-            //     $request->file = $request->source;
-            //     $source = $this->awsS3Service->uploadFile($request, Constant::VIDEO_FOLDER);
-            //     $newData['source'] = $source;
-            // }
-
-            return response()->json(file_get_contents($request->source));
-            $video = $this->video->create($newData);
             if (isset($request->source)) {
-                UploadVideoJob::dispatch(file_get_contents($request->source), $request->source->getClientOriginalExtension(), $video->id);
+                $sourceUrl = Constant::VIDEO_FOLDER . time() . '.' . $request->source->getClientOriginalExtension();
+                $newData['source'] = $sourceUrl;
+
+                Storage::disk('public')->put($sourceUrl, file_get_contents($request->source));
+                $video = $this->video->create($newData);
+
+                UploadVideoJob::dispatch($sourceUrl, $video->id);
+            } else {
+                $video = $this->video->create($newData);
             }
 
             DB::commit();
@@ -125,7 +126,6 @@ class VideoService extends BaseService
             return $this->responseSuccess($video);
         } catch (\Exception $ex) {
             DB::rollBack();
-            $this->awsS3Service->removeFile($source);
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 
             return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
@@ -134,16 +134,29 @@ class VideoService extends BaseService
 
     public function update($request, $id)
     {
+        $url = 'images/1690558063.jpg';
+        $check = Storage::disk('s3')->exists($url);
+
+        if ($check) {
+            $delete = Storage::disk('s3')->delete($url);
+            
+            return response()->json($delete);
+        }
+
+        return response()->json(Storage::disk('s3')->exists($url));
+
+
+        DB::beginTransaction();
         try {
             $video = $this->video->find($id);
-
             if (!$video) {
+                DB::rollBack();
                 return $this->responseError(__('messages.video.not_exist'), 400, ErrorCode::PARAM_INVALID);
             }
 
             $courseSection = $this->courseSection->find($request->course_section_id);
-
             if (!$courseSection) {
+                DB::rollBack();
                 return $this->responseError(__('messages.course_section.not_exist'), 400, ErrorCode::PARAM_INVALID);
             }
 
@@ -156,16 +169,27 @@ class VideoService extends BaseService
             ];
 
             if ($request->is_change_video === "true") {
-                $request->file = $request->source;
-                $source = $this->awsS3Service->uploadFile($request, Constant::VIDEO_FOLDER);
-                $updatedData['source'] = $source;
-                $this->awsS3Service->removeFile($video->source);
+                // $request->file = $request->source;
+                // $source = $this->awsS3Service->uploadFile($request, Constant::VIDEO_FOLDER);
+                // $updatedData['source'] = $source;
+                // $this->awsS3Service->removeFile($video->source);
+
+                
+                $sourceUrl = Constant::VIDEO_FOLDER . time() . '.' . $request->source->getClientOriginalExtension();
+                $updatedData['source'] = $sourceUrl;
+
+                Storage::disk('public')->put($sourceUrl, file_get_contents($request->source));
+
+                $oldSourceUrl = $video->source;
+                UploadVideoJob::dispatch($sourceUrl, $video->id, $oldSourceUrl);
             }
 
             $video->update($updatedData);
+            DB::commit();
 
             return $this->responseSuccess($video);
         } catch (\Exception $ex) {
+            DB::rollBack();
             $this->awsS3Service->removeFile($source);
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 
