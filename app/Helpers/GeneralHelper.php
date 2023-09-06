@@ -8,7 +8,7 @@ class GeneralHelper
 {
     public static function detachException($functionName, $title, $information = [], $isInfo = false)
     {
-        $error = ([
+        $error = json_encode([
             'function' => $functionName,
             'title' => $title,
             'information' => $information

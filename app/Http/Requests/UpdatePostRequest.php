@@ -16,7 +16,7 @@ class UpdatePostRequest extends FormRequest
         $image = '';
 
         if ($this->input('is_change_image') === "true") {
-            $image = 'required|file|mimes:jpg,jpeg,png';
+            $image = 'required|file|mimes:jpg,jpeg,png|max:600';
         }
 
         return [

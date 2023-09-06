@@ -47,15 +47,18 @@ class AWSS3Service
         if ($filePath != null) {
             if (is_array($filePath)) {
                 foreach ($filePath as $path) {
-                    if (Storage::disk('s3')->exists($path)) {
-                        Storage::disk('s3')->delete($path);
-                    }
+                    $this->delete($path);
                 }
             } else {
-                if (Storage::disk('s3')->exists($filePath)) {
-                    Storage::disk('s3')->delete($filePath);
-                }
+                $this->delete($filePath);
             }
+        }
+    }
+
+    public function delete($path)
+    {
+        if (Storage::disk('s3')->exists($path)) {
+            Storage::disk('s3')->delete($path);
         }
     }
 }
