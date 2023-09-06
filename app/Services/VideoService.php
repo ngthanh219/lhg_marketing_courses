@@ -126,6 +126,9 @@ class VideoService extends BaseService
             return $this->responseSuccess($video);
         } catch (\Exception $ex) {
             DB::rollBack();
+            if ($sourceUrl && Storage::disk('public')->exists($sourceUrl)) {
+                Storage::disk('public')->delete($sourceUrl);
+            }
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 
             return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
@@ -148,7 +151,7 @@ class VideoService extends BaseService
                 return $this->responseError(__('messages.course_section.not_exist'), 400, ErrorCode::PARAM_INVALID);
             }
 
-            $source = null;
+            $sourceUrl = null;
             $updatedData = [
                 'course_section_id' => $request->course_section_id,
                 'name' => $request->name,
@@ -172,7 +175,9 @@ class VideoService extends BaseService
             return $this->responseSuccess($video);
         } catch (\Exception $ex) {
             DB::rollBack();
-            $this->awsS3Service->removeFile($source);
+            if ($sourceUrl && Storage::disk('public')->exists($sourceUrl)) {
+                Storage::disk('public')->delete($sourceUrl);
+            }
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 
             return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
