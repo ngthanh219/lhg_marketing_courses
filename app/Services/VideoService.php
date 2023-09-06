@@ -134,18 +134,6 @@ class VideoService extends BaseService
 
     public function update($request, $id)
     {
-        $url = 'images/1690558063.jpg';
-        $check = Storage::disk('s3')->exists($url);
-
-        if ($check) {
-            $delete = Storage::disk('s3')->delete($url);
-            
-            return response()->json($delete);
-        }
-
-        return response()->json(Storage::disk('s3')->exists($url));
-
-
         DB::beginTransaction();
         try {
             $video = $this->video->find($id);
@@ -169,12 +157,6 @@ class VideoService extends BaseService
             ];
 
             if ($request->is_change_video === "true") {
-                // $request->file = $request->source;
-                // $source = $this->awsS3Service->uploadFile($request, Constant::VIDEO_FOLDER);
-                // $updatedData['source'] = $source;
-                // $this->awsS3Service->removeFile($video->source);
-
-                
                 $sourceUrl = Constant::VIDEO_FOLDER . time() . '.' . $request->source->getClientOriginalExtension();
                 $updatedData['source'] = $sourceUrl;
 

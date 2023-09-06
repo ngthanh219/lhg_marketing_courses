@@ -169,8 +169,10 @@
             },
             
             pauseVideo() {
-                this.$refs.video.pause();
-                this.$refs.video.src = '';
+                if (this.formData.source) {
+                    this.$refs.video.pause();
+                    this.$refs.video.src = '';
+                }
             },
 
             async handleData(e) {

@@ -37,9 +37,9 @@ class UploadVideoJob implements ShouldQueue
      */
     public function handle(): void
     {
-        GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Video is uploading', [
-            'source' => $this->sourceUrl
-        ], true);
+        $isSuccess = false;
+        $awsS3Service = new AWSS3Service();
+        GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Video is uploading', ['source' => $this->sourceUrl], true);
 
         try {
             $video = Video::find($this->videoId);
@@ -48,39 +48,46 @@ class UploadVideoJob implements ShouldQueue
             Storage::disk('public')->delete($this->sourceUrl);
 
             if ($this->oldSourceUrl) {
-                GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Old video is deleting', [
-                    'source' => $this->oldSourceUrl
-                ], true);
-
                 $video->update([
                     'source' => $this->sourceUrl
                 ]);
-
-                $expiration = now()->addMinutes(5); // Thời hạn của pre-signed URL (ví dụ: 5 phút)
-                $deleteUrl = Storage::disk('s3')->temporaryUrl($this->oldSourceUrl, $expiration, ['method' => 'DELETE']);
-                Http::delete($deleteUrl);
-                // $awsS3Service = new AWSS3Service();
-                // $awsS3Service->removeFile($this->oldSourceUrl);
-
-                GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Old video is deleted', [
-                    'source' => $this->oldSourceUrl
-                ], true);
             }
 
-            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Video is uploaded', [
-                'source' => $this->sourceUrl
-            ], [], true);
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Video is uploaded', ['source' => $this->sourceUrl], [], true);
+
+            $isSuccess = true;
         } catch (\Exception $ex) {
+            $isSuccess = false;
+            
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
-            Storage::disk('public')->delete($this->sourceUrl);
-            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Video is deleted', [
-                'source' => $this->sourceUrl
-            ], [], true);
+
+            $awsS3Service->removeFile($this->sourceUrl);
+            if (Storage::disk('public')->exists($this->sourceUrl)) {
+                Storage::disk('public')->delete($this->sourceUrl);
+            }
 
             if (!$this->oldSourceUrl) {
                 $video->update([
                     'source' => null
                 ]);
+            }
+
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Video is deleted', ['source' => $this->sourceUrl], [], true);
+        }
+
+        if ($this->oldSourceUrl && $isSuccess) {
+            try {
+                GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Old video is deleting', ['source' => $this->oldSourceUrl], true);
+        
+                $awsS3Service->removeFile($this->oldSourceUrl);
+        
+                GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Old video is deleted', ['source' => $this->oldSourceUrl], true);
+            } catch (\Exception $ex) {
+                GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+                $awsS3Service->removeFile($this->oldSourceUrl);
+
+                GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Old video is deleted', ['source' => $this->sourceUrl], [], true);
             }
         }
     }
