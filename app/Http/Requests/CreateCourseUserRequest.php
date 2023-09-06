@@ -18,7 +18,7 @@ class CreateCourseUserRequest extends FormRequest
             'course_id' => 'required|integer|min:1',
             'status' => 'required|integer|min:0|max:1',
             'is_show' => 'required|integer|min:0|max:1',
-            'billing_image_url' => 'file|mimes:jpg,jpeg,png'
+            'billing_image_url' => 'file|mimes:jpg,jpeg,png|max:600'
         ];
     }
 }

@@ -16,7 +16,7 @@ class UpdateCourseUserRequest extends FormRequest
         $billingImageUrl = '';
 
         if ($this->input('is_change_billing_image') === "true") {
-            $billingImageUrl = 'required|file|mimes:jpg,jpeg,png';
+            $billingImageUrl = 'required|file|mimes:jpg,jpeg,png|max:600';
         }
 
         return [

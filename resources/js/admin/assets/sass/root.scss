@@ -131,6 +131,12 @@ body {
             }
         }
 
+        .action-detail-btn.disabled {
+            opacity: 0.4;
+            background: #EAEAEA;
+            cursor: not-allowed;
+        }
+
         .action-detail-btn:hover {
             background: #EAEAEA;
         }
