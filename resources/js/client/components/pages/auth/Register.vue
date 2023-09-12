@@ -24,6 +24,12 @@
                         <div class="error text-danger text-bold text-sm" v-if="formDataError.verification_code">{{formDataError.verification_code}}</div>
 
                         <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Họ tên *" name="name" v-model="formData.name">
+                            <span class="fas fa-user"></span>
+                        </div>
+                        <div class="error text-danger text-bold text-sm" v-if="formDataError.name">{{formDataError.name}}</div>
+
+                        <div class="input-group">
                             <input type="text" class="form-control" placeholder="Số điện thoại *" v-model="formData.phone" @keypress="this.$helper.isNumber">
                             <span class="fas fa-phone"></span>
                         </div>
@@ -65,6 +71,7 @@
                 formData: {
                     email: '',
                     password: '',
+                    name: '',
                     phone: '',
                     verification_code: '',
                 },
@@ -72,6 +79,7 @@
                     message: '',
                     email: '',
                     password: '',
+                    name: '',
                     phone: '',
                     verification_code: '',
                 },
