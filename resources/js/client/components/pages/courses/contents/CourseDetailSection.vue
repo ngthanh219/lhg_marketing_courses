@@ -61,7 +61,7 @@
                 var total = 0;
 
                 for (var video in videos) {
-                    total += videos[video].duration;
+                    total += parseInt(videos[video].duration);
                 }
 
                 return total;
