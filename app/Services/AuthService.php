@@ -175,6 +175,7 @@ class AuthService extends BaseService
             }
 
             $user->update([
+                'name' => $request->name,
                 'phone' => $request->phone,
                 'password' => bcrypt($request->password),
                 'verification_code' => null,
