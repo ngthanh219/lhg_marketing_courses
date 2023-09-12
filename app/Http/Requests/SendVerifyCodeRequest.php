@@ -14,7 +14,12 @@ class SendVerifyCodeRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email|max:255'
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                'regex:/^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/'
+            ],
         ];
     }
 }
