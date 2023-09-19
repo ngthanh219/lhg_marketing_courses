@@ -223,22 +223,24 @@ class CourseService extends BaseService
             $course = $this->course->where('slug', $courseSlug)
                 ->where('is_show', Constant::IS_SHOW)
                 ->first();
-
             if (!$course) {
                 return $this->responseError(__('messages.course.not_exist'), 400, ErrorCode::PARAM_INVALID);
             }
 
             $course->my_course = Constant::COURSE_USER_NO_ACTION;
-            $user = auth()->guard('api')->user();
 
-            if ($user) {
-                $courseUser = $this->courseUser->where('user_id', $user->id)
-                    ->where('course_id', $course->id)
-                    ->where('is_show', Constant::IS_SHOW)
-                    ->first();
+            if (auth()->guard('api')->check()) {
+                $user = auth()->guard('api')->user();
 
-                if ($courseUser) {
-                    $course->my_course = $courseUser->status;
+                if ($user) {
+                    $courseUser = $this->courseUser->where('user_id', $user->id)
+                        ->where('course_id', $course->id)
+                        ->where('is_show', Constant::IS_SHOW)
+                        ->first();
+
+                    if ($courseUser) {
+                        $course->my_course = $courseUser->status;
+                    }
                 }
             }
 
