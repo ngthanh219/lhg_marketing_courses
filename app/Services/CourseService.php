@@ -229,19 +229,17 @@ class CourseService extends BaseService
 
             $course->my_course = Constant::COURSE_USER_NO_ACTION;
 
-            if ($request->bearerToken()) {
-                if (auth()->guard('api')->check()) {
-                    $user = auth()->guard('api')->user();
+            if (auth()->guard('api')->check()) {
+                $user = auth()->guard('api')->user();
 
-                    if ($user) {
-                        $courseUser = $this->courseUser->where('user_id', $user->id)
-                            ->where('course_id', $course->id)
-                            ->where('is_show', Constant::IS_SHOW)
-                            ->first();
+                if ($user) {
+                    $courseUser = $this->courseUser->where('user_id', $user->id)
+                        ->where('course_id', $course->id)
+                        ->where('is_show', Constant::IS_SHOW)
+                        ->first();
 
-                        if ($courseUser) {
-                            $course->my_course = $courseUser->status;
-                        }
+                    if ($courseUser) {
+                        $course->my_course = $courseUser->status;
                     }
                 }
             }
