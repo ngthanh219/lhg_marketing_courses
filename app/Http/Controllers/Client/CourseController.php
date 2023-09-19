@@ -22,9 +22,9 @@ class CourseController extends Controller
         return $this->courseService->getCoursesClient($request);
     }
 
-    public function getCourseDetail($courseSlug)
+    public function getCourseDetail(Request $request, $courseSlug)
     {
-        return $this->courseService->getCourseDetailClient($courseSlug);
+        return $this->courseService->getCourseDetailClient($request, $courseSlug);
     }
 
     public function registerCourse(RegisterCourseRequest $request)
