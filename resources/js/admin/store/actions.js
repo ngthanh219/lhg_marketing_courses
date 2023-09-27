@@ -29,6 +29,12 @@ let actions = {
     createVideo: video.createVideo,
     updateVideo: video.updateVideo,
     deleteVideo: video.deleteVideo,
+    getVideoObject: video.getVideoObject,
+    createMultipartUpload: video.createMultipartUpload,
+    signMultipartUpload: video.signMultipartUpload,
+    completeMultipartUpload: video.completeMultipartUpload,
+    abortMultipartUpload: video.abortMultipartUpload,
+    deleteVideoObject: video.deleteVideoObject,
 
     getCourseUsers: courseUser.getCourseUsers,
     createCourseUser: courseUser.createCourseUser,

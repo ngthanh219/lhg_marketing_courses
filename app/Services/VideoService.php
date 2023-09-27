@@ -3,15 +3,12 @@
 namespace App\Services;
 
 use App\Helpers\GeneralHelper;
-use App\Jobs\UploadVideoJob;
 use App\Libraries\Constant;
 use App\Libraries\ErrorCode;
 use App\Models\Course;
 use App\Models\CourseSection;
 use App\Models\Video;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class VideoService extends BaseService
 {
@@ -92,43 +89,27 @@ class VideoService extends BaseService
 
     public function create($request)
     {
-        DB::beginTransaction();
         try {
             $courseSection = $this->courseSection->find($request->course_section_id);
             if (!$courseSection) {
-                DB::rollBack();
                 return $this->responseError(__('messages.course_section.not_exist'), 400, ErrorCode::PARAM_INVALID);
             }
 
-            $sourceUrl = null;
             $newData = [
                 'course_section_id' => (int) $request->course_section_id,
                 'name' => $request->name,
                 'duration' => (int) $request->duration,
-                'is_show' => (int) $request->is_show,
-                'source' => $sourceUrl
+                'is_show' => (int) $request->is_show
             ];
 
-            if (isset($request->source)) {
-                $sourceUrl = Constant::VIDEO_FOLDER . time() . '.' . $request->source->getClientOriginalExtension();
-                $newData['source'] = $sourceUrl;
-
-                Storage::disk('public')->put($sourceUrl, file_get_contents($request->source));
-                $video = $this->video->create($newData);
-
-                UploadVideoJob::dispatch($sourceUrl, $video->id);
-            } else {
-                $video = $this->video->create($newData);
+            if ($request->source) {
+                $newData['source'] = $request->source;
             }
 
-            DB::commit();
+            $video = $this->video->create($newData);
 
             return $this->responseSuccess($video);
         } catch (\Exception $ex) {
-            DB::rollBack();
-            if ($sourceUrl && Storage::disk('public')->exists($sourceUrl)) {
-                Storage::disk('public')->delete($sourceUrl);
-            }
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 
             return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
@@ -137,21 +118,17 @@ class VideoService extends BaseService
 
     public function update($request, $id)
     {
-        DB::beginTransaction();
         try {
             $video = $this->video->find($id);
             if (!$video) {
-                DB::rollBack();
                 return $this->responseError(__('messages.video.not_exist'), 400, ErrorCode::PARAM_INVALID);
             }
 
             $courseSection = $this->courseSection->find($request->course_section_id);
             if (!$courseSection) {
-                DB::rollBack();
                 return $this->responseError(__('messages.course_section.not_exist'), 400, ErrorCode::PARAM_INVALID);
             }
 
-            $sourceUrl = null;
             $updatedData = [
                 'course_section_id' => $request->course_section_id,
                 'name' => $request->name,
@@ -159,25 +136,14 @@ class VideoService extends BaseService
                 'is_show' => $request->is_show
             ];
 
-            if ($request->is_change_video === "true") {
-                $sourceUrl = Constant::VIDEO_FOLDER . time() . '.' . $request->source->getClientOriginalExtension();
-                $updatedData['source'] = $sourceUrl;
-
-                Storage::disk('public')->put($sourceUrl, file_get_contents($request->source));
-
-                $oldSourceUrl = $video->source;
-                UploadVideoJob::dispatch($sourceUrl, $video->id, $oldSourceUrl);
+            if ($request->source) {
+                $updatedData['source'] = $request->source;
             }
 
             $video->update($updatedData);
-            DB::commit();
 
             return $this->responseSuccess($video);
         } catch (\Exception $ex) {
-            DB::rollBack();
-            if ($sourceUrl && Storage::disk('public')->exists($sourceUrl)) {
-                Storage::disk('public')->delete($sourceUrl);
-            }
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 
             return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
@@ -219,6 +185,121 @@ class VideoService extends BaseService
             }
             
             return $this->responseSuccess(null, [], 'Thất bại');
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
+    public function getVideoObjectInS3($request)
+    {
+        try {
+            $data = null;
+            if ($request->path) {
+                $data = $this->awsS3Service->getFile($request->path, Constant::EXPIRE_VIDEO);
+            } else {
+                $data = $this->awsS3Service->getObjects(Constant::VIDEO_FOLDER);
+    
+                foreach ($data as $key => $item) {
+                    $data[$key]['LastModified'] = Carbon::parse($data[$key]['LastModified'], 'Asia/Ho_Chi_Minh')->format("d-m-Y H:i:s");
+                }
+
+                if (isset($request->last_modified_sort) && $request->last_modified_sort == 'desc') {
+                    usort($data, function ($a, $b) {
+                        return strtotime($b['LastModified']) - strtotime($a['LastModified']);
+                    });
+                }
+            }
+
+            return $this->responseSuccess($data);
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
+    public function createMultipartUpload($request)
+    {
+        try {
+            $key = Constant::VIDEO_FOLDER;
+            if ($request->file_name) {
+                $fileName = $request->file_name;
+            } else {
+                $time = time();
+                $fileName = "$time.mp4";
+            }
+
+            $key .= $fileName;
+            if ($this->awsS3Service->checkObjectExists($key)) {
+                return $this->responseError(__('messages.video.name_exist'), 400, ErrorCode::PARAM_EXISTS);
+            }
+
+            $res = $this->awsS3Service->createMultipartUpload($key);
+
+            return $this->responseSuccess([
+                'upload_id' => $res,
+                'key' => $key
+            ]);
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
+    public function signMultipartUpload($request)
+    {
+        try {
+            $request['part_number'] += 1;
+            $res = $this->awsS3Service->signMultipartUpload($request);
+
+            return response()->json([
+                'success' => 1,
+                'data' => $res
+            ]);
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
+    public function completeMultipartUpload($request)
+    {
+        try {
+            $request['file_parts'] = json_decode($request['file_parts'], true);
+            $this->awsS3Service->completeMultipartUpload($request);
+            $link = $this->awsS3Service->getFile($request->key, Constant::EXPIRE_VIDEO);
+
+            return $this->responseSuccess($link);
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
+    public function abortMultipartUpload($request)
+    {
+        try {
+            $res = $this->awsS3Service->abortMultipartUpload($request);
+
+            return $this->responseSuccess($res);
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
+    public function deleteObject($request)
+    {
+        try {
+            $this->awsS3Service->removeFile($request->key);
+
+            return $this->responseSuccess($request->key);
         } catch (\Exception $ex) {
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 

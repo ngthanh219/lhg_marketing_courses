@@ -85,7 +85,7 @@
                                     </tbody>
                                     <tbody v-if="dataList && dataList.list.length == 0">
                                         <tr>
-                                            <td colspan="10">Không có dữ liệu</td>
+                                            <td colspan="4">Không có dữ liệu</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -182,7 +182,6 @@
                 e.preventDefault();
 
                 this.selectCourseSectionData(id, name);
-                // this.closeModalList();
             }
         }
     }

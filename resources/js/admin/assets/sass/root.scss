@@ -69,6 +69,11 @@ body {
     font-style: oblique;
 }
 
+.table-hover tbody tr.active {
+    color: #212529;
+    background-color: rgba(0,0,0,.075);
+}
+
 .table-action {
     width: 50px;
     // height: 40px;
@@ -226,6 +231,14 @@ body {
 
                 .form-preview-image {
                     width: 50%;
+                }
+
+                .input-group {
+                    .disabled {
+                        opacity: 0.4;
+                        background: #EAEAEA;
+                        cursor: not-allowed;
+                    }
                 }
             }
 

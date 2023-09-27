@@ -3,7 +3,7 @@
         <div class="pc-form" v-bind:class="{ 'transition-active': isTransitionActive }">
             <div class="content">
                 <div class="container-fluid" style="width: 80%">
-                    <div class="row" v-if="!isModalList">
+                    <div class="row" v-if="!isModalList && !isModalVideoObjectList">
                         <div class="col-md-12">
                             <form @submit="handleData">
                                 <div class="card card-primary">
@@ -32,51 +32,20 @@
                                             <input type="text" class="form-control form-control-border" placeholder="xxx" v-model="formData.name">
                                         </div>
                                         <div class="form-group">
+                                            <label>Gắn link video</label>
+                                            <a class="cursor-pointer" @click="openModalVideoObjectList">
+                                                Lựa chọn
+                                            </a>
+                                            <input type="text" class="form-control form-control-border" v-model="formData.source" disabled>
+                                        </div>
+                                        <div class="form-group">
                                             <label>Thời gian</label>
                                             <input type="text" class="form-control form-control-border" placeholder="xxx" v-model="formData.duration">
-                                        </div>
-                                        <div class="form-group" v-if="videoData != null">
-                                            <div class="custom-control custom-checkbox">
-                                                <input 
-                                                    class="custom-control-input" 
-                                                    type="checkbox" 
-                                                    id="customCheckbox2" 
-                                                    v-model="formData.is_change_video"
-                                                >
-                                                <label for="customCheckbox2" class="custom-control-label cursor-pointer">Thay video</label>
-                                            </div>
-                                        </div>
-                                        <div class="form-group" v-if="formData.is_change_video">
-                                            <label for="exampleInputFile">Video</label>
-                                            <div class="input-group">
-                                                <div class="custom-file">
-                                                    <input type="file" class="custom-file-input" id="exampleInputFile" @change="handleSource">
-                                                    <label class="custom-file-label" for="exampleInputFile">Chọn file</label>
-                                                </div>
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">Tải lên</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group" v-if="videoData != null">
-                                            <div class="form-preview-image">
-                                                {{ videoData.source_url != null || previewVideo != null  ? '' : 'Chưa có' }}
-
-                                                <video ref="video" class="img-fluid mb-3" v-if="previewVideo != null" :src="previewVideo" preload="auto" controls />
-                                                <video ref="video" class="img-fluid mb-3" v-if="previewVideo == null && videoData.source_url" :src="videoData.source_url" preload="auto" controls />
-                                            </div>
-                                        </div>
-                                        <div class="form-group" v-if="videoData == null">
-                                            <div class="form-preview-image">
-                                                {{  previewVideo ? '' : 'Chưa có' }}
-
-                                                <video ref="video" class="img-fluid mb-3" v-if="previewVideo !== null" :src="previewVideo" preload="auto" controls />
-                                            </div>
                                         </div>
                                     </div>
                                     <div class="card-footer">
                                         <button type="submit" class="btn btn-primary mr-2" v-bind:class="{
-                                            disabled: !(this.$helper.checkChangeFormData(videoData, formData) || formData.is_change_video)
+                                            disabled: !(this.$helper.checkChangeFormData(videoData, formData) || formData.source)
                                         }">
                                             {{ videoData ? 'Cập nhật' : 'Thêm mới' }}
                                         </button>
@@ -88,11 +57,19 @@
                     </div>
 
                     <CourseSectionList
-                        v-else
+                        v-if="isModalList && !isModalVideoObjectList"
 
                         :closeModalList="closeModalList"
                         :selectCourseSectionData="selectCourseSectionData"
                         :courseSectionId="formData.course_section_id"
+                    />
+
+                    <VideoObjectList
+                        v-if="!isModalList && isModalVideoObjectList"
+
+                        :closeModalList="closeModalVideoObjectList"
+                        :selectSourceData="selectSourceData"
+                        :source="formData.source"
                     />
                 </div>
             </div>
@@ -102,11 +79,13 @@
 
 <script>
     import CourseSectionList from './CourseSectionList.vue';
+    import VideoObjectList from './VideoObjectList.vue';
 
     export default {
         name: "VideoInformation",
         components: {
-            CourseSectionList
+            CourseSectionList,
+            VideoObjectList
         },
         props: {
             closeForm: Function,
@@ -120,21 +99,20 @@
                 formData: {
                     course_section_id: null,
                     name: '',
-                    is_change_video: false,
                     source: '',
                     duration: 0,
                     is_show: 0
                 },
                 formDataError: {
                     message: '',
+                    course_section_id: '',
                     name: '',
-                    is_change_video: '',
                     source: '',
                     duration: 0,
                     is_show: 0
                 },
-                previewVideo: null,
                 isModalList: false,
+                isModalVideoObjectList: false,
                 courseSectionName: null
             }
         },
@@ -151,9 +129,12 @@
 
                 if (this.videoData) {
                     this.$helper.mergeArrayData(this.videoData, this.formData);
+                    if (this.videoData.source_url) {
+                        const matches = this.videoData.source_url.match(/videos\/[\w.]+\.mp4/);
+                        this.formData.source = matches[0];
+                    }
+
                     this.courseSectionName = this.videoData.course_section_name;
-                } else {
-                    this.formData.is_change_video = true;
                 }
             }, 200);
         },
@@ -162,24 +143,16 @@
                 e.preventDefault();
 
                 this.isTransitionActive = false;
-                this.pauseVideo();
                 setTimeout(() => {
                     this.closeForm(e);
                 }, 400);
-            },
-            
-            pauseVideo() {
-                if (this.formData.source) {
-                    this.$refs.video.pause();
-                    this.$refs.video.src = '';
-                }
             },
 
             async handleData(e) {
                 e.preventDefault();
 
                 if (this.videoData) {
-                    if (this.$helper.checkChangeFormData(this.videoData, this.formData) || this.formData.is_change_video) {
+                    if (this.$helper.checkChangeFormData(this.videoData, this.formData) || this.formData.source) {
                         this.$helper.setPageLoading(true);
                         await this.update();
 
@@ -215,8 +188,7 @@
                 })
                 .then(res => {
                     transaction = true;
-                    this.pauseVideo();
-                    this.$helper.setNotification(1, 'Thông tin đã được tạo, video sẽ được tải lên sau ít phút');
+                    this.$helper.setNotification(1, 'Thông tin đã được tạo');
                 })
                 .catch(err => {
 
@@ -232,13 +204,10 @@
                     error: this.formDataError
                 })
                 .then(res => {
-                    this.pauseVideo();
-                    this.formData.is_change_video = 0;
                     this.videoData.source_url = res.data.source_url;
-                    this.previewVideo = res.data.source_url;
                     this.$helper.mergeArrayData(this.formData, this.videoData);
 
-                    this.$helper.setNotification(1, 'Thông tin đã được cập nhật, video sẽ được tải lên sau ít phút');
+                    this.$helper.setNotification(1, 'Thông tin đã được cập nhật');
                 })
                 .catch(err => {
 
@@ -261,16 +230,18 @@
                 this.courseSectionName = name;
             },
 
-            handleSource(e) {
-                var self = this;
-                const reader = new FileReader();
+            openModalVideoObjectList(e) {
+                e.preventDefault();
 
-                reader.onload = (load) => {
-                    self.previewVideo = load.target.result;
-                }
+                this.isModalVideoObjectList = true;
+            },
 
-                reader.readAsDataURL(e.target.files[0]);
-                self.formData.source = e.target.files[0];
+            closeModalVideoObjectList() {
+                this.isModalVideoObjectList = false;
+            },
+
+            selectSourceData(key) {
+                this.formData.source = key;
             }
         }
     }

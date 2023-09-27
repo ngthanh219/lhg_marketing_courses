@@ -26,9 +26,15 @@
                         </router-link>
                     </li>
                     <li class="nav-item">
+                        <router-link to="/admin/video-object" class="nav-link">
+                            <i class="nav-icon fas fa-th"></i>
+                            <p>Quản lý kho video</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item">
                         <router-link to="/admin/videos" class="nav-link">
                             <i class="nav-icon fa fa-video"></i>
-                            <p>Quản lý video</p>
+                            <p>Quản lý thông tin video</p>
                         </router-link>
                     </li>
                     <li class="nav-item">

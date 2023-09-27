@@ -59,8 +59,20 @@ Route::group([
                 'prefix' => 'videos'
             ], function () {
                 Route::get('', [VideoController::class, 'index']);
+
+                Route::group([
+                    'prefix' => 'object'
+                ], function () {
+                    Route::get('', [VideoController::class, 'getVideoObjectInS3']);
+                    Route::post('create-multipart-upload', [VideoController::class, 'createMultipartUpload']);
+                    Route::post('sign-multipart-upload', [VideoController::class, 'signMultipartUpload']);
+                    Route::post('complete-multipart-upload', [VideoController::class, 'completeMultipartUpload']);
+                    Route::post('abort-multipart-upload', [VideoController::class, 'abortMultipartUpload']);
+                    Route::post('delete', [VideoController::class, 'deleteObject']);
+                });
+
                 Route::post('', [VideoController::class, 'create']);
-                Route::post('{id}', [VideoController::class, 'update']);
+                Route::put('{id}', [VideoController::class, 'update']);
                 Route::delete('{id}', [VideoController::class, 'delete']);
             });
 
