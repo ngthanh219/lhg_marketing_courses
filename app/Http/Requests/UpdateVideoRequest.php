@@ -14,17 +14,10 @@ class UpdateVideoRequest extends FormRequest
 
     public function rules()
     {
-        $source = '';
-
-        if ($this->input('is_change_video') === "true") {
-            $source = 'required|file|mimes:mp4,avi,mov,wmv';
-        }
-
         return [
             'course_section_id' => 'required|integer|min:1',
             'description' => 'max:1000',
-            'is_change_video' => 'required',
-            'source' => $source,
+            'source' => 'nullable|max:50',
             'duration' => 'required|integer|min:0',
             'is_show' => 'required|integer|min:0|max:1'
         ];

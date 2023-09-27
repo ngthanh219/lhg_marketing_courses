@@ -38,7 +38,8 @@ return [
         "expired_verification_code" => "Mã xác thực đã hết hạn",
     ],
     "video" => [
-        "not_exist" => "Video này không tồn tại"
+        "not_exist" => "Video này không tồn tại",
+        "name_exist" => "Tên video đã tồn tại trên hệ thống"
     ],
     "course_user" => [
         "not_exist" => "Khóa học của người dùng này không tồn tại",

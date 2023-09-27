@@ -6,6 +6,7 @@ import User from "../components/pages/users/User.vue";
 import Course from "../components/pages/courses/Course.vue";
 import CourseSection from "../components/pages/course-sections/CourseSection.vue";
 import Video from "../components/pages/videos/Video.vue";
+import VideoObject from "../components/pages/videos/VideoObject.vue";
 import CourseUser from "../components/pages/course-users/CourseUser.vue";
 import Post from "../components/pages/posts/Post.vue";
 
@@ -39,6 +40,11 @@ const routes = [
                 path: 'videos',
                 name: 'Video',
                 component: Video
+            },
+            {
+                path: 'video-object',
+                name: 'VideoObject',
+                component: VideoObject
             },
             {
                 path: 'course-users',
