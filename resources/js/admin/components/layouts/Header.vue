@@ -14,12 +14,12 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                     <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item">
-                        Change information
-                    </a>
-                    <a href="#" class="dropdown-item">
-                        Change password
-                    </a>
+                    <router-link to="/admin/users" class="dropdown-item">
+                        Thay đổi thông tin
+                    </router-link>
+                    <!-- <router-link to="/admin/users" class="dropdown-item">
+                        Đổi mật khẩu
+                    </router-link> -->
                     <div class="dropdown-divider"></div>
                     <!-- <a href="#" class="dropdown-footer">
                         <form>
@@ -30,7 +30,7 @@
                     </a> -->
                     <a href="#" class="dropdown-footer">
                         <form v-on:submit="logout">
-                            <button type="submit" class="border-0 bg-danger d-flex justify-content-center align-items-center w-100" style="border-radius: 3px">Logout</button>
+                            <button type="submit" class="border-0 bg-danger d-flex justify-content-center align-items-center w-100" style="border-radius: 3px">Đăng xuất</button>
                         </form>
                     </a>
                 </div>

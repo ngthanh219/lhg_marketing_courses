@@ -4,6 +4,8 @@ namespace App\Libraries;
 
 class Constant
 {
+    const STORAGE_DISK_LOCAL = 'public';
+    
     const ROLE_ADMIN = 0;
     const ROLE_CLIENT = 1;
 
@@ -22,6 +24,7 @@ class Constant
 
     const IMAGE_FOLDER = 'images/';
     const VIDEO_FOLDER = 'videos/';
+    const CHUNK_FOLDER = 'chunks/';
 
     const EXPIRE_IMAGE = 60;
     const EXPIRE_VIDEO = 1800;

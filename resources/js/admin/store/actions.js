@@ -30,10 +30,10 @@ let actions = {
     updateVideo: video.updateVideo,
     deleteVideo: video.deleteVideo,
     getVideoObject: video.getVideoObject,
+    showVideoObject: video.showVideoObject,
     createMultipartUpload: video.createMultipartUpload,
     signMultipartUpload: video.signMultipartUpload,
     completeMultipartUpload: video.completeMultipartUpload,
-    abortMultipartUpload: video.abortMultipartUpload,
     deleteVideoObject: video.deleteVideoObject,
 
     getCourseUsers: courseUser.getCourseUsers,

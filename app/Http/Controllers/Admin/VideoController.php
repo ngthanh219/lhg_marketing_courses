@@ -43,9 +43,14 @@ class VideoController extends Controller
         return $this->videoService->uploadFile($request);
     }
 
-    public function getVideoObjectInS3(Request $request)
+    public function abortMultipartUpload(Request $request)
     {
-        return $this->videoService->getVideoObjectInS3($request);
+        return $this->videoService->abortMultipartUpload($request);
+    }
+
+    public function getVideoObject(Request $request)
+    {
+        return $this->videoService->getVideoObject($request);
     }
 
     public function createMultipartUpload(Request $request)
@@ -63,13 +68,13 @@ class VideoController extends Controller
         return $this->videoService->completeMultipartUpload($request);
     }
 
-    public function abortMultipartUpload(Request $request)
+    public function deleteVideoObject(Request $request)
     {
-        return $this->videoService->abortMultipartUpload($request);
+        return $this->videoService->deleteVideoObject($request);
     }
 
-    public function deleteObject(Request $request)
+    public function showVideoObject(Request $request)
     {
-        return $this->videoService->deleteObject($request);
+        return $this->videoService->showVideoObject($request);
     }
 }

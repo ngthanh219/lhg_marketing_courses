@@ -9,6 +9,7 @@ use App\Models\Course;
 use App\Models\CourseSection;
 use App\Models\Video;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class VideoService extends BaseService
 {
@@ -192,22 +193,42 @@ class VideoService extends BaseService
         }
     }
 
-    public function getVideoObjectInS3($request)
+    public function abortMultipartUpload($request)
     {
         try {
-            $data = null;
-            if ($request->path) {
-                $data = $this->awsS3Service->getFile($request->path, Constant::EXPIRE_VIDEO);
-            } else {
-                $data = $this->awsS3Service->getObjects(Constant::VIDEO_FOLDER);
-    
-                foreach ($data as $key => $item) {
-                    $data[$key]['LastModified'] = Carbon::parse($data[$key]['LastModified'], 'Asia/Ho_Chi_Minh')->format("d-m-Y H:i:s");
-                }
+            $res = $this->awsS3Service->abortMultipartUpload($request);
 
-                if (isset($request->last_modified_sort) && $request->last_modified_sort == 'desc') {
+            return $this->responseSuccess($res);
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
+    public function getVideoObject($request)
+    {
+        try {
+            $files = Storage::disk(Constant::STORAGE_DISK_LOCAL)->files(Constant::VIDEO_FOLDER);
+            $data = [];
+
+            foreach ($files as $file) {
+                $fileName = str_replace(Constant::VIDEO_FOLDER, '', $file);
+                $createdAt = str_replace('.mp4', '', $fileName);
+                $data[] = [
+                    'key' => $file,
+                    'created_at' => date('d-m-Y H:i:s', $createdAt)
+                ];
+            }
+
+            if (isset($request->last_modified_sort)) {
+                if ($request->last_modified_sort == 'desc') {
                     usort($data, function ($a, $b) {
-                        return strtotime($b['LastModified']) - strtotime($a['LastModified']);
+                        return strtotime($b['created_at']) - strtotime($a['created_at']);
+                    });
+                } else {
+                    usort($data, function ($a, $b) {
+                        return strtotime($a['created_at']) - strtotime($b['created_at']);
                     });
                 }
             }
@@ -232,14 +253,15 @@ class VideoService extends BaseService
             }
 
             $key .= $fileName;
-            if ($this->awsS3Service->checkObjectExists($key)) {
+            if (Storage::disk(Constant::STORAGE_DISK_LOCAL)->exists($key)) {
                 return $this->responseError(__('messages.video.name_exist'), 400, ErrorCode::PARAM_EXISTS);
             }
 
-            $res = $this->awsS3Service->createMultipartUpload($key);
+            Storage::disk(Constant::STORAGE_DISK_LOCAL)->put($key, '');
+            $uploadId = str_replace('.mp4', '', $fileName);
 
             return $this->responseSuccess([
-                'upload_id' => $res,
+                'upload_id' => $uploadId,
                 'key' => $key
             ]);
         } catch (\Exception $ex) {
@@ -252,12 +274,21 @@ class VideoService extends BaseService
     public function signMultipartUpload($request)
     {
         try {
-            $request['part_number'] += 1;
-            $res = $this->awsS3Service->signMultipartUpload($request);
+            $chunkFolder = Constant::CHUNK_FOLDER . $request->upload_id . '/blob_' . $request->part_number;
+            Storage::disk(Constant::STORAGE_DISK_LOCAL)->put($chunkFolder, file_get_contents($request->file));
+            $sourceFile = fopen(Storage::disk(Constant::STORAGE_DISK_LOCAL)->path($chunkFolder), 'r');
+            $destinationFile = fopen(Storage::disk(Constant::STORAGE_DISK_LOCAL)->path($request->key), 'a');
+            while (($line = fgets($sourceFile)) !== false) {
+                fwrite($destinationFile, $line);
+            }
+    
+            fclose($destinationFile);
+            fclose($sourceFile);
+            Storage::disk(Constant::STORAGE_DISK_LOCAL)->delete($chunkFolder);
 
             return response()->json([
                 'success' => 1,
-                'data' => $res
+                'part_number_continue' => $request->part_number + 1
             ]);
         } catch (\Exception $ex) {
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
@@ -269,11 +300,10 @@ class VideoService extends BaseService
     public function completeMultipartUpload($request)
     {
         try {
-            $request['file_parts'] = json_decode($request['file_parts'], true);
-            $this->awsS3Service->completeMultipartUpload($request);
-            $link = $this->awsS3Service->getFile($request->key, Constant::EXPIRE_VIDEO);
+            $chunkFolder = Constant::CHUNK_FOLDER . $request->upload_id;
+            Storage::disk(Constant::STORAGE_DISK_LOCAL)->deleteDirectory($chunkFolder);
 
-            return $this->responseSuccess($link);
+            return $this->responseSuccess();
         } catch (\Exception $ex) {
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 
@@ -281,25 +311,31 @@ class VideoService extends BaseService
         }
     }
 
-    public function abortMultipartUpload($request)
+    public function deleteVideoObject($request)
     {
         try {
-            $res = $this->awsS3Service->abortMultipartUpload($request);
-
-            return $this->responseSuccess($res);
-        } catch (\Exception $ex) {
-            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
-
-            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
-        }
-    }
-
-    public function deleteObject($request)
-    {
-        try {
-            $this->awsS3Service->removeFile($request->key);
+            if (Storage::disk(Constant::STORAGE_DISK_LOCAL)->exists($request->key)) {
+                Storage::disk(Constant::STORAGE_DISK_LOCAL)->delete($request->key);
+            }
 
             return $this->responseSuccess($request->key);
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
+    public function showVideoObject($request)
+    {
+        try {
+            if (!Storage::disk(Constant::STORAGE_DISK_LOCAL)->exists($request->key)) {
+                return $this->responseError(__('messages.video.not_exist'), 400, ErrorCode::PARAM_INVALID);
+            }
+
+            $video = Storage::disk(Constant::STORAGE_DISK_LOCAL)->path($request->key);
+
+            return response()->file($video, ['Content-Type' => 'video/mp4']);
         } catch (\Exception $ex) {
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 

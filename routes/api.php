@@ -63,12 +63,14 @@ Route::group([
                 Route::group([
                     'prefix' => 'object'
                 ], function () {
-                    Route::get('', [VideoController::class, 'getVideoObjectInS3']);
+                    Route::post('abort-multipart-upload', [VideoController::class, 'abortMultipartUpload']);
+
+                    Route::get('', [VideoController::class, 'getVideoObject']);
+                    Route::get('show', [VideoController::class, 'showVideoObject']);
                     Route::post('create-multipart-upload', [VideoController::class, 'createMultipartUpload']);
                     Route::post('sign-multipart-upload', [VideoController::class, 'signMultipartUpload']);
                     Route::post('complete-multipart-upload', [VideoController::class, 'completeMultipartUpload']);
-                    Route::post('abort-multipart-upload', [VideoController::class, 'abortMultipartUpload']);
-                    Route::post('delete', [VideoController::class, 'deleteObject']);
+                    Route::post('delete', [VideoController::class, 'deleteVideoObject']);
                 });
 
                 Route::post('', [VideoController::class, 'create']);

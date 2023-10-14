@@ -64,11 +64,13 @@
                                     </thead>
                                     <tbody class="table-data" v-if="dataList">
                                         <tr v-for="data, index in dataList" :id="'item-' + index" v-bind:class="{ 'active': idKey == 'item-' + index }">
-                                            <td>{{ index += 1 }}</td>
+                                            <td style="width: 25px">{{ index += 1 }}</td>
                                             <td>
-                                                <a class="underline cursor-pointer" @click="showVideo($event, data.Key)">{{ data.Key }}</a>
+                                                <a class="underline cursor-pointer" @click="showVideo($event, index - 1, dataList[index - 1])">{{ data.key }}</a>
                                             </td>
-                                            <td>{{ data.LastModified }}</td>
+                                            <td>
+                                                {{ data.created_at }}
+                                            </td>
                                             <td>
                                                 <div class="table-action">
                                                     <div class="action-btn">
@@ -83,7 +85,7 @@
                                                             <i class="fas fa-eye"></i>
                                                             <div class="icon-wrap">Xem thông tin</div>
                                                         </a>
-                                                        <a class="action-detail-btn" @click="deleteData($event, data.Key)">
+                                                        <a class="action-detail-btn" @click="deleteData($event, data.key)">
                                                             <i class="fas fa-trash" />
                                                             <div class="icon-wrap">
                                                                 Xóa
@@ -112,6 +114,8 @@
 
             :closeForm="closeForm"
             :getVideoObject="getVideoObject"
+            :isShowVideo="isShowVideo"
+            :videoData="data"
         />
     </div>
 </template>
@@ -135,8 +139,10 @@
                     message: ""
                 },
                 isForm: false,
+                isShowVideo: false,
                 searchKey: '',
-                idKey: ''
+                idKey: '',
+                data: null
             };
         },
         mounted() {
@@ -166,6 +172,8 @@
             refresh(e) {
                 e.preventDefault();
 
+                this.searchKey = '';
+                this.idKey = '';
                 this.getVideoObject();
             },
 
@@ -173,7 +181,7 @@
                 e.preventDefault();
 
                 for (var i = 0; i < this.dataList.length; i++) {
-                    if (this.dataList[i].Key == this.searchKey) {
+                    if (this.dataList[i].key == this.searchKey) {
                         var key = 'item-' + i;
                         const targetElement = document.getElementById(key);
                         targetElement.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -182,13 +190,6 @@
                         break;
                     }
                 }
-            },
-
-            showVideo(e, path) {
-                e.preventDefault();
-
-                this.query.path = path;
-                this.getVideoObject();
             },
 
             sortVideoObjectData(e, queryParam) {
@@ -202,6 +203,13 @@
 
                 this.$helper.pushQueryUrl(this.query);
                 this.getVideoObject();
+            },
+
+            showVideo(e, index, data) {
+                e.preventDefault();
+
+                this.isShowVideo = true;
+                this.openForm(e, index, data);
             },
 
             openForm(e, index, data) {
@@ -223,6 +231,7 @@
 
                 this.data = null;
                 this.isForm = false;
+                this.isShowVideo = false;
             },
 
             async deleteData(e, key) {

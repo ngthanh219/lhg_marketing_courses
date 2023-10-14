@@ -9,10 +9,10 @@
                                 <div class="card card-primary">
                                     <div class="card-header">
                                         <h3 class="card-title">
-                                            {{ isShowVideo ? 'Video link: ' + videoData.key : 'Upload video mới' }}
+                                            Upload video mới
                                         </h3>
                                     </div>
-                                    <div class="card-body" v-if="!isShowVideo">
+                                    <div class="card-body">
                                         <div class="form-group">
                                             <label for="exampleInputFile">Video</label>
                                             <div class="input-group">
@@ -66,11 +66,6 @@
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="card-body" v-if="isShowVideo && !isLoadVideo">
-                                        <video width="640" height="360" controls>
-                                            <source :src="videoLink" type="video/mp4">
-                                        </video>
-                                    </div>
                                     <div class="card-footer">
                                         <a class="btn btn-danger" @click="closeFormComponent">Quay lại</a>
                                     </div>
@@ -86,14 +81,12 @@
 
 <script>
     export default {
-        name: "VideoObjectInformation",
+        name: "VideoObjectInformationS3",
         components: {
         },
         props: {
             closeForm: Function,
-            getVideoObject: Function,
-            isShowVideo: Boolean,
-            videoData: Object
+            getVideoObject: Function
         },
         data() {
             return {
@@ -108,10 +101,9 @@
                     link: null,
                     key: null,
                     uploadId: null,
+                    fileParts: [],
                     data: null
-                },
-                videoLink: null,
-                isLoadVideo: false
+                }
             }
         },
         mounted() {
@@ -119,31 +111,9 @@
 
             setTimeout(() => {
                 this.isTransitionActive = true;
-                this.showVideo();
             }, 200);
         },
         methods: {
-            async showVideo() {
-                if (this.isShowVideo) {
-                    this.isLoadVideo = true;
-                    this.$helper.setPageLoading(true);
-                    await this.$store.dispatch("showVideoObject", {
-                        query: this.$helper.getQueryString({
-                            key: this.videoData.key,
-                        }),
-                        error: {}
-                    })
-                    .then(res => {
-                        this.videoLink = URL.createObjectURL(new Blob([res]));
-                    })
-                    .catch(err => {
-                    });
-                    this.$helper.setPageLoading(false);
-                    this.isLoadVideo = false;
-
-                }
-            },
-
             async closeFormComponent(e) {
                 e.preventDefault();
 
@@ -201,6 +171,7 @@
                 this.multipartUploadArgs.link = null;
                 this.multipartUploadArgs.key = null;
                 this.multipartUploadArgs.uploadId = null;
+                this.multipartUploadArgs.fileParts = [];
                 this.multipartUploadArgs.data = null;
 
                 await this.createMultipartUpload();
@@ -253,6 +224,7 @@
                             }
                         })
                         .then(res => {
+                            this.multipartUploadArgs.fileParts.push(res.data);
                             this.progressUploading = Math.floor((index + 1) / this.chunks.length * 100);
                             if (this.progressUploading == 100) {
                                 this.progressUploading = 99;
@@ -269,6 +241,7 @@
                             request: this.$helper.appendFormData({
                                 key: this.multipartUploadArgs.key,
                                 upload_id: this.multipartUploadArgs.uploadId,
+                                file_parts: JSON.stringify(this.multipartUploadArgs.fileParts),
                             }),
                             error: {}
                         })
@@ -279,6 +252,7 @@
                             this.progressUploading = 100;
                             this.chunks = [];
                             this.multipartUploadArgs.uploadId = null;
+                            this.multipartUploadArgs.fileParts = [];
                             this.multipartUploadArgs.data = null;
 
                             this.getVideoObject();

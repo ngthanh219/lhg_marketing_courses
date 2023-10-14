@@ -75,6 +75,22 @@ let video = {
         });
     },
 
+    showVideoObject({state}, form) {
+        axios.defaults.headers.common = {'Authorization': `Bearer ` + state.auth.accessToken}
+        return new Promise((resolve, reject) => {
+            axios.get(actionParams.API + 'videos/object/show' + form.query, {
+                responseType: 'blob'
+            })
+            .then((res) => {
+                actionParams.resetFormError(form.error);
+                resolve(res.data);
+            })
+            .catch((err) => {
+                reject(actionParams.getError(err, form.error));
+            })
+        });
+    },
+
     createMultipartUpload({state}, form) {
         axios.defaults.headers.common = {'Authorization': `Bearer ` + state.auth.accessToken}
         return new Promise((resolve, reject) => {
@@ -107,20 +123,6 @@ let video = {
         axios.defaults.headers.common = {'Authorization': `Bearer ` + state.auth.accessToken}
         return new Promise((resolve, reject) => {
             axios.post(actionParams.API + 'videos/object/complete-multipart-upload', form.request)
-            .then((res) => {
-                actionParams.resetFormError(form.error);
-                resolve(res.data);
-            })
-            .catch((err) => {
-                reject(actionParams.getError(err, form.error));
-            })
-        });
-    },
-
-    abortMultipartUpload({state}, form) {
-        axios.defaults.headers.common = {'Authorization': `Bearer ` + state.auth.accessToken}
-        return new Promise((resolve, reject) => {
-            axios.post(actionParams.API + 'videos/object/abort-multipart-upload', form.request)
             .then((res) => {
                 actionParams.resetFormError(form.error);
                 resolve(res.data);

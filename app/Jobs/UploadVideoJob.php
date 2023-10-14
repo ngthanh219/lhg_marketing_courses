@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Helpers\GeneralHelper;
+use App\Libraries\Constant;
 use App\Models\Video;
 use App\Services\AWSS3Service;
 use Illuminate\Bus\Queueable;
@@ -11,7 +12,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
 class UploadVideoJob implements ShouldQueue
@@ -43,9 +43,9 @@ class UploadVideoJob implements ShouldQueue
 
         try {
             $video = Video::find($this->videoId);
-            $file = Storage::disk('public')->get($this->sourceUrl);
+            $file = Storage::disk(Constant::STORAGE_DISK_LOCAL)->get($this->sourceUrl);
             Storage::disk('s3')->put($this->sourceUrl, $file);
-            Storage::disk('public')->delete($this->sourceUrl);
+            Storage::disk(Constant::STORAGE_DISK_LOCAL)->delete($this->sourceUrl);
 
             if ($this->oldSourceUrl) {
                 $video->update([
@@ -62,8 +62,8 @@ class UploadVideoJob implements ShouldQueue
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 
             $awsS3Service->removeFile($this->sourceUrl);
-            if (Storage::disk('public')->exists($this->sourceUrl)) {
-                Storage::disk('public')->delete($this->sourceUrl);
+            if (Storage::disk(Constant::STORAGE_DISK_LOCAL)->exists($this->sourceUrl)) {
+                Storage::disk(Constant::STORAGE_DISK_LOCAL)->delete($this->sourceUrl);
             }
 
             if (!$this->oldSourceUrl) {
