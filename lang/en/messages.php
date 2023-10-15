@@ -7,7 +7,8 @@ return [
         "logic_error" =>  "Error! An error occurred. Please try again later",
         "api_not_found" => "Current resources not found but may be available in the future",
         "param_invalid" => "Parameter was invalid",
-        "param_exists" => "Parameter already exists"
+        "param_exists" => "Parameter already exists",
+        "not_access" => "Can not access"
     ],
     "auth" => [
         "auth_error" => "Not authentication",
@@ -39,6 +40,7 @@ return [
     ],
     "video" => [
         "not_exist" => "This video does not exist",
+        "name_exist" => "Name of this video does not exist"
     ],
     "course_user" => [
         "not_exist" => "Course of this user does not exist",

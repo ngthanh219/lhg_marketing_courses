@@ -7,7 +7,8 @@ return [
         "logic_error" =>  "Đã có lỗi xảy ra. Vui lòng thử lại",
         "api_not_found" => "Tài nguyên hiện tại không được tìm thấy",
         "param_invalid" => "Thông số không hợp lệ",
-        "param_exists" => "Thông số đã tồn tại"
+        "param_exists" => "Thông số đã tồn tại",
+        "not_access" => "Không thể truy cập"
     ],
     "auth" => [
         "auth_error" => "Xác thực tài khoản không hợp lệ",

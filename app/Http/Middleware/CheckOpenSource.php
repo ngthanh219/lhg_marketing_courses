@@ -26,7 +26,7 @@ class CheckOpenSource
                 return $next($request);
             }
 
-            return $this->baseService->responseError(__('messages.auth.auth_error'), 401, ErrorCode::AUTH_ERROR);
+            return $this->baseService->responseError(__('messages.system.not_access'), 501, ErrorCode::API_NOT_FOUND);
         } catch (\Exception $ex) {
             return $this->baseService->responseError(__('messages.system.cannot_server'), 503, ErrorCode::SERVER_ERROR);
         }
