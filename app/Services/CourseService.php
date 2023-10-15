@@ -9,6 +9,7 @@ use App\Models\Course;
 use App\Models\CourseSection;
 use App\Models\CourseUser;
 use App\Models\Video;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class CourseService extends BaseService
@@ -17,20 +18,17 @@ class CourseService extends BaseService
     protected $courseSection;
     protected $video;
     protected $courseUser;
-    protected $awsS3Service;
 
     public function __construct(
         Course $course,
         CourseSection $courseSection,
         Video $video,
-        CourseUser $courseUser,
-        AWSS3Service $awsS3Service
+        CourseUser $courseUser
     ) {
         $this->course = $course;
         $this->courseSection = $courseSection;
         $this->video = $video;
         $this->courseUser = $courseUser;
-        $this->awsS3Service = $awsS3Service;
     }
 
     public function index($request)
@@ -74,7 +72,7 @@ class CourseService extends BaseService
             $image = null;
             $slug = Str::slug($request->name);
             $checkSlug = $this->course->where('slug', $slug)->withTrashed()->first();
-            
+
             if ($checkSlug) {
                 return $this->responseError(__('messages.course.exist'), 400, ErrorCode::PARAM_INVALID);
             }
@@ -92,8 +90,7 @@ class CourseService extends BaseService
             ];
 
             if (isset($request->image_url)) {
-                $request->file = $request->image_url;
-                $image = $this->awsS3Service->uploadFile($request, Constant::IMAGE_FOLDER);
+                $image = GeneralHelper::uploadFile($request->image_url);
                 $newData['image'] = $image;
             }
 
@@ -101,7 +98,7 @@ class CourseService extends BaseService
 
             return $this->responseSuccess($course);
         } catch (\Exception $ex) {
-            $this->awsS3Service->removeFile($image);
+            GeneralHelper::removeFile($image);
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 
             return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
@@ -141,17 +138,16 @@ class CourseService extends BaseService
             ];
 
             if ($request->is_change_image === "true") {
-                $request->file = $request->image_url;
-                $image = $this->awsS3Service->uploadFile($request, Constant::IMAGE_FOLDER);
+                $image = GeneralHelper::uploadFile($request->image_url);
                 $updatedData['image'] = $image;
-                $this->awsS3Service->removeFile($course->image);
+                GeneralHelper::removeFile($course->image);
             }
 
             $course->update($updatedData);
 
             return $this->responseSuccess($course);
         } catch (\Exception $ex) {
-            $this->awsS3Service->removeFile($image);
+            GeneralHelper::removeFile($image);
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 
             return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
@@ -318,8 +314,7 @@ class CourseService extends BaseService
 
             $billingImage = null;
             if (isset($request->billing_image_url)) {
-                $request->file = $request->billing_image_url;
-                $billingImage = $this->awsS3Service->uploadFile($request, Constant::IMAGE_FOLDER);
+                $billingImage = GeneralHelper::uploadFile($request->billing_image_url);
             }
 
             $courseUser = $this->courseUser->create([
@@ -340,7 +335,7 @@ class CourseService extends BaseService
                 'status' => $courseUser->status
             ]);
         } catch (\Exception $ex) {
-            $this->awsS3Service->removeFile($billingImage);
+            GeneralHelper::removeFile($billingImage);
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 
             return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
@@ -350,8 +345,6 @@ class CourseService extends BaseService
     public function decryptVideo($request)
     {
         try {
-            $f = null;
-            $n = null;
             $user = auth()->guard('api')->user();
 
             if (isset($request->id)) {
@@ -370,16 +363,16 @@ class CourseService extends BaseService
                     return $this->responseError(__('messages.course_user.not_exist'), 400, ErrorCode::PARAM_INVALID);
                 }
 
-                $folderName = 'videos/';
-                $ext = '.mp4';
-                $sourceWithoutFolder = str_replace($folderName, '', $video->source);
-                $sourceWithoutExtension = str_replace($ext, '', $sourceWithoutFolder);
-                $n = array_reverse(str_split($sourceWithoutExtension));
+                if (!Storage::disk(Constant::STORAGE_DISK_LOCAL)->exists($video->source)) {
+                    return $this->responseError(__('messages.video.not_exist'), 400, ErrorCode::PARAM_INVALID);
+                }
+    
+                $video = Storage::disk(Constant::STORAGE_DISK_LOCAL)->path($video->source);
+
+                return response()->file($video, ['Content-Type' => 'video/mp4']);
             }
             
-            return $this->responseSuccess([
-                'n' => $n
-            ]);
+            return $this->responseSuccess();
         } catch (\Exception $ex) {
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 

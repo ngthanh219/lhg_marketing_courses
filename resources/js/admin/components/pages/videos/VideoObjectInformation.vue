@@ -138,9 +138,9 @@
                     })
                     .catch(err => {
                     });
+
                     this.$helper.setPageLoading(false);
                     this.isLoadVideo = false;
-
                 }
             },
 

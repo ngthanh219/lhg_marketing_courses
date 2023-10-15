@@ -48,17 +48,6 @@
                                         <tr>
                                             <th>STT</th>
                                             <th>Link video</th>
-                                            <th>
-                                                <a href="/" @click="sortVideoObjectData($event, 'last_modified_sort')">
-                                                    Ngày tạo
-                                                    <i
-                                                        class="id-icon fas"
-                                                        v-bind:class="[
-                                                            query.last_modified_sort == 'asc' ? 'fa-arrow-up' : 'fa-arrow-down'
-                                                        ]"
-                                                    />
-                                                </a>
-                                            </th>
                                             <th style="width: 100px"></th>
                                         </tr>
                                     </thead>
@@ -67,9 +56,6 @@
                                             <td style="width: 25px">{{ index += 1 }}</td>
                                             <td>
                                                 <a class="underline cursor-pointer" @click="showVideo($event, index - 1, dataList[index - 1])">{{ data.key }}</a>
-                                            </td>
-                                            <td>
-                                                {{ data.created_at }}
                                             </td>
                                             <td>
                                                 <div class="table-action">
@@ -158,11 +144,7 @@
                     error: this.formDataError
                 })
                 .then(res => {
-                    if (typeof (res.data) !== 'string') {
-                        this.dataList = res.data;
-                    } else {
-                        window.open(res.data, '_blank');
-                    }
+                    this.dataList = res.data;
                 })
                 .catch(err => {
                 });

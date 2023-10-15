@@ -1,7 +1,7 @@
 <template>
     <div class="banner"
-        style="
-            background: url(https://khoahoc.nguyencanh.net/data/landingpage/photo_6123131c4108d3f4348b4570_1629711621.jpg);
+        :style="
+            'background: url(' + $env.s3Url + 'banner.png);'
         "
     >
         <div class="overlay"></div>

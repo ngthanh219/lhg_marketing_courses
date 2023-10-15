@@ -24,8 +24,6 @@
 
                 <CourseDetailVideo 
                     :videoSrc="videoSrc"
-                    :isLoadVideo="isLoadVideo"
-                    :setIsLoadVideo="setIsLoadVideo"
                 />
 
                 <CourseDetailSection
@@ -59,7 +57,6 @@
         data() {
             return {
                 videoSrc: '',
-                isLoadVideo: false,
                 data: null,
                 formDataError: {
                     message: ""
@@ -85,13 +82,8 @@
             },
 
             setVideoSrc(videoSrc) {
-                this.isLoadVideo = true;
                 this.videoSrc = videoSrc;
             },
-            
-            setIsLoadVideo(val) {
-                this.isLoadVideo = val;
-            }
         }
     }
 </script>

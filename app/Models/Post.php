@@ -31,7 +31,7 @@ class Post extends Model
 
     public function getImageUrlAttribute()
     {
-        return $this->image ? config('base.aws.s3.url') . $this->image : null;
+        return $this->image ? (config('base.image_url') . $this->image) : null;
     }
 
     public function getCreatedAtAttribute($value)

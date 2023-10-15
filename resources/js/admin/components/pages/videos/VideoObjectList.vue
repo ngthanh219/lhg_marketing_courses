@@ -51,14 +51,14 @@
                                     <tbody class="table-data" v-if="dataList">
                                         <tr v-for="data, index in dataList" :id="'item-' + index" v-bind:class="{ 'active': idKey == 'item-' + index }">
                                             <td>
-                                                <a class="btn btn-sm btn-danger" v-if="data.Key === source">Đang chọn</a>
-                                                <a class="btn btn-sm btn-outline-primary" @click="selectData($event, data.Key)" v-else>Chọn</a>
+                                                <a class="btn btn-sm btn-danger" v-if="data.key === source">Đang chọn</a>
+                                                <a class="btn btn-sm btn-outline-primary" @click="selectData($event, data.key)" v-else>Chọn</a>
                                             </td>
                                             <td>{{ index += 1 }}</td>
                                             <td>
-                                                <a class="underline cursor-pointer" @click="showVideo($event, data.Key)">{{ data.Key }}</a>
+                                                {{ data.key }}
                                             </td>
-                                            <td>{{ data.LastModified }}</td>
+                                            <td>{{ data.created_at }}</td>
                                         </tr>
                                     </tbody>
                                     <tbody v-if="dataList && dataList.length == 0">
@@ -109,11 +109,7 @@
                     error: this.formDataError
                 })
                 .then(res => {
-                    if (typeof (res.data) !== 'string') {
-                        this.dataList = res.data;
-                    } else {
-                        window.open(res.data, '_blank');
-                    }
+                    this.dataList = res.data;
                 })
                 .catch(err => {
                 });
@@ -123,6 +119,8 @@
             refresh(e) {
                 e.preventDefault();
 
+                this.searchKey = '';
+                this.idKey = '';
                 this.getVideoObject();
             },
 
@@ -130,7 +128,7 @@
                 e.preventDefault();
 
                 for (var i = 0; i < this.dataList.length; i++) {
-                    if (this.dataList[i].Key == this.searchKey) {
+                    if (this.dataList[i].key == this.searchKey) {
                         var key = 'item-' + i;
                         const targetElement = document.getElementById(key);
                         targetElement.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -139,13 +137,6 @@
                         break;
                     }
                 }
-            },
-
-            showVideo(e, path) {
-                e.preventDefault();
-
-                this.query.path = path;
-                this.getVideoObject();
             },
 
             sortVideoObjectData(e, queryParam) {

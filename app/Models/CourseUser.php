@@ -39,7 +39,7 @@ class CourseUser extends Model
 
     public function getBillingImageUrlAttribute()
     {
-        return $this->billing_image ? config('base.aws.s3.url') . $this->billing_image : null;
+        return $this->billing_image ? (config('base.image_url') . $this->billing_image) : null;
     }
 
     public function getUserEmailAttribute()

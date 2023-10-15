@@ -16,18 +16,15 @@ class VideoService extends BaseService
     protected $course;
     protected $courseSection;
     protected $video;
-    protected $awsS3Service;
 
     public function __construct(
         Course $course,
         CourseSection $courseSection,
-        Video $video,
-        AWSS3Service $awsS3Service
+        Video $video
     ) {
         $this->course = $course;
         $this->courseSection = $courseSection;
         $this->video = $video;
-        $this->awsS3Service = $awsS3Service;
     }
 
     public function index($request)
@@ -176,36 +173,6 @@ class VideoService extends BaseService
         }
     }
 
-    public function uploadFile($request)
-    {
-        try {
-            if (isset($request->file) && isset($request->folder)) {
-                $image = $this->awsS3Service->uploadFile($request, $request->folder . '/');
-
-                return $this->responseSuccess(config('base.aws.s3.url') . $image);
-            }
-            
-            return $this->responseSuccess(null, [], 'Thất bại');
-        } catch (\Exception $ex) {
-            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
-
-            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
-        }
-    }
-
-    public function abortMultipartUpload($request)
-    {
-        try {
-            $res = $this->awsS3Service->abortMultipartUpload($request);
-
-            return $this->responseSuccess($res);
-        } catch (\Exception $ex) {
-            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
-
-            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
-        }
-    }
-
     public function getVideoObject($request)
     {
         try {
@@ -213,24 +180,9 @@ class VideoService extends BaseService
             $data = [];
 
             foreach ($files as $file) {
-                $fileName = str_replace(Constant::VIDEO_FOLDER, '', $file);
-                $createdAt = str_replace('.mp4', '', $fileName);
                 $data[] = [
-                    'key' => $file,
-                    'created_at' => date('d-m-Y H:i:s', $createdAt)
+                    'key' => $file
                 ];
-            }
-
-            if (isset($request->last_modified_sort)) {
-                if ($request->last_modified_sort == 'desc') {
-                    usort($data, function ($a, $b) {
-                        return strtotime($b['created_at']) - strtotime($a['created_at']);
-                    });
-                } else {
-                    usort($data, function ($a, $b) {
-                        return strtotime($a['created_at']) - strtotime($b['created_at']);
-                    });
-                }
             }
 
             return $this->responseSuccess($data);
@@ -302,6 +254,20 @@ class VideoService extends BaseService
         try {
             $chunkFolder = Constant::CHUNK_FOLDER . $request->upload_id;
             Storage::disk(Constant::STORAGE_DISK_LOCAL)->deleteDirectory($chunkFolder);
+
+            return $this->responseSuccess();
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+    
+    public function abortMultipartUpload($request)
+    {
+        try {
+            Storage::disk(Constant::STORAGE_DISK_LOCAL)->deleteDirectory(Constant::CHUNK_FOLDER . $request->upload_id);
+            Storage::disk(Constant::STORAGE_DISK_LOCAL)->delete($request->key);
 
             return $this->responseSuccess();
         } catch (\Exception $ex) {

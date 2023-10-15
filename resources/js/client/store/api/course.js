@@ -49,7 +49,9 @@ let course = {
     getDV({state}, form) {
         return new Promise((resolve, reject) => {
             axios.defaults.headers.common = {'Authorization': `Bearer ` + state.auth.accessToken}
-            axios.post(actionParams.API + 'd-v', form.request)
+            axios.post(actionParams.API + 'd-v', form.request, {
+                responseType: 'blob'
+            })
             .then((res) => {
                 actionParams.resetFormError(form.error);
                 resolve(res.data);

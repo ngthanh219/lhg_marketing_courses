@@ -34,6 +34,7 @@ let actions = {
     createMultipartUpload: video.createMultipartUpload,
     signMultipartUpload: video.signMultipartUpload,
     completeMultipartUpload: video.completeMultipartUpload,
+    abortMultipartUpload: video.abortMultipartUpload,
     deleteVideoObject: video.deleteVideoObject,
 
     getCourseUsers: courseUser.getCourseUsers,

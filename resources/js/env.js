@@ -1,6 +1,6 @@
 const env = {
     api: 'http://localhost:8000/api/v1/',
-    s3Url: 'https://kinhdoanhthucchien.s3.ap-southeast-1.amazonaws.com/',
+    s3Url: 'http://localhost:8000/images/',
 }
 
 export default env;

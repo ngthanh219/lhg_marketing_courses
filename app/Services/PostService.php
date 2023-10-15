@@ -11,14 +11,11 @@ use Illuminate\Support\Str;
 class PostService extends BaseService
 {
     protected $post;
-    protected $awsS3Service;
 
     public function __construct(
-        Post $post,
-        AWSS3Service $awsS3Service
+        Post $post
     ) {
         $this->post = $post;
-        $this->awsS3Service = $awsS3Service;
     }
 
     public function index($request)
@@ -75,8 +72,7 @@ class PostService extends BaseService
             ];
 
             if (isset($request->image_url)) {
-                $request->file = $request->image_url;
-                $image = $this->awsS3Service->uploadFile($request, Constant::IMAGE_FOLDER);
+                $image = GeneralHelper::uploadFile($request->image_url);
                 $newData['image'] = $image;
             }
 
@@ -84,7 +80,7 @@ class PostService extends BaseService
 
             return $this->responseSuccess($post);
         } catch (\Exception $ex) {
-            $this->awsS3Service->removeFile($image);
+            GeneralHelper::removeFile($image);
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 
             return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
@@ -119,17 +115,16 @@ class PostService extends BaseService
             ];
 
             if ($request->is_change_image === "true") {
-                $request->file = $request->image_url;
-                $image = $this->awsS3Service->uploadFile($request, Constant::IMAGE_FOLDER);
+                $image = GeneralHelper::uploadFile($request->image_url);
                 $updatedData['image'] = $image;
-                $this->awsS3Service->removeFile($post->image);
+                GeneralHelper::removeFile($post->image);
             }
 
             $post->update($updatedData);
 
             return $this->responseSuccess($post);
         } catch (\Exception $ex) {
-            $this->awsS3Service->removeFile($image);
+            GeneralHelper::removeFile($image);
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 
             return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);

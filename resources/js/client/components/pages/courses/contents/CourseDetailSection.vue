@@ -74,7 +74,7 @@
                     this.$helper.redirectPage('dang-nhap');
                 }
                 
-                if (video.source_url != null && this.isVideoActiveVal != isVideoActiveVal) {
+                if (typeof (video.source) !== 'undefined' && this.isVideoActiveVal != isVideoActiveVal) {
                     this.$helper.setPageLoading(true);
                     await this.$store.dispatch("getDV", {
                         request: this.$helper.appendFormData({
@@ -85,7 +85,8 @@
                         }
                     })
                     .then(res => {
-                        this.deVideo(video.source_url, res.data);
+                        var video = URL.createObjectURL(new Blob([res]));
+                        this.setVideoSrc(video);
                         this.isVideoActiveVal = isVideoActiveVal;
                     })
                     .catch(err => {
@@ -93,23 +94,6 @@
                     this.$helper.setPageLoading(false);
                 }
             },
-
-            deVideo(sourceUrl, data) {
-                var n = data.n;
-                var query = this.$helper.getQueryString(sourceUrl);
-
-                if (n != null) {
-                    n = n.reverse();
-                    var filePath = 'videos/';
-
-                    for (var i in n) {
-                        filePath += n[i];
-                    }
-
-                    filePath += '.mp4';
-                    this.setVideoSrc(this.$env.s3Url + filePath + query);
-                }
-            }
         }
     }
 </script>

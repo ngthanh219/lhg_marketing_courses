@@ -18,22 +18,19 @@ class CourseUserService extends BaseService
     protected $courseSection;
     protected $video;
     protected $courseUser;
-    protected $awsS3Service;
 
     public function __construct(
         User $user,
         Course $course,
         CourseSection $courseSection,
         Video $video,
-        CourseUser $courseUser,
-        AWSS3Service $awsS3Service
+        CourseUser $courseUser
     ) {
         $this->user = $user;
         $this->course = $course;
         $this->courseSection = $courseSection;
         $this->video = $video;
         $this->courseUser = $courseUser;
-        $this->awsS3Service = $awsS3Service;
     }
 
     public function index($request)
@@ -105,8 +102,7 @@ class CourseUserService extends BaseService
             ];
 
             if (isset($request->billing_image_url)) {
-                $request->file = $request->billing_image_url;
-                $billingImage = $this->awsS3Service->uploadFile($request, Constant::IMAGE_FOLDER);
+                $billingImage = GeneralHelper::uploadFile($request->billing_image_url);
                 $newData['billing_image'] = $billingImage;
             }
 
@@ -114,7 +110,7 @@ class CourseUserService extends BaseService
 
             return $this->responseSuccess($courseUser);
         } catch (\Exception $ex) {
-            $this->awsS3Service->removeFile($billingImage);
+            GeneralHelper::removeFile($billingImage);
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 
             return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
@@ -136,17 +132,16 @@ class CourseUserService extends BaseService
             ];
 
             if ($request->is_change_billing_image === "true" && isset($request->billing_image_url)) {
-                $request->file = $request->billing_image_url;
-                $billingImage = $this->awsS3Service->uploadFile($request, Constant::IMAGE_FOLDER);
+                $billingImage = GeneralHelper::uploadFile($request->billing_image_url);
                 $updatedData['billing_image'] = $billingImage;
-                $this->awsS3Service->removeFile($courseUser->billing_image);
+                GeneralHelper::removeFile($courseUser->billing_image);
             }
 
             $courseUser->update($updatedData);
 
             return $this->responseSuccess($courseUser);
         } catch (\Exception $ex) {
-            $this->awsS3Service->removeFile($billingImage);
+            GeneralHelper::removeFile($billingImage);
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 
             return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);

@@ -5,7 +5,7 @@
                 <div class="left-wrapper">
                     <div class="logo">
                         <router-link to="/trang-chu" @click="redirectPage">
-                            <img :src="this.$env.s3Url + 'logos/logo.png'" alt="">
+                            <img :src="this.$env.s3Url + 'logo.png'" alt="">
                         </router-link>
                     </div>
                     <ul class="navbar-menu" v-bind:class="[

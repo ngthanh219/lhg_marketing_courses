@@ -5,6 +5,7 @@ namespace App\Libraries;
 class Constant
 {
     const STORAGE_DISK_LOCAL = 'public';
+    const STORAGE_DISK_CUSTOM_LOCAL = 'public_custom';
     
     const ROLE_ADMIN = 0;
     const ROLE_CLIENT = 1;

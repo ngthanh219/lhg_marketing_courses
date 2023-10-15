@@ -26,7 +26,6 @@ Route::group([
             'middleware' => 'admin.auth'
         ], function () {
             Route::post('logout', [AuthController::class, 'logout']);
-            Route::post('upload-file', [VideoController::class, "uploadFile"]);
 
             Route::group([
                 'prefix' => 'users'
@@ -63,13 +62,13 @@ Route::group([
                 Route::group([
                     'prefix' => 'object'
                 ], function () {
-                    Route::post('abort-multipart-upload', [VideoController::class, 'abortMultipartUpload']);
 
                     Route::get('', [VideoController::class, 'getVideoObject']);
                     Route::get('show', [VideoController::class, 'showVideoObject']);
                     Route::post('create-multipart-upload', [VideoController::class, 'createMultipartUpload']);
                     Route::post('sign-multipart-upload', [VideoController::class, 'signMultipartUpload']);
                     Route::post('complete-multipart-upload', [VideoController::class, 'completeMultipartUpload']);
+                    Route::post('abort-multipart-upload', [VideoController::class, 'abortMultipartUpload']);
                     Route::post('delete', [VideoController::class, 'deleteVideoObject']);
                 });
 
@@ -112,6 +111,6 @@ Route::group([
         'middleware' => 'client.auth'
     ], function () {
         Route::post('register-course', [ClientCourseController::class, 'registerCourse']);
-        Route::post('d-v', [ClientCourseController::class, 'decryptVideo']);
+        Route::post('d-v', [ClientCourseController::class, 'decryptVideo'])->middleware('client.check.open.source');
     });
 });

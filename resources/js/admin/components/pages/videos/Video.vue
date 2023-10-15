@@ -102,7 +102,7 @@
                                             <td>{{ data.id }}</td>
                                             <td>{{ data.name }}</td>
                                             <td>
-                                                <a class="underline" :href="data.source_url" target="_blank">Xem</a>
+                                                <a class="cursor-pointer underline" @click="showVideo($event, index, data)">Xem</a>
                                             </td>
                                             <td>{{ this.$helper.formatDuration(data.duration) }}</td>
                                             <td>
@@ -167,18 +167,28 @@
             :videoData="data"
             :getVideoData="getVideoData"
         />
+
+        <VideoObjectInformation
+            v-if="isShowVideo"
+
+            :closeForm="closeForm"
+            :isShowVideo="isShowVideo"
+            :videoData="data"
+        />
     </div>
 </template>
 
 <script>
     import TablePagination from '../../commons/pagination/TablePagination.vue';
     import VideoInformation from './VideoInformation.vue';
+    import VideoObjectInformation from './VideoObjectInformation.vue';
 
     export default {
         name: "Video",
         components: { 
             TablePagination,
-            VideoInformation
+            VideoInformation,
+            VideoObjectInformation
         },
         data() {
             return {
@@ -200,7 +210,8 @@
                 courseSectionData: {
                     id: null,
                     name: null
-                }
+                },
+                isShowVideo: false
             };
         },
         mounted() {
@@ -264,6 +275,14 @@
                 this.getVideoData();
             },
 
+            showVideo(e, index, data) {
+                e.preventDefault();
+
+                this.isShowVideo = true;
+                data['key'] = data.source;
+                this.data = data;
+            },
+
             openForm(e, index, data) {
                 e.preventDefault();
 
@@ -282,6 +301,7 @@
 
                 this.data = null;
                 this.isForm = false;
+                this.isShowVideo = false;
             },
 
             async deleteData(e, id) {

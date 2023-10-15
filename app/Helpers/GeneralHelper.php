@@ -2,7 +2,9 @@
 
 namespace App\Helpers;
 
+use App\Libraries\Constant;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class GeneralHelper
 {
@@ -18,6 +20,21 @@ class GeneralHelper
             Log::info($error);
         } else {
             Log::error($error);
+        }
+    }
+
+    public static function uploadFile($file)
+    {
+        $fileName = time() . '.' . $file->getClientOriginalExtension();
+        Storage::disk(Constant::STORAGE_DISK_CUSTOM_LOCAL)->put($fileName, file_get_contents($file));
+
+        return $fileName;
+    }
+
+    public static function removeFile($path)
+    {
+        if ($path && Storage::disk(Constant::STORAGE_DISK_CUSTOM_LOCAL)->exists($path)) {
+            Storage::disk(Constant::STORAGE_DISK_CUSTOM_LOCAL)->delete($path);
         }
     }
 }

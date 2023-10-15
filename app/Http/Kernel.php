@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\AdminAuthentication;
+use App\Http\Middleware\CheckOpenSource;
 use App\Http\Middleware\ClientAuthentication;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -67,6 +68,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'admin.auth' => AdminAuthentication::class,
-        'client.auth' => ClientAuthentication::class
+        'client.auth' => ClientAuthentication::class,
+        'client.check.open.source' => CheckOpenSource::class
     ];
 }
