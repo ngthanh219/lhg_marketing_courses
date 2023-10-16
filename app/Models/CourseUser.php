@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Libraries\Constant;
-use App\Services\AWSS3Service;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

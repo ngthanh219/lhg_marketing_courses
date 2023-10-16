@@ -17,7 +17,7 @@
                                             <label for="exampleInputFile">Video</label>
                                             <div class="input-group">
                                                 <div class="custom-file">
-                                                    <input type="file" class="custom-file-input" id="exampleInputFile" @change="handleSource">
+                                                    <input type="file" class="custom-file-input" id="exampleInputFile" @change="handleSource" :disabled="isStartUpload ? true : false">
                                                     <label class="custom-file-label" for="exampleInputFile">{{ videoFile ? videoFile.name : 'Chọn file' }}</label>
                                                 </div>
                                                 <div class="input-group-append">
@@ -26,7 +26,7 @@
                                                         v-bind:class="{ 'disabled' : !videoFile || isStartUpload }"
                                                         v-on="isUploadError ? { click: reloadUpload } : { click: createMultipartUpload}"
                                                     >
-                                                        {{ isUploadError ? 'Tải lại' : 'Tải lên' }}
+                                                        Tải {{ isUploadError ? 'lại' : 'lên' }}
                                                     </span>
                                                 </div>
                                             </div>
@@ -59,14 +59,14 @@
                                         </div>
                                         <div class="form-group" v-if="progressUploading == 100">
                                             <label>
-                                                Link video: 
-                                                <a :href="multipartUploadArgs.link" target="_blank">
-                                                    {{ this.$env.s3Url + multipartUploadArgs.key }}
+                                                Đường dẫn: 
+                                                <a class="underline">
+                                                    {{ multipartUploadArgs.key }}
                                                 </a>
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="card-body" v-if="isShowVideo && !isLoadVideo">
+                                    <div class="card-body text-center" v-if="isShowVideo && !isLoadVideo">
                                         <video width="640" height="360" controls>
                                             <source :src="videoLink" type="video/mp4">
                                         </video>
@@ -105,10 +105,8 @@
                 isUploadError: false,
                 isFileNameRandom: true,
                 multipartUploadArgs: {
-                    link: null,
                     key: null,
-                    uploadId: null,
-                    data: null
+                    uploadId: null
                 },
                 videoLink: null,
                 isLoadVideo: false
@@ -147,9 +145,9 @@
             async closeFormComponent(e) {
                 e.preventDefault();
 
-                if (this.videoFile && this.isStartUpload) {
-                    if (confirm('File đang được tải lên, bạn có chắc chắn muốn hủy')) {
-                        if (this.multipartUploadArgs.key) {
+                if (this.videoFile && this.isStartUpload && this.multipartUploadArgs.key) {
+                    if (this.progressUploading < 100) {
+                        if (confirm('File đang được tải lên, bạn có chắc chắn muốn hủy')) {
                             this.isStartUpload = false;
                             this.$helper.setPageLoading(true);
 
@@ -171,25 +169,25 @@
                             .catch(err => {
                                 this.$helper.setPageLoading(false);
                             });
-                        } else {
-                            this.isTransitionActive = false;
-                            setTimeout(() => {
-                                this.closeForm(e);
-                            }, 400);
                         }
                     }
-                } else {
-                    this.isTransitionActive = false;
-                    setTimeout(() => {
-                        this.closeForm(e);
-                    }, 400);
                 }
+
+                this.isTransitionActive = false;
+                setTimeout(() => {
+                    this.closeForm(e);
+                }, 400);
             },
 
             handleSource(e) {
                 if (!this.isStartUpload) {
                     this.videoFile = e.target.files[0];
-                    this.progressUploading = 0;
+                    if (this.videoFile.name.split('.').pop() != 'mp4') {
+                        this.$helper.setNotification(0, 'File bạn chọn không phải video');
+                        this.videoFile = '';
+                    } else {
+                        this.progressUploading = 0;
+                    }
                 }
             },
 
@@ -201,7 +199,6 @@
                 this.multipartUploadArgs.link = null;
                 this.multipartUploadArgs.key = null;
                 this.multipartUploadArgs.uploadId = null;
-                this.multipartUploadArgs.data = null;
 
                 await this.createMultipartUpload();
             },
@@ -263,6 +260,22 @@
                         .catch(err => {
                             this.isStartUpload = false;
                             this.isUploadError = true;
+                            this.$helper.setPageLoading(true);
+
+                            this.$store.dispatch("abortMultipartUpload", {
+                                request: this.$helper.appendFormData({
+                                    key: this.multipartUploadArgs.key,
+                                    upload_id: this.multipartUploadArgs.uploadId
+                                }),
+                                error: {}
+                            })
+                            .then(res => {
+                                this.$helper.setNotification(1, 'Đã hủy video');
+                                this.$helper.setPageLoading(false);
+                            })
+                            .catch(err => {
+                                this.$helper.setPageLoading(false);
+                            });
                         });
                     } else {
                         this.$store.dispatch("completeMultipartUpload", {
@@ -273,13 +286,9 @@
                             error: {}
                         })
                         .then(res => {
-                            this.videoFile = '';
-                            this.isStartUpload = false;
-                            this.multipartUploadArgs.link = res.data;
                             this.progressUploading = 100;
                             this.chunks = [];
                             this.multipartUploadArgs.uploadId = null;
-                            this.multipartUploadArgs.data = null;
 
                             this.getVideoObject();
                             this.$helper.setNotification(1, 'Tải video lên thành công');

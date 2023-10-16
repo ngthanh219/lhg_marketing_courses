@@ -26,6 +26,7 @@ Route::group([
             'middleware' => 'admin.auth'
         ], function () {
             Route::post('logout', [AuthController::class, 'logout']);
+            Route::post('upload-general-file', [VideoController::class, 'uploadGeneralFile']);
 
             Route::group([
                 'prefix' => 'users'

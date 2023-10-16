@@ -23,9 +23,11 @@ class GeneralHelper
         }
     }
 
-    public static function uploadFile($file)
+    public static function uploadFile($file, $fileName = null)
     {
-        $fileName = time() . '.' . $file->getClientOriginalExtension();
+        if ($fileName == null) {
+            $fileName = time() . '.' . $file->getClientOriginalExtension();
+        }
         Storage::disk(Constant::STORAGE_DISK_CUSTOM_LOCAL)->put($fileName, file_get_contents($file));
 
         return $fileName;

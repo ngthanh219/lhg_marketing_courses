@@ -34,11 +34,10 @@ class BaseService
     {
         $response['success'] = 1;
 
-        if ($data) {
-            $response['data'] = $data;
-        } else {
+        if (!$data) {
             $response['message'] = $message ? $message : __('messages.data_status.success');
         }
+        $response['data'] = $data;
 
         Log::info(json_encode([
             'url' => request()->url(),

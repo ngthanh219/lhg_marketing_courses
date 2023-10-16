@@ -308,4 +308,17 @@ class VideoService extends BaseService
             return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
         }
     }
+
+    public function uploadGeneralFile($request)
+    {
+        try {
+            $upload = GeneralHelper::uploadFile($request->file, $request->file_name);
+
+            return $this->responseSuccess();
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
 }

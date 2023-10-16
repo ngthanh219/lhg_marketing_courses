@@ -46,14 +46,14 @@
                                 <table class="table text-center table-hover table-head-fixed text-nowrap">
                                     <thead>
                                         <tr>
-                                            <th>STT</th>
+                                            <th style="width: 25px">STT</th>
                                             <th>Link video</th>
                                             <th style="width: 100px"></th>
                                         </tr>
                                     </thead>
                                     <tbody class="table-data" v-if="dataList">
                                         <tr v-for="data, index in dataList" :id="'item-' + index" v-bind:class="{ 'active': idKey == 'item-' + index }">
-                                            <td style="width: 25px">{{ index += 1 }}</td>
+                                            <td>{{ index += 1 }}</td>
                                             <td>
                                                 <a class="underline cursor-pointer" @click="showVideo($event, index - 1, dataList[index - 1])">{{ data.key }}</a>
                                             </td>

@@ -14,7 +14,7 @@
                                 Thanh toán bằng phương thức chuyển khoản hoặc quét mã QR
                             </div>
                             <div class="image">
-                                <img :src="this.$env.s3Url + 'qrs/qr.png'" alt="">
+                                <img :src="this.$env.s3Url + 'qr.png'" alt="">
                             </div>
                         </div>
                     </div>
