@@ -10,7 +10,7 @@
         <ul class="navbar-nav ml-auto">
             <li class="nav-item dropdown">
                 <a class="nav-link" data-toggle="dropdown" href="#">
-                    {{ $store.state.auth.user.email }}
+                    {{ ($store.state.auth.user) ? $store.state.auth.user.email : '' }}
                 </a>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                     <div class="dropdown-divider"></div>

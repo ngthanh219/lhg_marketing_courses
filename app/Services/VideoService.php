@@ -8,7 +8,6 @@ use App\Libraries\ErrorCode;
 use App\Models\Course;
 use App\Models\CourseSection;
 use App\Models\Video;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 
 class VideoService extends BaseService
