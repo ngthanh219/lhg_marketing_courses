@@ -301,7 +301,24 @@ class VideoService extends BaseService
 
             $video = Storage::disk(Constant::STORAGE_DISK_LOCAL)->path($request->key);
 
-            return response()->file($video, ['Content-Type' => 'video/mp4']);
+            // return response()->file($video, ['Content-Type' => 'video/mp4']);
+
+            return response()->stream(
+                function () use ($video) {
+                    $fileStream = fopen($video, 'rb');
+                    while (!feof($fileStream)) {
+                        echo fread($fileStream, 5 * 1024 * 1024);
+                        ob_flush();
+                        flush();
+                    }
+                    fclose($fileStream);
+                },
+                200,
+                [
+                    'Content-Type' => 'application/octet-stream',
+                    'Content-Disposition' => 'attachment; filename="' . basename($video) . '"',
+                ]
+            );
         } catch (\Exception $ex) {
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 
