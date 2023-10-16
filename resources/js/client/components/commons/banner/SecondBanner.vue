@@ -1,7 +1,7 @@
 <template>
     <div class="banner"
     :style="
-        'background: url(' + $env.s3Url + 'banner2.png);'
+        'background: url(' + $env.storageUrl + 'banner2.png);'
     "
     >
         <div class="overlay"></div>

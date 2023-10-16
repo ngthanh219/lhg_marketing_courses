@@ -12,21 +12,21 @@
                 <div class="reason-box">
                     <div class="rb-item">
                         <div class="image">
-                            <img :src="$env.s3Url + 'rs1.png'" alt="">
+                            <img :src="$env.storageUrl + 'rs1.png'" alt="">
                         </div>
                         <p>Học mọi lúc mọi nơi</p>
                         <span>Chỉ cần có máy tính, laptop hoặc TV kết nối internet</span>
                     </div>
                     <div class="rb-item">
                         <div class="image">
-                            <img :src="$env.s3Url + 'rs2.png'" alt="">
+                            <img :src="$env.storageUrl + 'rs2.png'" alt="">
                         </div>
                         <p>Chất lượng</p>
                         <span>Khóa học chất lượng, cập nhật liên tục, nhu cầu cao, dễ chia sẻ</span>
                     </div>
                     <div class="rb-item">
                         <div class="image">
-                            <img :src="$env.s3Url + 'rs3.png'" alt="">
+                            <img :src="$env.storageUrl + 'rs3.png'" alt="">
                         </div>
                         <p>Thanh toán 1 lần</p>
                         <span>Thanh toán 1 lần, học tất cả các khóa học</span>
