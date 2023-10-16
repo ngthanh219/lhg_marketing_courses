@@ -109,7 +109,9 @@
                     uploadId: null
                 },
                 videoLink: null,
-                isLoadVideo: false
+                isLoadVideo: false,
+                videoBlob: [],
+                concatFileCount: 0,
             }
         },
         mounted() {
@@ -121,18 +123,104 @@
             }, 200);
         },
         methods: {
-            async showVideo() {
+            concatFile(data) {
+                var length = data.length;
+                
+                for (let param in data) {
+                    let chunkFilePath = data[param];
+                    this.videoBlob.push({
+                        [chunkFilePath]: null
+                    });
+
+                    this.$store.dispatch("getChunkFile", {
+                        query: this.$helper.getQueryString({
+                            chunk_file: chunkFilePath,
+                        }),
+                        error: {}
+                    })
+                    .then(res => {
+                        if (!this.videoBlob[param][chunkFilePath]) {
+                            this.videoBlob[param][chunkFilePath] = res;
+                            this.concatFileCount++;
+                        }
+
+                        this.waitingConcatFile(length);
+                    })
+                    .catch(err => {
+                    });
+                }
+            },
+
+            waitingConcatFile(length) {
+                if (this.concatFileCount < length) {
+                    this.waitingConcatFile(length);
+                } else {
+                    let videoBlobArray = [];
+                    for (let blob in this.videoBlob) {
+                        // videoBlobArray[]
+                        for (let index in this.videoBlob[blob]) {
+                            videoBlobArray.push(this.videoBlob[blob][index]);
+                        }
+                    }
+
+                    this.combineChunks(videoBlobArray);
+
+                    // let concatenatedArray = new Uint8Array(videoBlobArray);
+                    // let offset = 0;
+                    // videoBlobArray.forEach(videoBlob => {
+                    //     concatenatedArray.set(videoBlob, offset);
+                    //     offset += videoBlob.length;
+                    // });
+                    // var videoBlob = new Blob([concatenatedArray], { type: 'video/mp4' });
+
+                    // this.videoLink = URL.createObjectURL(videoBlob);
+                }
+            },
+
+            async combineChunks(chunks) {
+                let totalSize = 0;
+                chunks.forEach(chunk => {
+                    totalSize += chunk.size;
+                });
+
+                const combinedBuffer = new ArrayBuffer(totalSize);
+                const combinedArray = new Uint8Array(combinedBuffer);
+                
+                let offset = 0;
+                var self = this;
+                chunks.forEach((chunk) => {
+                    const reader = new FileReader();
+                    reader.onload = function () {
+                        combinedArray.set(new Uint8Array(reader.result), offset);
+                        offset += reader.result.byteLength;
+
+                        if (offset === totalSize) {
+                            // console.log(combinedBuffer);
+                            const blob = new Blob([combinedBuffer], { type: 'video/mp4' });
+
+                            self.videoLink = URL.createObjectURL(blob);
+
+                            console.log(self.videoLink);
+                        }
+                    };
+
+                    reader.readAsArrayBuffer(chunk);
+                });
+            },
+
+            showVideo() {
                 if (this.isShowVideo) {
                     this.isLoadVideo = true;
                     this.$helper.setPageLoading(true);
-                    await this.$store.dispatch("showVideoObject", {
+                    this.$store.dispatch("showVideoObject", {
                         query: this.$helper.getQueryString({
                             key: this.videoData.key,
                         }),
                         error: {}
                     })
                     .then(res => {
-                        this.videoLink = URL.createObjectURL(new Blob([res]));
+                        // this.videoLink = URL.createObjectURL(new Blob([res]));
+                        this.concatFile(res.data);
                     })
                     .catch(err => {
                     });

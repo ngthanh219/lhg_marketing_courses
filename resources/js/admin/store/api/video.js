@@ -78,7 +78,21 @@ let video = {
     showVideoObject({state}, form) {
         axios.defaults.headers.common = {'Authorization': `Bearer ` + state.auth.accessToken}
         return new Promise((resolve, reject) => {
-            axios.get(actionParams.API + 'videos/object/show' + form.query, {
+            axios.get(actionParams.API + 'videos/object/show' + form.query)
+            .then((res) => {
+                actionParams.resetFormError(form.error);
+                resolve(res.data);
+            })
+            .catch((err) => {
+                reject(actionParams.getError(err, form.error));
+            })
+        });
+    },
+
+    getChunkFile({state}, form) {
+        axios.defaults.headers.common = {'Authorization': `Bearer ` + state.auth.accessToken}
+        return new Promise((resolve, reject) => {
+            axios.get(actionParams.API + 'videos/object/chunk-file' + form.query, {
                 responseType: 'blob'
             })
             .then((res) => {

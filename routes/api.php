@@ -66,6 +66,7 @@ Route::group([
 
                     Route::get('', [VideoController::class, 'getVideoObject']);
                     Route::get('show', [VideoController::class, 'showVideoObject']);
+                    Route::get('chunk-file', [VideoController::class, 'getChunkFile']);
                     Route::post('create-multipart-upload', [VideoController::class, 'createMultipartUpload']);
                     Route::post('sign-multipart-upload', [VideoController::class, 'signMultipartUpload']);
                     Route::post('complete-multipart-upload', [VideoController::class, 'completeMultipartUpload']);

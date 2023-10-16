@@ -31,6 +31,7 @@ let actions = {
     deleteVideo: video.deleteVideo,
     getVideoObject: video.getVideoObject,
     showVideoObject: video.showVideoObject,
+    getChunkFile: video.getChunkFile,
     createMultipartUpload: video.createMultipartUpload,
     signMultipartUpload: video.signMultipartUpload,
     completeMultipartUpload: video.completeMultipartUpload,

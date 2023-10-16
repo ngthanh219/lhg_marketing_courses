@@ -235,7 +235,7 @@ class VideoService extends BaseService
     
             fclose($destinationFile);
             fclose($sourceFile);
-            Storage::disk(Constant::STORAGE_DISK_LOCAL)->delete($chunkFolder);
+            // Storage::disk(Constant::STORAGE_DISK_LOCAL)->delete($chunkFolder);
 
             return response()->json([
                 'success' => 1,
@@ -252,7 +252,7 @@ class VideoService extends BaseService
     {
         try {
             $chunkFolder = Constant::CHUNK_FOLDER . $request->upload_id;
-            Storage::disk(Constant::STORAGE_DISK_LOCAL)->deleteDirectory($chunkFolder);
+            // Storage::disk(Constant::STORAGE_DISK_LOCAL)->deleteDirectory($chunkFolder);
 
             return $this->responseSuccess();
         } catch (\Exception $ex) {
@@ -294,6 +294,16 @@ class VideoService extends BaseService
     public function showVideoObject($request)
     {
         try {
+            $files = Storage::disk(Constant::STORAGE_DISK_LOCAL)->files('chunks/1697475907');
+            usort($files, function($a, $b) {
+                $numberA = intval(substr($a, strpos($a, "blob_") + 5));
+                $numberB = intval(substr($b, strpos($b, "blob_") + 5));
+            
+                return $numberA - $numberB;
+            });
+
+            return $this->responseSuccess($files);
+
             if (!Storage::disk(Constant::STORAGE_DISK_LOCAL)->exists($request->key)) {
                 return $this->responseError(__('messages.video.not_exist'), 400, ErrorCode::PARAM_INVALID);
             }
@@ -318,6 +328,23 @@ class VideoService extends BaseService
                     'Content-Disposition' => 'attachment; filename="' . basename($video) . '"',
                 ]
             );
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
+    public function getChunkFile($request)
+    {
+        try {
+            if (!Storage::disk(Constant::STORAGE_DISK_LOCAL)->exists($request->chunk_file)) {
+                return $this->responseError(__('messages.video.not_exist'), 400, ErrorCode::PARAM_INVALID);
+            }
+
+            $video = Storage::disk(Constant::STORAGE_DISK_LOCAL)->path($request->chunk_file);
+
+            return response()->file($video);
         } catch (\Exception $ex) {
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 

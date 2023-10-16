@@ -73,6 +73,11 @@ class VideoController extends Controller
         return $this->videoService->showVideoObject($request);
     }
 
+    public function getChunkFile(Request $request)
+    {
+        return $this->videoService->getChunkFile($request);
+    }
+
     public function uploadGeneralFile(Request $request)
     {
         return $this->videoService->uploadGeneralFile($request);
