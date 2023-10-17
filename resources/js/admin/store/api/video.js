@@ -78,7 +78,9 @@ let video = {
     showVideoObject({state}, form) {
         axios.defaults.headers.common = {'Authorization': `Bearer ` + state.auth.accessToken}
         return new Promise((resolve, reject) => {
-            axios.get(actionParams.API + 'videos/object/show' + form.query)
+            axios.get(actionParams.API + 'videos/object/show' + form.query, {
+                responseType: 'blob'
+            })
             .then((res) => {
                 actionParams.resetFormError(form.error);
                 resolve(res.data);

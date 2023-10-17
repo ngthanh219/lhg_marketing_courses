@@ -122,17 +122,17 @@
             }, 200);
         },
         updated() {
-            var self = this;
-            setInterval(function() {
-                if (self.videoLink) {
-                    if (document.getElementById('myVideo')) {
-                        document.getElementById('myVideo').addEventListener('contextmenu', function (e) {
-                            e.preventDefault();
-                        });
-                        document.getElementById('myVideo').controlsList.add("nodownload");
-                    }
-                }
-            }, 500);
+            // var self = this;
+            // setInterval(function() {
+            //     if (self.videoLink) {
+            //         if (document.getElementById('myVideo')) {
+            //             document.getElementById('myVideo').addEventListener('contextmenu', function (e) {
+            //                 e.preventDefault();
+            //             });
+            //             document.getElementById('myVideo').controlsList.add("nodownload");
+            //         }
+            //     }
+            // }, 500);
         },
         methods: {
             handleVideoLink(length) {
@@ -170,23 +170,25 @@
                 }
             },
 
-            showVideo() {
+            async showVideo() {
                 if (this.isShowVideo) {
                     this.isLoadVideo = true;
                     this.$helper.setPageLoading(true);
-                    this.$store.dispatch("showVideoObject", {
+                    await this.$store.dispatch("showVideoObject", {
                         query: this.$helper.getQueryString({
                             key: this.videoData.key,
                         }),
                         error: {}
                     })
                     .then(res => {
-                        this.concatFile(res.data);
+                        // this.concatFile(res.data);
+                        this.videoLink = URL.createObjectURL(new Blob([res], { type: 'video/mp4' }));
                     })
                     .catch(err => {
-                        this.$helper.setPageLoading(false);
-                        this.isLoadVideo = false;
                     });
+                    
+                    this.$helper.setPageLoading(false);
+                    this.isLoadVideo = false;
                 }
             },
 

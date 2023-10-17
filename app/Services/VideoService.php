@@ -274,8 +274,8 @@ class VideoService extends BaseService
     public function getVideoObject($request)
     {
         try {
-            // $files = Storage::disk(Constant::STORAGE_DISK_LOCAL)->files(Constant::VIDEO_FOLDER);
-            $files = Storage::disk(Constant::STORAGE_DISK_LOCAL)->directories('chunks');
+            $files = Storage::disk(Constant::STORAGE_DISK_LOCAL)->files(Constant::VIDEO_FOLDER);
+            // $files = Storage::disk(Constant::STORAGE_DISK_LOCAL)->directories('chunks');
             $data = [];
 
             foreach ($files as $file) {
@@ -295,15 +295,15 @@ class VideoService extends BaseService
     public function showVideoObject($request)
     {
         try {
-            $files = Storage::disk(Constant::STORAGE_DISK_LOCAL)->files($request->key);
-            usort($files, function($a, $b) {
-                $numberA = intval(substr($a, strpos($a, "blob_") + 5));
-                $numberB = intval(substr($b, strpos($b, "blob_") + 5));
+            // $files = Storage::disk(Constant::STORAGE_DISK_LOCAL)->files($request->key);
+            // usort($files, function($a, $b) {
+            //     $numberA = intval(substr($a, strpos($a, "blob_") + 5));
+            //     $numberB = intval(substr($b, strpos($b, "blob_") + 5));
 
-                return $numberA - $numberB;
-            });
+            //     return $numberA - $numberB;
+            // });
 
-            return $this->responseSuccess($files);
+            // return $this->responseSuccess($files);
 
             if (!Storage::disk(Constant::STORAGE_DISK_LOCAL)->exists($request->key)) {
                 return $this->responseError(__('messages.video.not_exist'), 400, ErrorCode::PARAM_INVALID);
