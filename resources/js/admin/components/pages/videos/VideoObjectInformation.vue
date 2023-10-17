@@ -190,18 +190,11 @@
                     // this.$helper.setPageLoading(false);
                     // this.isLoadVideo = false;
 
-                    var link = 'https://kinhdoanhthucchien.edu.vn/storage/' + this.videoData.key;
-
-                    fetch(link)
-                    .then(response => response.blob())
-                    .then(blob => {
-                        this.videoLink = URL.createObjectURL(blob);
+                    this.videoLink = 'https://kinhdoanhthucchien.edu.vn/storage/' + this.videoData.key;
+                    
+                    setTimeout(() => {
                         this.isLoadVideo = false;
-                    })
-                    .catch(error => {
-                        console.error('Lỗi khi tải video: ', error);
-                        this.isLoadVideo = false;
-                    });
+                    }, 1);
                 }
             },
 
