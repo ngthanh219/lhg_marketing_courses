@@ -125,15 +125,14 @@
             var self = this;
             setInterval(function() {
                 if (self.videoLink) {
-                    let video = document.getElementById('myVideo');
-                    video.addEventListener('contextmenu', function (e) {
-                        e.preventDefault();
-                    });
-                    if (video) {
-                        video.controlsList.add("nodownload");
+                    if (document.getElementById('myVideo')) {
+                        document.getElementById('myVideo').addEventListener('contextmenu', function (e) {
+                            e.preventDefault();
+                        });
+                        document.getElementById('myVideo').controlsList.add("nodownload");
                     }
                 }
-            }, 1);
+            }, 500);
         },
         methods: {
             handleVideoLink(length) {
@@ -142,8 +141,10 @@
                 } else {
                     var videoBlob = new Blob(this.videoBlob, { type: 'video/mp4' });
                     this.videoLink = URL.createObjectURL(videoBlob);
-                    this.isLoadVideo = false;
-                    this.$helper.setPageLoading(false);
+                    setTimeout(() => {
+                        this.isLoadVideo = false;
+                        this.$helper.setPageLoading(false);
+                    }, 5000);
                 }
             },
 
@@ -161,6 +162,7 @@
                     })
                     .then(res => {
                         this.videoBlob[res.number] = res.data;
+                        console.log('loading ... ' + parseInt((this.videoBlob.length * 100) / length) + '%');
                         this.handleVideoLink(length);
                     })
                     .catch(err => {
