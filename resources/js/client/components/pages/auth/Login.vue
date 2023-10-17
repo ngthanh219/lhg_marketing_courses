@@ -5,7 +5,7 @@
                 <div class="card-body">
                     <div class="logo">
                         <a href="https://khoahoc.nguyencanh.net">
-                            <img :src="this.$env.storageUrl + 'logos/logo.png'" class="logo-default-site">
+                            <img :src="this.$env.storageUrl + 'logo.png'" class="logo-default-site">
                         </a>
                     </div>
                     <form v-on:submit="login">
