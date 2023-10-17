@@ -173,22 +173,27 @@
             async showVideo() {
                 if (this.isShowVideo) {
                     this.isLoadVideo = true;
-                    this.$helper.setPageLoading(true);
-                    await this.$store.dispatch("showVideoObject", {
-                        query: this.$helper.getQueryString({
-                            key: this.videoData.key,
-                        }),
-                        error: {}
-                    })
-                    .then(res => {
-                        // this.concatFile(res.data);
-                        this.videoLink = URL.createObjectURL(new Blob([res], { type: 'video/mp4' }));
-                    })
-                    .catch(err => {
-                    });
+                    // this.$helper.setPageLoading(true);
+                    // await this.$store.dispatch("showVideoObject", {
+                    //     query: this.$helper.getQueryString({
+                    //         key: this.videoData.key,
+                    //     }),
+                    //     error: {}
+                    // })
+                    // .then(res => {
+                    //     // this.concatFile(res.data);
+                    //     this.videoLink = URL.createObjectURL(new Blob([res], { type: 'video/mp4' }));
+                    // })
+                    // .catch(err => {
+                    // });
                     
-                    this.$helper.setPageLoading(false);
-                    this.isLoadVideo = false;
+                    // this.$helper.setPageLoading(false);
+                    // this.isLoadVideo = false;
+
+                    this.videoLink = 'https://kinhdoanhthucchien.edu.vn/storage/' + this.videoData.key;
+                    setTimeout(() => {
+                        this.isLoadVideo = false;
+                    }, 1);
                 }
             },
 
