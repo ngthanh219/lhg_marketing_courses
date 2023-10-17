@@ -172,26 +172,6 @@ class VideoService extends BaseService
         }
     }
 
-    public function getVideoObject($request)
-    {
-        try {
-            $files = Storage::disk(Constant::STORAGE_DISK_LOCAL)->files(Constant::VIDEO_FOLDER);
-            $data = [];
-
-            foreach ($files as $file) {
-                $data[] = [
-                    'key' => $file
-                ];
-            }
-
-            return $this->responseSuccess($data);
-        } catch (\Exception $ex) {
-            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
-
-            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
-        }
-    }
-
     public function createMultipartUpload($request)
     {
         try {
@@ -291,14 +271,35 @@ class VideoService extends BaseService
         }
     }
 
+    public function getVideoObject($request)
+    {
+        try {
+            // $files = Storage::disk(Constant::STORAGE_DISK_LOCAL)->files(Constant::VIDEO_FOLDER);
+            $files = Storage::disk(Constant::STORAGE_DISK_LOCAL)->directories('chunks');
+            $data = [];
+
+            foreach ($files as $file) {
+                $data[] = [
+                    'key' => $file
+                ];
+            }
+
+            return $this->responseSuccess($data);
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
     public function showVideoObject($request)
     {
         try {
-            $files = Storage::disk(Constant::STORAGE_DISK_LOCAL)->files('chunks/1697475907');
+            $files = Storage::disk(Constant::STORAGE_DISK_LOCAL)->files($request->key);
             usort($files, function($a, $b) {
                 $numberA = intval(substr($a, strpos($a, "blob_") + 5));
                 $numberB = intval(substr($b, strpos($b, "blob_") + 5));
-            
+
                 return $numberA - $numberB;
             });
 
@@ -338,11 +339,11 @@ class VideoService extends BaseService
     public function getChunkFile($request)
     {
         try {
-            if (!Storage::disk(Constant::STORAGE_DISK_LOCAL)->exists($request->chunk_file)) {
+            if (!Storage::disk(Constant::STORAGE_DISK_LOCAL)->exists($request->path)) {
                 return $this->responseError(__('messages.video.not_exist'), 400, ErrorCode::PARAM_INVALID);
             }
 
-            $video = Storage::disk(Constant::STORAGE_DISK_LOCAL)->path($request->chunk_file);
+            $video = Storage::disk(Constant::STORAGE_DISK_LOCAL)->path($request->path);
 
             return response()->file($video);
         } catch (\Exception $ex) {

@@ -67,8 +67,8 @@
                                         </div>
                                     </div>
                                     <div class="card-body text-center" v-if="isShowVideo && !isLoadVideo">
-                                        <video width="640" height="360" controls>
-                                            <source :src="videoLink" type="video/mp4">
+                                        <video width="640" height="360" controls id="myVideo">
+                                            <source :src="videoLink" type="video/mp4" />
                                         </video>
                                     </div>
                                     <div class="card-footer">
@@ -111,7 +111,6 @@
                 videoLink: null,
                 isLoadVideo: false,
                 videoBlob: [],
-                concatFileCount: 0,
             }
         },
         mounted() {
@@ -122,90 +121,51 @@
                 this.showVideo();
             }, 200);
         },
+        updated() {
+            var self = this;
+            setInterval(function() {
+                if (self.videoLink) {
+                    let video = document.getElementById('myVideo');
+                    video.addEventListener('contextmenu', function (e) {
+                        e.preventDefault();
+                    });
+                    if (video) {
+                        video.controlsList.add("nodownload");
+                    }
+                }
+            }, 1);
+        },
         methods: {
+            handleVideoLink(length) {
+                if (this.videoBlob.length < length) {
+                    this.handleVideoLink(length);
+                } else {
+                    var videoBlob = new Blob(this.videoBlob, { type: 'video/mp4' });
+                    this.videoLink = URL.createObjectURL(videoBlob);
+                    this.isLoadVideo = false;
+                    this.$helper.setPageLoading(false);
+                }
+            },
+
             concatFile(data) {
                 var length = data.length;
-                
+
                 for (let param in data) {
                     let chunkFilePath = data[param];
-                    this.videoBlob.push({
-                        [chunkFilePath]: null
-                    });
 
                     this.$store.dispatch("getChunkFile", {
                         query: this.$helper.getQueryString({
-                            chunk_file: chunkFilePath,
+                            path: chunkFilePath,
                         }),
                         error: {}
                     })
                     .then(res => {
-                        if (!this.videoBlob[param][chunkFilePath]) {
-                            this.videoBlob[param][chunkFilePath] = res;
-                            this.concatFileCount++;
-                        }
-
-                        this.waitingConcatFile(length);
+                        this.videoBlob[res.number] = res.data;
+                        this.handleVideoLink(length);
                     })
                     .catch(err => {
                     });
                 }
-            },
-
-            waitingConcatFile(length) {
-                if (this.concatFileCount < length) {
-                    this.waitingConcatFile(length);
-                } else {
-                    let videoBlobArray = [];
-                    for (let blob in this.videoBlob) {
-                        // videoBlobArray[]
-                        for (let index in this.videoBlob[blob]) {
-                            videoBlobArray.push(this.videoBlob[blob][index]);
-                        }
-                    }
-
-                    this.combineChunks(videoBlobArray);
-
-                    // let concatenatedArray = new Uint8Array(videoBlobArray);
-                    // let offset = 0;
-                    // videoBlobArray.forEach(videoBlob => {
-                    //     concatenatedArray.set(videoBlob, offset);
-                    //     offset += videoBlob.length;
-                    // });
-                    // var videoBlob = new Blob([concatenatedArray], { type: 'video/mp4' });
-
-                    // this.videoLink = URL.createObjectURL(videoBlob);
-                }
-            },
-
-            async combineChunks(chunks) {
-                let totalSize = 0;
-                chunks.forEach(chunk => {
-                    totalSize += chunk.size;
-                });
-
-                const combinedBuffer = new ArrayBuffer(totalSize);
-                const combinedArray = new Uint8Array(combinedBuffer);
-                
-                let offset = 0;
-                var self = this;
-                chunks.forEach((chunk) => {
-                    const reader = new FileReader();
-                    reader.onload = function () {
-                        combinedArray.set(new Uint8Array(reader.result), offset);
-                        offset += reader.result.byteLength;
-
-                        if (offset === totalSize) {
-                            // console.log(combinedBuffer);
-                            const blob = new Blob([combinedBuffer], { type: 'video/mp4' });
-
-                            self.videoLink = URL.createObjectURL(blob);
-
-                            console.log(self.videoLink);
-                        }
-                    };
-
-                    reader.readAsArrayBuffer(chunk);
-                });
             },
 
             showVideo() {
@@ -219,14 +179,12 @@
                         error: {}
                     })
                     .then(res => {
-                        // this.videoLink = URL.createObjectURL(new Blob([res]));
                         this.concatFile(res.data);
                     })
                     .catch(err => {
+                        this.$helper.setPageLoading(false);
+                        this.isLoadVideo = false;
                     });
-
-                    this.$helper.setPageLoading(false);
-                    this.isLoadVideo = false;
                 }
             },
 
@@ -317,6 +275,9 @@
                             const chunk = this.videoFile.slice(i, i + chunkSize);
                             this.chunks.push(chunk);
                         }
+
+                        // console.log(this.chunks[0]);
+                        // console.log(typeof this.chunks[0]);
 
                         this.signMultipartUpload(0);
                     }

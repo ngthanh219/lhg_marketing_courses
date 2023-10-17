@@ -97,9 +97,19 @@ let video = {
             })
             .then((res) => {
                 actionParams.resetFormError(form.error);
-                resolve(res.data);
+
+                const query = form.query;
+                const decodedPath = decodeURIComponent(query);
+                const parts = decodedPath.split('/');
+                const blobName = parts[parts.length - 1];
+                const number = parseInt(blobName.replace("blob_", ""));
+
+                resolve({
+                    data: res.data,
+                    number: number
+                });
             })
-            .catch((err) => {
+            .catch((err) => {   
                 reject(actionParams.getError(err, form.error));
             })
         });
