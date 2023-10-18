@@ -4,7 +4,14 @@
             <h3>Video</h3>
             <div class="text-center" v-if="!videoSrc">Lựa chọn video để xem</div>
 
-            <div class="video" v-bind:class="{'active-controls': currentDuration == 0}" ref="video" v-else>
+            <div 
+                class="video" 
+                v-bind:class="[
+                    {'active-controls': currentDuration == 0},
+                    {'fullscreen': isFullScreen}
+                ]" 
+                ref="video"
+            v-else>
                 <canvas class="cursor-pointer" ref="canvas" @click="startVideo" />
                 <div class="video-controls" id="controls" v-if="video" >
                     <div class="option">

@@ -7,6 +7,10 @@
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
 }
 
+.overflow-hidden {
+    overflow: hidden !important;
+}
+
 img, video, canvas {
     width: 100%;
 }
@@ -899,7 +903,7 @@ header {
                                 justify-content: space-between;
                                 padding: 0 10px 10px 10px;
                                 position: absolute;
-                                bottom: 4px;
+                                bottom: 0px;
                                 left: 0;
                                 right: 0;
                                 z-index: 999999;
@@ -924,7 +928,11 @@ header {
 
                                     a, i, .video-duration {
                                         color: white;
-                                        font-size: 12px;
+                                        font-size: 15px;
+                                    }
+
+                                    .fa-expand, .fa-play, .fa-pause {
+                                        font-size: 15px;
                                     }
                                     
                                     .left a, .right .volume {
@@ -944,10 +952,16 @@ header {
                             }
                         }
 
-                        .video:fullscreen {
+                        .video.fullscreen {
+                            position: fixed !important;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            height: 100%;
                             display: flex;
-                            align-items: center;
                             justify-content: center;
+                            align-items: center;
+                            background: black;
                         }
 
                         .video:hover, .video.active-controls {
