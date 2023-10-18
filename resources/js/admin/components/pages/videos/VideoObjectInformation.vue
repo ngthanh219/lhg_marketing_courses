@@ -190,11 +190,21 @@
                     // this.$helper.setPageLoading(false);
                     // this.isLoadVideo = false;
 
-                    this.videoLink = 'https://kinhdoanhthucchien.edu.vn/storage/' + this.videoData.key;
+                    // this.videoLink = 'https://kinhdoanhthucchien.edu.vn/storage/' + this.videoData.key;
                     
-                    setTimeout(() => {
+                    // setTimeout(() => {
+                    //     this.isLoadVideo = false;
+                    // }, 1);
+
+                    fetch('https://kdtc.s3.ap-southeast-1.amazonaws.com/videos/20p1080p.mp4')
+                    .then(response => response.blob())
+                    .then(blob => {
+                        this.videoLink = URL.createObjectURL(blob);
                         this.isLoadVideo = false;
-                    }, 1);
+                    })
+                    .catch(error => {
+                        console.error('Lỗi khi tải video: ', error);
+                    });
                 }
             },
 
