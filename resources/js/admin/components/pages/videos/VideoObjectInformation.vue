@@ -190,13 +190,13 @@
                     // this.$helper.setPageLoading(false);
                     // this.isLoadVideo = false;
 
-                    // this.videoLink = 'https://kinhdoanhthucchien.edu.vn/storage/' + this.videoData.key;
+                    this.videoLink = 'https://kinhdoanhthucchien.edu.vn/storage/' + this.videoData.key;
                     
                     // setTimeout(() => {
                     //     this.isLoadVideo = false;
                     // }, 1);
 
-                    fetch('https://kdtc.s3.ap-southeast-1.amazonaws.com/videos/20p1080p.mp4')
+                    fetch(this.videoLink)
                     .then(response => response.blob())
                     .then(blob => {
                         this.videoLink = URL.createObjectURL(blob);
