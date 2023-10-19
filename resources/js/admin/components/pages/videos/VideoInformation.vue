@@ -37,10 +37,7 @@
                                                 Lựa chọn
                                             </a>
                                             <input type="text" class="form-control form-control-border" v-model="formData.source" disabled>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Thời gian</label>
-                                            <input type="text" class="form-control form-control-border" placeholder="xxx" v-model="formData.duration">
+                                            <span v-if="videoData">Thời gian: <a href="#">{{$helper.formatDuration(formData.duration)}}</a></span>
                                         </div>
                                     </div>
                                     <div class="card-footer">
@@ -205,6 +202,7 @@
                 })
                 .then(res => {
                     this.videoData.source_url = res.data.source_url;
+                    this.formData.duration = parseInt(res.data.duration);
                     this.$helper.mergeArrayData(this.formData, this.videoData);
 
                     this.$helper.setNotification(1, 'Thông tin đã được cập nhật');

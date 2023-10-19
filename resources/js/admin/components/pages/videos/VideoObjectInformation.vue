@@ -57,6 +57,9 @@
                                                 ]" :style="'width: ' + progressUploading + '%'"></div>
                                             </div>
                                         </div>
+                                        <div class="form-group" v-if="videoFile">
+                                            <video class="input-group" ref="videoPlayer" controls></video>
+                                        </div>
                                         <div class="form-group" v-if="progressUploading == 100">
                                             <label>
                                                 Link video: 
@@ -102,7 +105,8 @@
                     key: null,
                     uploadId: null,
                     fileParts: [],
-                    data: null
+                    data: null,
+                    duration: 0
                 }
             }
         },
@@ -156,10 +160,21 @@
                 }
             },
 
-            handleSource(e) {
+            async handleSource(e) {
                 if (!this.isStartUpload) {
                     this.videoFile = e.target.files[0];
-                    this.progressUploading = 0;
+                    var self = this;
+
+                    setTimeout(() => {
+                        const videoPlayer = self.$refs.videoPlayer;
+                        const videoURL = URL.createObjectURL(self.videoFile);
+                        videoPlayer.src = videoURL;
+                        videoPlayer.load();
+    
+                        videoPlayer.onloadedmetadata = () => {
+                            self.multipartUploadArgs.duration = Math.floor(videoPlayer.duration);
+                        };
+                    }, 1);
                 }
             },
 
@@ -242,6 +257,7 @@
                                 key: this.multipartUploadArgs.key,
                                 upload_id: this.multipartUploadArgs.uploadId,
                                 file_parts: JSON.stringify(this.multipartUploadArgs.fileParts),
+                                duration: this.multipartUploadArgs.duration
                             }),
                             error: {}
                         })

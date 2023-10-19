@@ -102,7 +102,7 @@
                                             <td>{{ data.id }}</td>
                                             <td>{{ data.name }}</td>
                                             <td>
-                                                <a class="underline" :href="data.source_url" target="_blank">Xem</a>
+                                                <a class="underline" :href="data.source" target="_blank">Xem</a>
                                             </td>
                                             <td>{{ this.$helper.formatDuration(data.duration) }}</td>
                                             <td>

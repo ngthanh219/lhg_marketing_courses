@@ -17,7 +17,7 @@ class UpdateVideoRequest extends FormRequest
         return [
             'course_section_id' => 'required|integer|min:1',
             'description' => 'max:1000',
-            'source' => 'nullable|max:50',
+            'source' => 'nullable',
             'duration' => 'required|integer|min:0',
             'is_show' => 'required|integer|min:0|max:1'
         ];

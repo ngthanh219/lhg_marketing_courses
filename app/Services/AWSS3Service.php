@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Aws\S3\S3Client;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class AWSS3Service
 {
@@ -38,7 +39,7 @@ class AWSS3Service
         return $objects['Contents'];
     }
 
-    public function getFile($filePath, $expireDuration)
+    public function getObject($filePath, $expireDuration)
     {
         $expires = "+$expireDuration second";
         $s3Client = $this->s3ClientSetup();
@@ -129,7 +130,7 @@ class AWSS3Service
     public function delete($key)
     {
         if (Storage::disk('s3')->exists($key)) {
-            Storage::disk('s3')->delete($key);
+            return Storage::disk('s3')->delete($key);
         }
     }
 
