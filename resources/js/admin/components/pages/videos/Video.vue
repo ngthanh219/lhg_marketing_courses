@@ -102,7 +102,7 @@
                                             <td>{{ data.id }}</td>
                                             <td>{{ data.name }}</td>
                                             <td>
-                                                <a class="underline" :href="data.source" target="_blank">Xem</a>
+                                                <a class="underline" href="" @click="showVideo($event, data.source)">Xem</a>
                                             </td>
                                             <td>{{ this.$helper.formatDuration(data.duration) }}</td>
                                             <td>
@@ -209,6 +209,26 @@
             this.getVideoData();
         },
         methods: {
+            async showVideo(e, source) {
+                e.preventDefault();
+                
+                this.$helper.setPageLoading(true);
+                await this.$store.dispatch("getVideoObject", {
+                    query: this.$helper.getQueryString({
+                        path: source
+                    }),
+                    error: {
+                        message: ''
+                    }
+                })
+                .then(res => {
+                    window.open(res.data, '_blank');
+                })
+                .catch(err => {
+                });
+                this.$helper.setPageLoading(false);
+            },
+
             async getVideoData() {
                 this.$helper.setPageLoading(true);
                 await this.$store.dispatch("getVideos", {

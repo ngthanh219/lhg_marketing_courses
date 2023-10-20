@@ -74,23 +74,38 @@
                     this.$helper.redirectPage('dang-nhap');
                 }
                 
-                if (video.source_url != null && this.isVideoActiveVal != isVideoActiveVal) {
-                    this.$helper.setPageLoading(true);
-                    await this.$store.dispatch("getDV", {
-                        request: this.$helper.appendFormData({
-                            id: video.id
-                        }),
-                        error: {
-                            message: ''
-                        }
-                    })
-                    .then(res => {
-                        this.deVideo(video.source_url, res.data);
-                        this.isVideoActiveVal = isVideoActiveVal;
-                    })
-                    .catch(err => {
-                    });
-                    this.$helper.setPageLoading(false);
+                if (video.source != null && this.isVideoActiveVal != isVideoActiveVal) {
+                    const items = video.source.split('%');
+                    for (let i in items) {
+                        items[i] = items[i].split('').reverse().join('');
+                    }
+
+                    const temp = items[0];
+                    var third = '';
+
+                    items[0] = items[1];
+                    items[1] = temp;
+                    if (items[2]) {
+                        third = items[2];
+                    }
+
+                    console.log(items[0] + items[1] + items[2]);
+                    // this.$helper.setPageLoading(true);
+                    // await this.$store.dispatch("getDV", {
+                    //     request: this.$helper.appendFormData({
+                    //         id: video.id
+                    //     }),
+                    //     error: {
+                    //         message: ''
+                    //     }
+                    // })
+                    // .then(res => {
+                    //     this.deVideo(video.source_url, res.data);
+                    //     this.isVideoActiveVal = isVideoActiveVal;
+                    // })
+                    // .catch(err => {
+                    // });
+                    // this.$helper.setPageLoading(false);
                 }
             },
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\GeneralHelper;
 use App\Libraries\Constant;
 use App\Services\AWSS3Service;
 use Carbon\Carbon;
@@ -40,8 +41,12 @@ class Video extends Model
 
     public function getSourceAttribute($value)
     {  
-        if ($value && auth()->guard('api')->user()->role_id == Constant::ROLE_ADMIN) {
-            return $value;
+        if ($value) {
+            if (auth()->guard('api')->user()->role_id == Constant::ROLE_ADMIN) {
+                return $value;
+            }
+
+            return GeneralHelper::getCustomSource($value);
         }
 
         return null;

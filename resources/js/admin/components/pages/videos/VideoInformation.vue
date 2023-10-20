@@ -126,11 +126,6 @@
 
                 if (this.videoData) {
                     this.$helper.mergeArrayData(this.videoData, this.formData);
-                    if (this.videoData.source_url) {
-                        const matches = this.videoData.source_url.match(/videos\/[\w.]+\.mp4/);
-                        this.formData.source = matches[0];
-                    }
-
                     this.courseSectionName = this.videoData.course_section_name;
                 }
             }, 200);
@@ -201,7 +196,6 @@
                     error: this.formDataError
                 })
                 .then(res => {
-                    this.videoData.source_url = res.data.source_url;
                     this.formData.duration = parseInt(res.data.duration);
                     this.$helper.mergeArrayData(this.formData, this.videoData);
 
@@ -238,8 +232,9 @@
                 this.isModalVideoObjectList = false;
             },
 
-            selectSourceData(key) {
+            selectSourceData(key, duration) {
                 this.formData.source = key;
+                this.formData.duration = duration;
             }
         }
     }

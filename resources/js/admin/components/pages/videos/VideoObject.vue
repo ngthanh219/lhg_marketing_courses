@@ -59,6 +59,7 @@
                                                     />
                                                 </a>
                                             </th>
+                                            <th>Thời gian</th>
                                             <th style="width: 100px"></th>
                                         </tr>
                                     </thead>
@@ -68,6 +69,7 @@
                                             <td>
                                                 <a class="underline cursor-pointer" @click="showVideo($event, data.Key)">{{ data.Key }}</a>
                                             </td>
+                                            <td>{{ $helper.formatDuration(data.Duration) }}</td>
                                             <td>{{ data.LastModified }}</td>
                                             <td>
                                                 <div class="table-action">

@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Libraries\Constant;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -61,6 +62,8 @@ class GeneralHelper
                 return $videoContent['duration'];
             }
         }
+
+        return 0;
     }
 
     public static function deleteVideoContentFile($key)
@@ -88,5 +91,38 @@ class GeneralHelper
         }
 
         return $randomString;
+    }
+
+    public static function getCustomSource($source)
+    {
+        $trimmedString = str_replace(Constant::VIDEO_FOLDER, '', $source);
+        $source = str_replace('.mp4', '', $trimmedString);
+
+        $length = strlen($source);
+        $halfLength = floor($length / 2);
+        $maxFirstLength = rand(floor($halfLength / 3), $halfLength);
+
+        $firstItem = substr($source, 0, $maxFirstLength);
+        $secondItem = substr($source, $maxFirstLength, $halfLength);
+        $thirdItem = substr($source, $maxFirstLength + $halfLength);
+
+        return strrev($secondItem) . '%' . strrev($firstItem) . '%'  . strrev($thirdItem);
+    }
+
+    public static function reverseCustomSource($source)
+    {
+        return $source;
+        // $array = explode('%', $source);
+        // return $array;
+        
+        // $firstItem = strrev($firstItem);
+        // $secondItem = strrev($secondItem);
+        // $thirdItem = strrev($thirdItem);
+        // $source = $firstItem . $secondItem . $thirdItem;
+
+        // $source = $source . '.mp4';
+        // $source = Constant::VIDEO_FOLDER . $source;
+
+        // return $source;
     }
 }

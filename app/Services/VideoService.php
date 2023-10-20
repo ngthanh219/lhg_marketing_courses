@@ -206,6 +206,7 @@ class VideoService extends BaseService
     
                 foreach ($data as $key => $item) {
                     $data[$key]['LastModified'] = Carbon::parse($data[$key]['LastModified'], 'Asia/Ho_Chi_Minh')->format("d-m-Y H:i:s");
+                    $data[$key]['Duration'] = GeneralHelper::getVideoDuration($item['Key']);
 
                     if ($item['Key'] == Constant::VIDEO_FOLDER) {
                         unset($data[$key]);
@@ -234,7 +235,7 @@ class VideoService extends BaseService
             if ($request->file_name) {
                 $fileName = $request->file_name;
             } else {
-                $time = GeneralHelper::randomString(80) . '_' . time();
+                $time = GeneralHelper::randomString(100) . '_' . time();
                 $fileName = "$time.mp4";
             }
 

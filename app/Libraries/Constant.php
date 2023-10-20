@@ -24,7 +24,7 @@ class Constant
     const VIDEO_FOLDER = 'videos/';
 
     const EXPIRE_IMAGE = 60;
-    const EXPIRE_VIDEO = 1800;
+    const EXPIRE_VIDEO = 300;
 
     const IS_NOT_CHANGE_VIDEO = 0;
     const IS_CHANGE_VIDEO = 1;
