@@ -217,49 +217,52 @@
             },
 
             enterFullScreen(element) {
-                this.alertMessage += '203.1 ';
+                this.alertMessage += '206.1 ';
                 this.isFullScreen = true;
-                this.alertMessage += '203.2 ';
+                this.alertMessage += '206.2 ';
 
                 if (element.requestFullscreen) {
-                    this.alertMessage += '203.3 ';
+                    this.alertMessage += '206.3 ';
                     element.requestFullscreen();
                 } else if (element.mozRequestFullScreen) {
-                    this.alertMessage += '203.4 ';
+                    this.alertMessage += '206.4 ';
                     element.mozRequestFullScreen();
                 } else if (element.webkitRequestFullscreen) {
-                    this.alertMessage += '203.5 ';
+                    this.alertMessage += '206.5 ';
                     element.webkitRequestFullscreen();
                 } else if (element.msRequestFullscreen) {
-                    this.alertMessage += '203.6 ';
+                    this.alertMessage += '206.6 ';
                     element.msRequestFullscreen();
+                } else if (element.webkitEnterFullscreen) {
+                    this.alertMessage += '206.7 ';
+                    element.webkitEnterFullscreen();
                 }
-                this.alertMessage += '203.7 ';
+                this.alertMessage += '206.8 ';
             },
             
             exitFullScreen() {
-                this.alertMessage += '206.1 ';
+                this.alertMessage += '203.1 ';
                 this.isFullScreen = false;
-                this.alertMessage += '206.2 ';
+                this.alertMessage += '203.2 ';
 
                 if (document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
-                    this.alertMessage += '206.3 ';
+                    this.alertMessage += '203.3 ';
                     if (document.exitFullscreen) {
-                        this.alertMessage += '206.4 ';
+                        this.alertMessage += '203.4 ';
                         document.exitFullscreen();
                     } else if (document.mozCancelFullScreen) {
-                        this.alertMessage += '206.5 ';
+                        this.alertMessage += '203.5 ';
                         document.mozCancelFullScreen();
                     } else if (document.webkitExitFullscreen) {
-                        this.alertMessage += '206.6 ';
+                        this.alertMessage += '203.6 ';
                         document.webkitExitFullscreen();
                     } else if (document.msExitFullscreen) {
-                        this.alertMessage += '206.7 ';
+                        this.alertMessage += '203.7 ';
                         document.msExitFullscreen();
                     }
                 }
 
-                this.alertMessage += '206.8 ';
+                this.alertMessage += '203.8 ';
             },
         }
     }
