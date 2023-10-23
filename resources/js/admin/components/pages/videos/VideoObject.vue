@@ -48,6 +48,7 @@
                                         <tr>
                                             <th>STT</th>
                                             <th>Link video</th>
+                                            <th>Thời gian</th>
                                             <th>
                                                 <a href="/" @click="sortVideoObjectData($event, 'last_modified_sort')">
                                                     Ngày tạo
@@ -59,7 +60,6 @@
                                                     />
                                                 </a>
                                             </th>
-                                            <th>Thời gian</th>
                                             <th style="width: 100px"></th>
                                         </tr>
                                     </thead>

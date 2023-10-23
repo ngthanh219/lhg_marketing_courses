@@ -75,55 +75,57 @@
                 }
                 
                 if (video.source != null && this.isVideoActiveVal != isVideoActiveVal) {
-                    const items = video.source.split('%');
-                    for (let i in items) {
-                        items[i] = items[i].split('').reverse().join('');
-                    }
-
-                    const temp = items[0];
-                    var third = '';
-
-                    items[0] = items[1];
-                    items[1] = temp;
-                    if (items[2]) {
-                        third = items[2];
-                    }
-
-                    console.log(items[0] + items[1] + items[2]);
-                    // this.$helper.setPageLoading(true);
-                    // await this.$store.dispatch("getDV", {
-                    //     request: this.$helper.appendFormData({
-                    //         id: video.id
-                    //     }),
-                    //     error: {
-                    //         message: ''
-                    //     }
-                    // })
-                    // .then(res => {
-                    //     this.deVideo(video.source_url, res.data);
-                    //     this.isVideoActiveVal = isVideoActiveVal;
-                    // })
-                    // .catch(err => {
-                    // });
-                    // this.$helper.setPageLoading(false);
+                    this.$helper.setPageLoading(true);
+                    await this.$store.dispatch("getDV", {
+                        request: this.$helper.appendFormData({
+                            id: video.id
+                        }),
+                        error: {
+                            message: ''
+                        }
+                    })
+                    .then(res => {
+                        this.deVideo(video, res.data);
+                        this.isVideoActiveVal = isVideoActiveVal;
+                    })
+                    .catch(err => {
+                    });
+                    this.$helper.setPageLoading(false);
                 }
             },
 
-            deVideo(sourceUrl, data) {
-                var n = data.n;
-                var query = this.$helper.getQueryString(sourceUrl);
-
-                if (n != null) {
-                    n = n.reverse();
-                    var filePath = 'videos/';
-
-                    for (var i in n) {
-                        filePath += n[i];
-                    }
-
-                    filePath += '.mp4';
-                    this.setVideoSrc(this.$env.s3Url + filePath + query);
+            async deVideo(video, data) {
+                var source = video.source;
+                const items = source.split('%');
+                for (let i in items) {
+                    items[i] = items[i].split('').reverse().join('');
                 }
+
+                const temp = items[0];
+                var thirdItem = '';
+                items[0] = items[1];
+                items[1] = temp;
+
+                if (items[2]) {
+                    thirdItem = items[2];
+                }
+
+                source = items[0] + items[1] + thirdItem;
+                var newData = {};
+
+                for (var key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        newData["X-Amz-" + key] = data[key];
+                    }
+                }
+
+                var expiresKey = 'X-Amz-Expires';
+                if (!data.hasOwnProperty(expiresKey)) {
+                    newData[expiresKey] = video.duration + 300;
+                }
+
+                var query = this.$helper.getQueryString(newData);
+                this.setVideoSrc(this.$env.s3Url + 'videos/' + source + '.mp4' + query);
             }
         }
     }

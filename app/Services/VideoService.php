@@ -236,7 +236,7 @@ class VideoService extends BaseService
                 $fileName = $request->file_name;
             } else {
                 $time = GeneralHelper::randomString(100) . '_' . time();
-                $fileName = "$time.mp4";
+                $fileName = $time . Constant::VIDEO_EXT;
             }
 
             $key .= $fileName;

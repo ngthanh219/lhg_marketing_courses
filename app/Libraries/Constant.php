@@ -32,4 +32,6 @@ class Constant
     const COURSE_USER_USING = 0;
     const COURSE_USER_PENDING = 1;
     const COURSE_USER_NO_ACTION = 2;
+
+    const VIDEO_EXT = '.mp4';
 }

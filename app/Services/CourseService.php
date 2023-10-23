@@ -369,19 +369,13 @@ class CourseService extends BaseService
                     return $this->responseError(__('messages.course_user.not_exist'), 400, ErrorCode::PARAM_INVALID);
                 }
 
-                // $folderName = 'videos/';
-                // $ext = '.mp4';
-                // $sourceWithoutFolder = str_replace($folderName, '', $video->source);
-                // $sourceWithoutExtension = str_replace($ext, '', $sourceWithoutFolder);
-                // $n = array_reverse(str_split($sourceWithoutExtension));
-
-                // $video = ;
-                $video->reverse_source = GeneralHelper::reverseCustomSource($video->source);
-                return response()->json($video);
-
-                $sourceUrl = $this->awsS3Service->getObject($video->source, $video->duration + Constant::EXPIRE_VIDEO);
+                $videoObject = (object) $video->toArray();
+                $objectKey = GeneralHelper::reverseCustomSource($videoObject->source);
+                $sourceUrl = $this->awsS3Service->getObject($objectKey, $videoObject->duration + Constant::EXPIRE_VIDEO);
                 $query = parse_url($sourceUrl, PHP_URL_QUERY);
                 parse_str($query, $queryParams);
+
+                $queryParams = GeneralHelper::getSignedUrlParams($queryParams);
             }
             
             return $this->responseSuccess($queryParams);

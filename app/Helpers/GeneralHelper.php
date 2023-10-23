@@ -96,7 +96,7 @@ class GeneralHelper
     public static function getCustomSource($source)
     {
         $trimmedString = str_replace(Constant::VIDEO_FOLDER, '', $source);
-        $source = str_replace('.mp4', '', $trimmedString);
+        $source = str_replace(Constant::VIDEO_EXT, '', $trimmedString);
 
         $length = strlen($source);
         $halfLength = floor($length / 2);
@@ -111,18 +111,25 @@ class GeneralHelper
 
     public static function reverseCustomSource($source)
     {
+        list($thirdItem, $firstItem, $secondItem) = explode('%', strrev($source));
+        $sourceName = $firstItem . $secondItem . $thirdItem;
+        $source = Constant::VIDEO_FOLDER . $sourceName . Constant::VIDEO_EXT;
+
         return $source;
-        // $array = explode('%', $source);
-        // return $array;
-        
-        // $firstItem = strrev($firstItem);
-        // $secondItem = strrev($secondItem);
-        // $thirdItem = strrev($thirdItem);
-        // $source = $firstItem . $secondItem . $thirdItem;
+    }
 
-        // $source = $source . '.mp4';
-        // $source = Constant::VIDEO_FOLDER . $source;
+    public static function getSignedUrlParams($params)
+    {
+        $newParams = [];
+        foreach ($params as $key => $param) {
+            $newKey = str_replace('X-Amz-', '', $key);
+            $newParams[$newKey] = $param;
 
-        // return $source;
+            if ($newKey == 'Expires') {
+                unset($newParams[$newKey]);
+            }
+        }
+
+        return $newParams;
     }
 }
