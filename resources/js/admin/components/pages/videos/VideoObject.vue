@@ -48,6 +48,7 @@
                                         <tr>
                                             <th>STT</th>
                                             <th>Link video</th>
+                                            <th>Thời gian</th>
                                             <th>
                                                 <a href="/" @click="sortVideoObjectData($event, 'last_modified_sort')">
                                                     Ngày tạo
@@ -68,6 +69,7 @@
                                             <td>
                                                 <a class="underline cursor-pointer" @click="showVideo($event, data.Key)">{{ data.Key }}</a>
                                             </td>
+                                            <td>{{ $helper.formatDuration(data.Duration) }}</td>
                                             <td>{{ data.LastModified }}</td>
                                             <td>
                                                 <div class="table-action">

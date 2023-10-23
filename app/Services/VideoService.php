@@ -9,6 +9,7 @@ use App\Models\Course;
 use App\Models\CourseSection;
 use App\Models\Video;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class VideoService extends BaseService
 {
@@ -98,12 +99,13 @@ class VideoService extends BaseService
             $newData = [
                 'course_section_id' => (int) $request->course_section_id,
                 'name' => $request->name,
-                'duration' => (int) $request->duration,
+                'duration' => 0,
                 'is_show' => (int) $request->is_show
             ];
 
             if ($request->source) {
                 $newData['source'] = $request->source;
+                $newData['duration'] = GeneralHelper::getVideoDuration($request->source);
             }
 
             $video = $this->video->create($newData);
@@ -138,6 +140,7 @@ class VideoService extends BaseService
 
             if ($request->source) {
                 $updatedData['source'] = $request->source;
+                $updatedData['duration'] = GeneralHelper::getVideoDuration($request->source);
             }
 
             $video->update($updatedData);
@@ -197,12 +200,17 @@ class VideoService extends BaseService
         try {
             $data = null;
             if ($request->path) {
-                $data = $this->awsS3Service->getFile($request->path, Constant::EXPIRE_VIDEO);
+                $data = $this->awsS3Service->getObject($request->path, Constant::EXPIRE_VIDEO);
             } else {
                 $data = $this->awsS3Service->getObjects(Constant::VIDEO_FOLDER);
     
                 foreach ($data as $key => $item) {
                     $data[$key]['LastModified'] = Carbon::parse($data[$key]['LastModified'], 'Asia/Ho_Chi_Minh')->format("d-m-Y H:i:s");
+                    $data[$key]['Duration'] = GeneralHelper::getVideoDuration($item['Key']);
+
+                    if ($item['Key'] == Constant::VIDEO_FOLDER) {
+                        unset($data[$key]);
+                    }
                 }
 
                 if (isset($request->last_modified_sort) && $request->last_modified_sort == 'desc') {
@@ -227,8 +235,8 @@ class VideoService extends BaseService
             if ($request->file_name) {
                 $fileName = $request->file_name;
             } else {
-                $time = time();
-                $fileName = "$time.mp4";
+                $time = GeneralHelper::randomString(100) . '_' . time();
+                $fileName = $time . Constant::VIDEO_EXT;
             }
 
             $key .= $fileName;
@@ -271,7 +279,11 @@ class VideoService extends BaseService
         try {
             $request['file_parts'] = json_decode($request['file_parts'], true);
             $this->awsS3Service->completeMultipartUpload($request);
-            $link = $this->awsS3Service->getFile($request->key, Constant::EXPIRE_VIDEO);
+            GeneralHelper::handleVideoContentFile([
+                'key' => $request->key,
+                'duration' => $request->duration
+            ]);
+            $link = $this->awsS3Service->getObject($request->key, Constant::EXPIRE_VIDEO);
 
             return $this->responseSuccess($link);
         } catch (\Exception $ex) {
@@ -298,6 +310,7 @@ class VideoService extends BaseService
     {
         try {
             $this->awsS3Service->removeFile($request->key);
+            GeneralHelper::deleteVideoContentFile($request->key);
 
             return $this->responseSuccess($request->key);
         } catch (\Exception $ex) {

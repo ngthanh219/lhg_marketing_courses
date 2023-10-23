@@ -2,7 +2,9 @@
 
 namespace App\Helpers;
 
+use App\Libraries\Constant;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class GeneralHelper
 {
@@ -19,5 +21,115 @@ class GeneralHelper
         } else {
             Log::error($error);
         }
+    }
+
+    public static function handleVideoContentFile($contents)
+    {
+        $videoContentsFile = 'video_contents.json';
+        $disk = 'public';
+        
+        if (!Storage::disk($disk)->exists($videoContentsFile)) {
+            Storage::disk($disk)->put($videoContentsFile, json_encode([$contents]));
+        } else {
+            $videoContents = json_decode(Storage::disk($disk)->get($videoContentsFile), true);
+            $index = -1;
+            foreach ($videoContents as $i => $videoContent) {
+                if ($contents['key'] == $videoContent['key']) {
+                    $index = $i;
+                    break;
+                }
+            }
+
+            if ($index == -1) {
+                $videoContents[] = $contents;
+            } else {
+                $videoContents[$index]['key'] = $contents['key'];
+                $videoContents[$index]['duration'] = $contents['duration'];
+            }
+            
+            Storage::disk($disk)->put($videoContentsFile, json_encode($videoContents));
+        }
+    }
+
+    public static function getVideoDuration($key)
+    {
+        $videoContentsFile = 'video_contents.json';
+        $disk = 'public';
+        $videoContents = json_decode(Storage::disk($disk)->get($videoContentsFile), true);
+
+        foreach ($videoContents as $videoContent) {
+            if ($videoContent['key'] == $key) {
+                return $videoContent['duration'];
+            }
+        }
+
+        return 0;
+    }
+
+    public static function deleteVideoContentFile($key)
+    {
+        $videoContentsFile = 'video_contents.json';
+        $disk = 'public';
+        $videoContents = json_decode(Storage::disk($disk)->get($videoContentsFile), true);
+
+        foreach ($videoContents as $index => $videoContent) {
+            if ($videoContent['key'] == $key) {
+                unset($videoContents[$index]);
+            }
+        }
+
+        Storage::disk($disk)->put($videoContentsFile, json_encode($videoContents));
+    }
+
+    public static function randomString($length = 10)
+    {
+        $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $randomString = '';
+
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, strlen($characters) - 1)];
+        }
+
+        return $randomString;
+    }
+
+    public static function getCustomSource($source)
+    {
+        $trimmedString = str_replace(Constant::VIDEO_FOLDER, '', $source);
+        $source = str_replace(Constant::VIDEO_EXT, '', $trimmedString);
+
+        $length = strlen($source);
+        $halfLength = floor($length / 2);
+        $maxFirstLength = rand(floor($halfLength / 3), $halfLength);
+
+        $firstItem = substr($source, 0, $maxFirstLength);
+        $secondItem = substr($source, $maxFirstLength, $halfLength);
+        $thirdItem = substr($source, $maxFirstLength + $halfLength);
+
+        return strrev($secondItem) . '%' . strrev($firstItem) . '%'  . strrev($thirdItem);
+    }
+
+    public static function reverseCustomSource($source)
+    {
+        list($thirdItem, $firstItem, $secondItem) = explode('%', strrev($source));
+        $sourceName = $firstItem . $secondItem . $thirdItem;
+        $source = Constant::VIDEO_FOLDER . $sourceName . Constant::VIDEO_EXT;
+
+        return $source;
+    }
+
+    public static function getSignedUrlParams($params)
+    {
+        $newParams = [];
+        foreach ($params as $key => $param) {
+            $newKey = str_replace('X-Amz-', '', $key);
+            $newParams[$newKey] = $param;
+
+            if ($newKey == 'Expires') {
+                unset($newParams[$newKey]);
+            }
+        }
+
+        return $newParams;
     }
 }

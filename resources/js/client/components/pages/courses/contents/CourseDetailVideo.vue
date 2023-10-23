@@ -12,8 +12,12 @@
                 ]" 
                 ref="video"
             v-else>
-                <canvas class="cursor-pointer" ref="canvas" @click="startVideo" />
-                <div class="video-controls" id="controls" v-if="video" >
+                <canvas
+                    class="cursor-pointer"
+                    v-bind:class="{'background': !isShowVideo}" 
+                    ref="canvas" @click="startVideo"
+                />
+                <div class="video-controls" id="controls" v-if="video">
                     <div class="option">
                         <div class="left">
                             <a class="cursor-pointer" @click="startVideo">
@@ -54,8 +58,6 @@
                 canvas: {
                     animationFrameId: null,
                     ctx: null,
-                    videoWidth: 1920,
-                    videoHeight: 1080,
                     content: null
                 },
                 video: null,
@@ -63,7 +65,8 @@
                 isFullScreen: false,
                 isVideoPlayed: false,
                 currentDuration: 0,
-                totalDuration: 0
+                totalDuration: 0,
+                isShowVideo: false
             };
         },
         mounted() {
@@ -78,6 +81,10 @@
                 this.clearCanvas();
                 this.createCanvas();
                 this.setIsLoadVideo(false);
+            }
+
+            if (this.isShowVideo && this.isFullScreen) {
+                setInterval(this.exitFullScreen(this.$refs.video), 1000);
             }
         },
         beforeUnmount() {
@@ -102,18 +109,20 @@
                     this.video.playsInline = true;
 
                     this.video.addEventListener('loadedmetadata', () => {
-                        this.canvas.content.width = this.canvas.videoWidth;
-                        this.canvas.content.height = this.canvas.videoHeight;
+                        this.canvas.content.width = this.video.videoWidth;
+                        this.canvas.content.height = this.video.videoHeight;
                     });
 
                     this.video.onloadedmetadata = () => {
                         this.animationFrameId = this.drawFrame();
                         this.totalDuration = this.video.duration;
+                        this.isShowVideo = true;
                     };
                 }
             },
 
             clearCanvas() {
+                this.isShowVideo = false;
                 if (this.video) {
                     this.video.pause();
                     cancelAnimationFrame(this.canvas.animationFrameId);
@@ -195,6 +204,7 @@
             },
 
             enterFullScreen(element) {
+                this.isFullScreen = true;
                 if (element.requestFullscreen) {
                     element.requestFullscreen();
                 } else if (element.mozRequestFullScreen) {
@@ -204,22 +214,22 @@
                 } else if (element.msRequestFullscreen) {
                     element.msRequestFullscreen();
                 }
-
-                this.isFullScreen = true;
             },
             
             exitFullScreen() {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.mozCancelFullScreen) {
-                    document.mozCancelFullScreen();
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                } else if (document.msExitFullscreen) {
-                    document.msExitFullscreen();
-                }
-
                 this.isFullScreen = false;
+
+                if (document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.mozCancelFullScreen) {
+                        document.mozCancelFullScreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    } else if (document.msExitFullscreen) {
+                        document.msExitFullscreen();
+                    }
+                }
             },
         }
     }

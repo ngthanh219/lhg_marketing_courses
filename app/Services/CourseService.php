@@ -350,8 +350,7 @@ class CourseService extends BaseService
     public function decryptVideo($request)
     {
         try {
-            $f = null;
-            $n = null;
+            $queryParams = null;
             $user = auth()->guard('api')->user();
 
             if (isset($request->id)) {
@@ -370,16 +369,16 @@ class CourseService extends BaseService
                     return $this->responseError(__('messages.course_user.not_exist'), 400, ErrorCode::PARAM_INVALID);
                 }
 
-                $folderName = 'videos/';
-                $ext = '.mp4';
-                $sourceWithoutFolder = str_replace($folderName, '', $video->source);
-                $sourceWithoutExtension = str_replace($ext, '', $sourceWithoutFolder);
-                $n = array_reverse(str_split($sourceWithoutExtension));
+                $videoObject = (object) $video->toArray();
+                $objectKey = GeneralHelper::reverseCustomSource($videoObject->source);
+                $sourceUrl = $this->awsS3Service->getObject($objectKey, $videoObject->duration + Constant::EXPIRE_VIDEO);
+                $query = parse_url($sourceUrl, PHP_URL_QUERY);
+                parse_str($query, $queryParams);
+
+                $queryParams = GeneralHelper::getSignedUrlParams($queryParams);
             }
             
-            return $this->responseSuccess([
-                'n' => $n
-            ]);
+            return $this->responseSuccess($queryParams);
         } catch (\Exception $ex) {
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 

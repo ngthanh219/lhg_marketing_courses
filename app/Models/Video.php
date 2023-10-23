@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\GeneralHelper;
 use App\Libraries\Constant;
 use App\Services\AWSS3Service;
 use Carbon\Carbon;
@@ -23,13 +24,13 @@ class Video extends Model
     ];
 
     protected $hidden = [
-        'source',
+        // 'source',
         'deleted_at',
         'updated_at'
     ];
 
     protected $appends = [
-        'source_url',
+        // 'source_url',
         'course_section_name'
     ];
 
@@ -38,24 +39,37 @@ class Video extends Model
         return CourseSection::find($this->course_section_id)->name;
     }
 
-    public function getSourceUrlAttribute()
+    public function getSourceAttribute($value)
     {  
-        if ($this->source) {
-            $awsS3Service = new AWSS3Service();
-            $sourceUrl = $awsS3Service->getFile($this->source, Constant::EXPIRE_VIDEO);
-
+        if ($value) {
             if (auth()->guard('api')->user()->role_id == Constant::ROLE_ADMIN) {
-                return $sourceUrl;
-            } else {
-                $query = parse_url($sourceUrl, PHP_URL_QUERY);
-                parse_str($query, $queryParams);
-
-                return $queryParams;
+                return $value;
             }
+
+            return GeneralHelper::getCustomSource($value);
         }
 
         return null;
     }
+
+    // public function getSourceUrlAttribute()
+    // {  
+    //     if ($this->source) {
+    //         $awsS3Service = new AWSS3Service();
+    //         $sourceUrl = $awsS3Service->getObject($this->source, Constant::EXPIRE_VIDEO);
+
+    //         if (auth()->guard('api')->user()->role_id == Constant::ROLE_ADMIN) {
+    //             return $sourceUrl;
+    //         } else {
+    //             $query = parse_url($sourceUrl, PHP_URL_QUERY);
+    //             parse_str($query, $queryParams);
+
+    //             return $queryParams;
+    //         }
+    //     }
+
+    //     return null;
+    // }
 
     public function getCreatedAtAttribute($value)
     {

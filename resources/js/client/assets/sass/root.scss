@@ -896,6 +896,13 @@ header {
 
                         .video {
                             position: relative;
+                            transition: .3s all ease;
+
+                            canvas {
+                                object-fit: scale-down;
+                                background: black;
+                                height: 100%;
+                            }
 
                             .video-controls {
                                 display: flex;
@@ -907,7 +914,7 @@ header {
                                 left: 0;
                                 right: 0;
                                 z-index: 999999;
-                                background: hsla(0, 0%, 8%, 0.7);
+                                // background: hsla(0, 0%, 8%, 0.7);
                                 opacity: 0;
                                 transition: .3s all ease;
 
@@ -957,11 +964,13 @@ header {
                             top: 0;
                             left: 0;
                             right: 0;
-                            height: 100%;
-                            display: flex;
-                            justify-content: center;
-                            align-items: center;
+                            bottom: 0;
                             background: black;
+                            z-index: 99999;
+
+                            canvas {
+                                height: 100%;
+                            }
                         }
 
                         .video:hover, .video.active-controls {

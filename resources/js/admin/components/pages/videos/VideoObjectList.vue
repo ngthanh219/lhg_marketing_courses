@@ -35,6 +35,7 @@
                                             <th style="width: 50px"></th>
                                             <th>STT</th>
                                             <th>Link video</th>
+                                            <th>Thời gian</th>
                                             <th>
                                                 <a href="/" @click="sortVideoObjectData($event, 'last_modified_sort')">
                                                     Ngày tạo
@@ -52,12 +53,13 @@
                                         <tr v-for="data, index in dataList" :id="'item-' + index" v-bind:class="{ 'active': idKey == 'item-' + index }">
                                             <td>
                                                 <a class="btn btn-sm btn-danger" v-if="data.Key === source">Đang chọn</a>
-                                                <a class="btn btn-sm btn-outline-primary" @click="selectData($event, data.Key)" v-else>Chọn</a>
+                                                <a class="btn btn-sm btn-outline-primary" @click="selectData($event, data.Key, data.Duration)" v-else>Chọn</a>
                                             </td>
                                             <td>{{ index += 1 }}</td>
                                             <td>
                                                 <a class="underline cursor-pointer" @click="showVideo($event, data.Key)">{{ data.Key }}</a>
                                             </td>
+                                            <td>{{ $helper.formatDuration(data.Duration) }}</td>
                                             <td>{{ data.LastModified }}</td>
                                         </tr>
                                     </tbody>
@@ -167,10 +169,10 @@
                 this.closeModalList();
             },
 
-            selectData(e, key) {
+            selectData(e, key, duration) {
                 e.preventDefault();
 
-                this.selectSourceData(key);
+                this.selectSourceData(key, duration);
             }
         }
     }
