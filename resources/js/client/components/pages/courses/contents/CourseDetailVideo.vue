@@ -191,45 +191,74 @@
                 this.video.volume = this.volume;
             },
             
-            zoomVideo(e) {
+            async zoomVideo(e) {
                 e.preventDefault();
 
-                var element = this.$refs.video;
+                var message = 'start ';
+                try {
+                    var element = this.$refs.video;
+                    message += '200 ';
 
-                if (this.isFullScreen) {
-                    this.exitFullScreen(element);
-                } else {
-                    this.enterFullScreen(element);
+                    if (this.isFullScreen) {
+                        message += '203 ';
+                        this.exitFullScreen(element);
+                    } else {
+                        message += '206 ';
+                        this.enterFullScreen(element);
+                    }
+                    message += '209 ';
+                } catch (err) {
+                    message += 'Catch ';
+                    message += err.message;
                 }
+
+                alert(message);
             },
 
             enterFullScreen(element) {
+                message += '203.1 ';
                 this.isFullScreen = true;
+                message += '203.2 ';
+
                 if (element.requestFullscreen) {
+                    message += '203.3 ';
                     element.requestFullscreen();
                 } else if (element.mozRequestFullScreen) {
+                    message += '203.4 ';
                     element.mozRequestFullScreen();
                 } else if (element.webkitRequestFullscreen) {
+                    message += '203.5 ';
                     element.webkitRequestFullscreen();
                 } else if (element.msRequestFullscreen) {
+                    message += '203.6 ';
                     element.msRequestFullscreen();
                 }
+                message += '203.7 ';
             },
             
             exitFullScreen() {
+                message += '206.1 ';
                 this.isFullScreen = false;
+                message += '206.2 ';
 
                 if (document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+                    message += '206.3 ';
                     if (document.exitFullscreen) {
+                        message += '206.4 ';
                         document.exitFullscreen();
                     } else if (document.mozCancelFullScreen) {
+                        message += '206.5 ';
                         document.mozCancelFullScreen();
                     } else if (document.webkitExitFullscreen) {
+                        message += '206.6 ';
                         document.webkitExitFullscreen();
                     } else if (document.msExitFullscreen) {
+                        message += '206.7 ';
                         document.msExitFullscreen();
                     }
                 }
+
+                message += '206.8 ';
             },
         }
     }
