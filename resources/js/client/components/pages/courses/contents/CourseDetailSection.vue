@@ -121,7 +121,7 @@
 
                 var expiresKey = 'X-Amz-Expires';
                 if (!data.hasOwnProperty(expiresKey)) {
-                    newData[expiresKey] = video.duration + 300;
+                    newData[expiresKey] = parseInt(video.duration) + 300;
                 }
 
                 var query = this.$helper.getQueryString(newData);
