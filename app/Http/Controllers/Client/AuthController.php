@@ -33,4 +33,9 @@ class AuthController extends Controller
     {
         return $this->authService->register($request);
     }
+
+    public function getUserInformation(Request $request)
+    {
+        return $this->authService->getUserInformation($request);
+    }
 }

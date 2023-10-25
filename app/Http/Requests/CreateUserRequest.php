@@ -19,7 +19,8 @@ class CreateUserRequest extends FormRequest
             'phone' => 'required|regex:/(0)[0-9]{9}/|max:10',
             'is_login' => 'required|integer|min:0|max:1',
             'role_id' => 'required|integer|min:0|max:1',
-            'password' => 'required|min:6|max:25'
+            'password' => 'required|min:6|max:25',
+            'email_verified_at' => 'required|integer|min:0|max:1',
         ];
     }
 }
