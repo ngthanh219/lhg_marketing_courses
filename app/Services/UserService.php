@@ -81,7 +81,7 @@ class UserService extends BaseService
                 'phone' => $request->phone,
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
-                'email_verified_at' => now(),
+                'email_verified_at' => $request->email_verified_at == Constant::IS_VERIFIED_EMAIL ? now() : null,
                 'is_login' => $request->is_login
             ];
 
@@ -129,7 +129,8 @@ class UserService extends BaseService
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'is_login' => $request->is_login,
-                'role_id' => $request->role_id
+                'role_id' => $request->role_id,
+                'email_verified_at' => $request->email_verified_at == Constant::IS_VERIFIED_EMAIL ? now() : null
             ];
 
             if ($request->is_change_password) {

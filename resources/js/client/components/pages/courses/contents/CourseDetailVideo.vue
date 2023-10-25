@@ -11,13 +11,28 @@
                     {'fullscreen': isFullScreen}
                 ]" 
                 ref="video"
-            v-else>
+                v-else
+            >
                 <canvas
                     class="cursor-pointer"
                     v-bind:class="{'background': !isShowVideo}" 
                     ref="canvas" @click="startVideo"
                 />
                 <div class="video-controls" id="controls" v-if="video">
+                    <div
+                        class="duration-range"
+                        ref="durationRange"
+                        @mousedown="startDraggingDuration"
+                        @mouseup="stopDraggingDuration"
+                        @mouseleave="stopDraggingDuration"
+                        @mousemove="updateDuration($event, false)"
+                        @click="updateDuration($event, true)"
+                    >
+                        <div
+                            class="c-duration"
+                            :style="'width: ' + ((currentDuration == totalDuration) ? 100 : (currentDuration * 100 / totalDuration)) + '%'"
+                        />
+                    </div>
                     <div class="option">
                         <div class="left">
                             <a class="cursor-pointer" @click="startVideo">
@@ -29,15 +44,30 @@
                         </div>
                         <div class="right">
                             <div class="volume">
-                                <input type="range" id="range" class="custom-range" min="0" max="1" step="0.1" @input="changeVolumeVideo" v-model="volume" />
+                                <i
+                                    class="cursor-pointer fa"
+                                    v-bind:class="[ volume * 100 > 10 ? 'fa-volume-off' : 'fa-volume-mute' ]"
+                                    @click="updateVolume($event, false, true)"
+                                />
+                                <div
+                                    class="duration-range volume"
+                                    ref="volumeRange"
+                                    @mousedown="startDraggingVolume"
+                                    @mouseup="stopDraggingVolume"
+                                    @mouseleave="stopDraggingVolume"
+                                    @mousemove="updateVolume($event, false)"
+                                    @click="updateVolume($event, true)"
+                                >
+                                    <div
+                                        class="c-duration"
+                                        :style="'width: ' + (volume * 100) + '%'"
+                                    />
+                                </div>
                             </div>
                             <a class="cursor-pointer" @click="zoomVideo">
                                 <i class="fa fa-expand"></i>
                             </a>
                         </div>
-                    </div>
-                    <div class="duration-range">
-                        <input type="range" id="range" class="custom-range" min="0" :max="totalDuration" step="1" @input="seekVideo($event, null)" v-model="currentDuration" />
                     </div>
                 </div>
             </div>
@@ -66,7 +96,10 @@
                 isVideoPlayed: false,
                 currentDuration: 0,
                 totalDuration: 0,
-                isShowVideo: false
+                isShowVideo: false,
+                isDraggingDuration: false,
+                isDraggingVolume: false,
+                volumeTemp: 0.3
             };
         },
         mounted() {
@@ -82,10 +115,6 @@
                 this.createCanvas();
                 this.setIsLoadVideo(false);
             }
-
-            if (this.isShowVideo && this.isFullScreen) {
-                setInterval(this.exitFullScreen(this.$refs.video), 1000);
-            }
         },
         beforeUnmount() {
             if (this.video) {
@@ -98,6 +127,25 @@
                 this.canvas.ctx = this.canvas.content.getContext('2d');
             },
 
+            updateVideoDuration() {
+                if (this.currentDuration >= this.totalDuration) {
+                    this.isVideoPlayed = false;
+                } else {
+                    this.currentDuration = this.video.currentTime
+                }
+            },
+
+            drawData(value) {
+                this.canvas.ctx.drawImage(value, 0, 0, this.canvas.content.width, this.canvas.content.height);
+            },
+
+            drawFrame() {
+                this.drawData(this.video);
+                this.updateVideoDuration();
+
+                requestAnimationFrame(this.drawFrame);
+            },
+
             createCanvas() {
                 if (this.videoSrc) {
                     this.getContext();
@@ -105,8 +153,8 @@
                     this.video.$refs = 'video';
                     this.video.src = this.videoSrc;
                     this.video.volume = this.volume;
-                    this.video.setAttribute('preload', 'auto');
-                    this.video.playsInline = true;
+                    // this.video.setAttribute('preload', 'auto');
+                    // this.video.playsInline = true;
 
                     this.video.addEventListener('loadedmetadata', () => {
                         this.canvas.content.width = this.video.videoWidth;
@@ -132,17 +180,6 @@
                 this.canvas.ctx.clearRect(0, 0, this.canvas.content.width, this.canvas.content.height);
             },
 
-            drawData(value) {
-                this.canvas.ctx.drawImage(value, 0, 0, this.canvas.content.width, this.canvas.content.height);
-            },
-
-            drawFrame() {
-                this.drawData(this.video);
-                this.updateDurationVideo();
-
-                requestAnimationFrame(this.drawFrame);
-            },
-
             startVideo(e) {
                 e.preventDefault();
 
@@ -163,14 +200,6 @@
                 this.drawFrame();
             },
 
-            updateDurationVideo() {
-                if (this.currentDuration >= this.totalDuration) {
-                    this.isVideoPlayed = false;
-                } else {
-                    this.currentDuration = this.video.currentTime
-                }
-            },
-
             seekVideo(e, value) {
                 e.preventDefault();
 
@@ -185,6 +214,81 @@
                 this.video.currentTime = newTime;
             },
 
+            startDraggingDuration() {
+                this.isDraggingDuration = true;
+            },
+
+            stopDraggingDuration() {
+                this.isDraggingDuration = false;
+            },
+
+            updateDuration(e, isClick = false) {
+                const timeBar = this.$refs.durationRange.getBoundingClientRect();
+                const width = e.clientX - timeBar.left;
+                const maxWidth = timeBar.width;
+                const percentage = (width / maxWidth) * 100;
+                const eleDuration = this.totalDuration * percentage / 100;
+
+                if (this.isDraggingDuration || isClick) {
+                    this.video.currentTime = eleDuration;
+                }
+
+                if (!this.isVideoPlayed && isClick) {
+                    this.video.currentTime = eleDuration;
+                    this.currentDuration = eleDuration;
+                    this.video.play();
+                    this.isVideoPlayed = true;
+                }
+            },
+
+            startDraggingVolume() {
+                this.isDraggingVolume = true;
+            },
+
+            stopDraggingVolume() {
+                this.isDraggingVolume = false;
+            },
+
+            updateVolume(e, isClick = false, isMute = false) {
+                e.preventDefault();
+
+                if (isMute) {
+                    if (this.video.volume == 0) {
+                        this.video.volume = this.volumeTemp;
+                        this.volume = this.volumeTemp;
+                    } else {
+                        this.volumeTemp = this.video.volume;
+                        this.video.volume = 0;
+                        this.volume = 0.1;
+                    }
+                } else {
+                    var timeBar = this.$refs.volumeRange.getBoundingClientRect();
+                    var width = e.clientX - timeBar.left;
+                    var maxWidth = timeBar.width;
+                    var percentage = parseInt((width / maxWidth) * 100) / 100;
+                    var eleVolume = percentage < 0 ? 0 : percentage;
+
+                    if ((this.isDraggingVolume && !isClick) || (!this.isDraggingVolume && isClick)) {
+                        this.video.volume = eleVolume;
+                        this.volume = eleVolume;
+
+                        if (this.volume >= 0.99 || this.volume == 0.01) {
+                            this.stopDraggingVolume();
+                        }
+
+                        if (this.volume <= 0.1) {
+                            this.video.volume = 0;
+                            this.volume = 0.1;
+                        }
+
+                        if (this.volume >= 0.95) {
+                            this.video.volume = 1;
+                            this.volume = 1;
+                        }
+                    }
+                }
+            },
+
             changeVolumeVideo(e) {
                 e.preventDefault();
 
@@ -194,26 +298,35 @@
             zoomVideo(e) {
                 e.preventDefault();
 
-                var element = this.$refs.video;
-
                 if (this.isFullScreen) {
-                    this.exitFullScreen(element);
+                    this.isFullScreen = false;
                 } else {
-                    this.enterFullScreen(element);
+                    this.isFullScreen = true;
                 }
+
+                // var element = this.$refs.video;
+
+                // if (this.isFullScreen) {
+                //     this.exitFullScreen(element);
+                // } else {
+                //     this.enterFullScreen(element);
+                // }
             },
 
             enterFullScreen(element) {
                 this.isFullScreen = true;
-                if (element.requestFullscreen) {
-                    element.requestFullscreen();
-                } else if (element.mozRequestFullScreen) {
-                    element.mozRequestFullScreen();
-                } else if (element.webkitRequestFullscreen) {
-                    element.webkitRequestFullscreen();
-                } else if (element.msRequestFullscreen) {
-                    element.msRequestFullscreen();
-                }
+
+                // if (element.requestFullscreen) {
+                //     element.requestFullscreen();
+                // } else if (element.mozRequestFullScreen) {
+                //     element.mozRequestFullScreen();
+                // } else if (element.webkitRequestFullscreen) {
+                //     element.webkitRequestFullscreen();
+                // } else if (element.msRequestFullscreen) {
+                //     element.msRequestFullscreen();
+                // } else if (element.webkitEnterFullscreen) {
+                //     element.webkitEnterFullscreen();
+                // }
             },
             
             exitFullScreen() {
