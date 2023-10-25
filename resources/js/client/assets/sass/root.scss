@@ -1414,6 +1414,24 @@ footer {
                     margin-bottom: 20px;
                     width: 100% !important;
                 }
+
+                .wc-information {
+                    .box-card {
+                        .tab-detail {
+                            .video {
+                                .video-controls {
+                                    .option {
+                                        flex-direction: column;
+
+                                        .left {
+                                            margin-bottom: 10px;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
