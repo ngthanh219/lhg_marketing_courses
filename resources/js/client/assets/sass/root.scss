@@ -898,10 +898,17 @@ header {
                             position: relative;
                             transition: .3s all ease;
 
+                            .loading {
+                                .page-loading {
+                                    position: absolute !important;
+                                }
+                            }
+
                             canvas {
                                 object-fit: scale-down;
                                 background: black;
                                 height: 100%;
+                                cursor: pointer;
                             }
 
                             .video-controls {
@@ -913,7 +920,7 @@ header {
                                 bottom: 0px;
                                 left: 0;
                                 right: 0;
-                                z-index: 999999;
+                                z-index: 99999999999;
                                 // background: hsla(0, 0%, 8%, 0.7);
                                 opacity: 0;
                                 transition: .5s all ease;
@@ -968,11 +975,11 @@ header {
                                 .duration-range::before {
                                     content: "";
                                     position: absolute;
-                                    top: -15px;
+                                    top: -19px;
                                     left: 0;
                                     right: 0;
                                     bottom: 0;
-                                    height: 30px;
+                                    height: 38px;
                                 }
 
                                 .duration-range:hover {
@@ -988,12 +995,18 @@ header {
                                 .option {
                                     display: flex;
                                     justify-content: space-between;
+                                    // align-items: center;
                                     padding: 15px;
 
                                     .left, .right {
                                         display: flex;
                                         justify-content: space-between;
                                         align-items: center;
+                                    }
+
+
+                                    i:hover {
+                                        color: red !important;
                                     }
 
                                     a, i, .video-duration {
@@ -1048,7 +1061,7 @@ header {
                         }
 
                         .video:hover, .video.active-controls {
-                            .video-controls {
+                            .video-controls, .seek-option {
                                 opacity: 1;
                             }
                         }
@@ -1349,7 +1362,7 @@ footer {
 
 @media only screen and (max-width: 450px) {
     .page {
-        width: 300px !important;
+        width: 95% !important;
     }
 
     .container-wrapper {
@@ -1417,14 +1430,28 @@ footer {
 
                 .wc-information {
                     .box-card {
-                        .tab-detail {
+                        .tab-detail.video-tab {
+                            padding-left: 0 !important;
+                            padding-right: 0 !important;
+                            padding-bottom: 0 !important;
+
+                            .text-center {
+                                margin-bottom: 10px;
+                            }
+
                             .video {
                                 .video-controls {
                                     .option {
-                                        flex-direction: column;
+                                        flex-direction: row;
 
                                         .left {
-                                            margin-bottom: 10px;
+                                            
+                                        }
+
+                                        .right {
+                                            .volume {
+                                                display: none;
+                                            }
                                         }
                                     }
                                 }

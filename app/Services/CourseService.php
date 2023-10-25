@@ -371,7 +371,8 @@ class CourseService extends BaseService
 
                 $videoObject = (object) $video->toArray();
                 $objectKey = GeneralHelper::reverseCustomSource($videoObject->source);
-                $sourceUrl = $this->awsS3Service->getObject($objectKey, $videoObject->duration + Constant::EXPIRE_VIDEO);
+                // $sourceUrl = $this->awsS3Service->getObject($objectKey, $videoObject->duration + Constant::EXPIRE_VIDEO);
+                $sourceUrl = $this->awsS3Service->getObject($objectKey, 10);
                 $query = parse_url($sourceUrl, PHP_URL_QUERY);
                 parse_str($query, $queryParams);
 

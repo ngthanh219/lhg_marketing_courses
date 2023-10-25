@@ -1,6 +1,6 @@
 <template>
     <div class="box-card">
-        <div class="tab-detail pd-tab">
+        <div class="tab-detail pd-tab video-tab">
             <h3>Video</h3>
             <div class="text-center" v-if="!videoSrc">Lựa chọn video để xem</div>
 
@@ -13,6 +13,9 @@
                 ref="video"
                 v-else
             >
+                <div class="loading" v-if="isLoadingVideo">
+                    <PageLoading />
+                </div>
                 <canvas
                     class="cursor-pointer"
                     v-bind:class="{'background': !isShowVideo}" 
@@ -35,8 +38,14 @@
                     </div>
                     <div class="option">
                         <div class="left">
+                            <a class="cursor-pointer"  @click="seekVideo($event, -10)">
+                                <i class="fas fa-step-backward"></i>
+                            </a>
                             <a class="cursor-pointer" @click="startVideo">
                                 <i class="fas" v-bind:class="[ this.isVideoPlayed ? 'fa-pause' : 'fa-play' ]" />
+                            </a>
+                            <a class="cursor-pointer" @click="seekVideo($event, 10)">
+                                <i class="fas fa-step-forward"></i>
                             </a>
                             <div class="video-duration">
                                 {{ $helper.formatDuration(parseInt(currentDuration)) + ' / ' + $helper.formatDuration(parseInt(totalDuration)) }}
@@ -65,7 +74,7 @@
                                 </div>
                             </div>
                             <a class="cursor-pointer" @click="zoomVideo">
-                                <i class="fa fa-expand"></i>
+                                <i class="fas fa-expand"></i>
                             </a>
                         </div>
                     </div>
@@ -76,12 +85,20 @@
 </template>
 
 <script>
+    import PageLoading from '../../../commons/loading/pageloading.vue';
+
     export default {
         name: 'CourseDetailVideo',
+        components: {
+            PageLoading
+        },
         props: {
             videoSrc: String,
+            videoData: Object,
             isLoadVideo: Boolean,
             setIsLoadVideo: Function,
+            setVideoSrc: Function,
+            deVideo: Function,
         },
         data() {
             return {
@@ -95,26 +112,21 @@
                 isFullScreen: false,
                 isVideoPlayed: false,
                 currentDuration: 0,
+                currentDurationTemp: 0,
                 totalDuration: 0,
                 isShowVideo: false,
                 isDraggingDuration: false,
                 isDraggingVolume: false,
-                volumeTemp: 0.3
+                volumeTemp: 0.3,
+                isLoadingVideo: false,
+                countLoadingVideo: 0
             };
         },
         mounted() {
             
         },
         updated() {
-            if (this.isLoadVideo) {
-                this.isVideoPlayed = false;
-                this.volume = 0.3;
-                this.currentDuration = 0;
-                this.totalDuration = 0;
-                this.clearCanvas();
-                this.createCanvas();
-                this.setIsLoadVideo(false);
-            }
+            this.updateVideoContent();
         },
         beforeUnmount() {
             if (this.video) {
@@ -122,16 +134,45 @@
             }
         },
         methods: {
+            async updateVideoContent() {
+                if (this.isLoadVideo) {
+                    this.isVideoPlayed = false;
+                    this.volume = 0.3;
+                    this.currentDuration = 0;
+                    this.totalDuration = 0;
+                    this.clearCanvas();
+                    this.createCanvas();
+                    this.setIsLoadVideo(false);
+                }
+            },
+
             getContext() {
                 this.canvas.content = this.$refs.canvas;
                 this.canvas.ctx = this.canvas.content.getContext('2d');
             },
 
             updateVideoDuration() {
-                if (this.currentDuration >= this.totalDuration) {
-                    this.isVideoPlayed = false;
-                } else {
-                    this.currentDuration = this.video.currentTime
+                if (this.isVideoPlayed) {
+                    if (this.currentDuration >= this.totalDuration) {
+                        this.isVideoPlayed = false;
+                    } else {
+                        if (this.currentDuration == this.video.currentTime) {
+                            if (this.countLoadingVideo >= 101) {
+                                this.countLoadingVideo = 101;
+                            } else {
+                                this.countLoadingVideo++;
+                            }
+
+                            if (this.countLoadingVideo == 100) {
+                                this.isLoadingVideo = true;
+                            }
+                        } else {
+                            this.countLoadingVideo = 0;
+                            this.isLoadingVideo = false;
+                        }
+
+                        this.currentDuration = this.video.currentTime;
+                    }
                 }
             },
 
@@ -166,6 +207,41 @@
                         this.totalDuration = this.video.duration;
                         this.isShowVideo = true;
                     };
+
+                    var self = this;
+                    this.video.addEventListener('error', () => {
+                        this.isLoadingVideo = true;
+                        this.currentDurationTemp = this.currentDuration;
+
+                        console.log('Reload video ' + this.videoData.id);
+
+                        this.$store.dispatch("getDV", {
+                            request: this.$helper.appendFormData({
+                                id: this.videoData.id
+                            }),
+                            error: {
+                                message: ''
+                            }
+                        })
+                        .then(res => {
+                            this.deVideo(this.videoData, res.data);
+                            // this.createCanvas();
+                            // this.video.currentTime = this.currentDurationTemp;
+                            // this.currentDuration = this.currentDurationTemp;
+
+                            // console.log(this.currentDurationTemp);
+                            // console.log(this.currentDuration);
+                            // console.log(this.video.currentTime);
+
+                            // this.refs.video.onloadedmetadata = () => {
+                            //     console.log('ok roi');
+                            //     this.isLoadingVideo = false;
+                            // };
+                        })
+                        .catch(err => {
+                            this.isLoadingVideo = false;
+                        });
+                    });
                 }
             },
 
@@ -203,15 +279,10 @@
             seekVideo(e, value) {
                 e.preventDefault();
 
-                var newTime = 0;
-
-                if (value != null) {
-                    newTime = Math.min(this.video.currentTime + value, this.video.duration);
-                } else {
-                    newTime = this.currentDuration;
-                }
-
+                let newTime = 0;
+                newTime = Math.min(this.video.currentTime + parseInt(value), this.video.duration);
                 this.video.currentTime = newTime;
+                this.currentDuration = newTime;
             },
 
             startDraggingDuration() {
@@ -236,8 +307,8 @@
                 if (!this.isVideoPlayed && isClick) {
                     this.video.currentTime = eleDuration;
                     this.currentDuration = eleDuration;
-                    this.video.play();
-                    this.isVideoPlayed = true;
+                    // this.video.play();
+                    // this.isVideoPlayed = true;
                 }
             },
 

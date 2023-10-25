@@ -24,13 +24,15 @@
 
                 <CourseDetailVideo 
                     :videoSrc="videoSrc"
+                    :videoData="videoData"
                     :isLoadVideo="isLoadVideo"
                     :setIsLoadVideo="setIsLoadVideo"
+                    :deVideo="deVideo"
                 />
 
                 <CourseDetailSection
                     :courseSections="data.course.course_sections"
-                    :setVideoSrc="setVideoSrc"
+                    :deVideo="deVideo"
                 />
             </div>
 
@@ -59,6 +61,7 @@
         data() {
             return {
                 videoSrc: '',
+                videoData: null,
                 isLoadVideo: false,
                 data: null,
                 formDataError: {
@@ -83,14 +86,51 @@
                 });
                 this.$helper.setPageLoading(false);
             },
+            
+            setIsLoadVideo(val) {
+                this.isLoadVideo = val;
+            },
 
             setVideoSrc(videoSrc) {
                 this.isLoadVideo = true;
                 this.videoSrc = videoSrc;
+                console.log(this.videoSrc);
             },
-            
-            setIsLoadVideo(val) {
-                this.isLoadVideo = val;
+
+            async deVideo(video, data) {
+                this.videoData = video;
+                var source = video.source;
+                const items = source.split('%');
+                for (let i in items) {
+                    items[i] = items[i].split('').reverse().join('');
+                }
+
+                const temp = items[0];
+                var thirdItem = '';
+                items[0] = items[1];
+                items[1] = temp;
+
+                if (items[2]) {
+                    thirdItem = items[2];
+                }
+
+                source = items[0] + items[1] + thirdItem;
+                var newData = {};
+
+                for (var key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        newData["X-Amz-" + key] = data[key];
+                    }
+                }
+
+                var expiresKey = 'X-Amz-Expires';
+                if (!data.hasOwnProperty(expiresKey)) {
+                    // newData[expiresKey] = parseInt(video.duration) + 30;
+                    newData[expiresKey] = 10;
+                }
+
+                var query = this.$helper.getQueryString(newData);
+                this.setVideoSrc(this.$env.s3Url + 'videos/' + source + '.mp4' + query);
             }
         }
     }
