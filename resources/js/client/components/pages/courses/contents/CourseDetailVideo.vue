@@ -153,8 +153,8 @@
                     this.video.$refs = 'video';
                     this.video.src = this.videoSrc;
                     this.video.volume = this.volume;
-                    // this.video.setAttribute('preload', 'auto');
-                    // this.video.playsInline = true;
+                    this.video.setAttribute('preload', 'auto');
+                    this.video.playsInline = true;
 
                     this.video.addEventListener('loadedmetadata', () => {
                         this.canvas.content.width = this.video.videoWidth;
