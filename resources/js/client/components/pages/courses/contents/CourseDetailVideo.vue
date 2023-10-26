@@ -1,6 +1,6 @@
 <template>
     <div class="box-card">
-        <div class="tab-detail pd-tab">
+        <div class="tab-detail pd-tab video-tab">
             <h3>Video</h3>
             <div class="text-center" v-if="!videoSrc">Lựa chọn video để xem</div>
 
@@ -11,17 +11,41 @@
                     {'fullscreen': isFullScreen}
                 ]" 
                 ref="video"
-            v-else>
+                v-else
+            >
+                <div class="loading" v-if="isLoadingVideo">
+                    <PageLoading />
+                </div>
                 <canvas
                     class="cursor-pointer"
                     v-bind:class="{'background': !isShowVideo}" 
                     ref="canvas" @click="startVideo"
                 />
                 <div class="video-controls" id="controls" v-if="video">
+                    <div
+                        class="duration-range"
+                        ref="durationRange"
+                        @mousedown="startDraggingDuration"
+                        @mouseup="stopDraggingDuration"
+                        @mouseleave="stopDraggingDuration"
+                        @mousemove="updateDuration($event, false)"
+                        @click="updateDuration($event, true)"
+                    >
+                        <div
+                            class="c-duration"
+                            :style="'width: ' + ((currentDuration == totalDuration) ? 100 : (currentDuration * 100 / totalDuration)) + '%'"
+                        />
+                    </div>
                     <div class="option">
                         <div class="left">
+                            <a class="cursor-pointer"  @click="seekVideo($event, -10)">
+                                <i class="fas fa-step-backward"></i>
+                            </a>
                             <a class="cursor-pointer" @click="startVideo">
                                 <i class="fas" v-bind:class="[ this.isVideoPlayed ? 'fa-pause' : 'fa-play' ]" />
+                            </a>
+                            <a class="cursor-pointer" @click="seekVideo($event, 10)">
+                                <i class="fas fa-step-forward"></i>
                             </a>
                             <div class="video-duration">
                                 {{ $helper.formatDuration(parseInt(currentDuration)) + ' / ' + $helper.formatDuration(parseInt(totalDuration)) }}
@@ -29,15 +53,30 @@
                         </div>
                         <div class="right">
                             <div class="volume">
-                                <input type="range" id="range" class="custom-range" min="0" max="1" step="0.1" @input="changeVolumeVideo" v-model="volume" />
+                                <i
+                                    class="cursor-pointer fa"
+                                    v-bind:class="[ volume * 100 > 10 ? 'fa-volume-off' : 'fa-volume-mute' ]"
+                                    @click="updateVolume($event, false, true)"
+                                />
+                                <div
+                                    class="duration-range volume"
+                                    ref="volumeRange"
+                                    @mousedown="startDraggingVolume"
+                                    @mouseup="stopDraggingVolume"
+                                    @mouseleave="stopDraggingVolume"
+                                    @mousemove="updateVolume($event, false)"
+                                    @click="updateVolume($event, true)"
+                                >
+                                    <div
+                                        class="c-duration"
+                                        :style="'width: ' + (volume * 100) + '%'"
+                                    />
+                                </div>
                             </div>
                             <a class="cursor-pointer" @click="zoomVideo">
-                                <i class="fa fa-expand"></i>
+                                <i class="fas fa-expand"></i>
                             </a>
                         </div>
-                    </div>
-                    <div class="duration-range">
-                        <input type="range" id="range" class="custom-range" min="0" :max="totalDuration" step="1" @input="seekVideo($event, null)" v-model="currentDuration" />
                     </div>
                 </div>
             </div>
@@ -46,12 +85,20 @@
 </template>
 
 <script>
+    import PageLoading from '../../../commons/loading/pageloading.vue';
+
     export default {
         name: 'CourseDetailVideo',
+        components: {
+            PageLoading
+        },
         props: {
             videoSrc: String,
+            videoData: Object,
             isLoadVideo: Boolean,
             setIsLoadVideo: Function,
+            setVideoSrc: Function,
+            deVideo: Function,
         },
         data() {
             return {
@@ -67,26 +114,18 @@
                 currentDuration: 0,
                 totalDuration: 0,
                 isShowVideo: false,
-                alertMessage: ''
+                isDraggingDuration: false,
+                isDraggingVolume: false,
+                volumeTemp: 0.3,
+                isLoadingVideo: false,
+                countLoadingVideo: 0
             };
         },
         mounted() {
             
         },
         updated() {
-            if (this.isLoadVideo) {
-                this.isVideoPlayed = false;
-                this.volume = 0.3;
-                this.currentDuration = 0;
-                this.totalDuration = 0;
-                this.clearCanvas();
-                this.createCanvas();
-                this.setIsLoadVideo(false);
-            }
-
-            if (this.isShowVideo && this.isFullScreen) {
-                setInterval(this.exitFullScreen(this.$refs.video), 1000);
-            }
+            this.updateVideoContent();
         },
         beforeUnmount() {
             if (this.video) {
@@ -94,9 +133,93 @@
             }
         },
         methods: {
+            reloadVideo() {
+                var self = this;
+                self.video.addEventListener('error', () => {
+                    var currentDurationTemp = self.currentDuration;
+                    var isVideoPlayedTemp = self.isVideoPlayed;
+
+                    self.$store.dispatch("getDV", {
+                        request: self.$helper.appendFormData({
+                            id: self.videoData.id
+                        }),
+                        error: {
+                            message: ''
+                        }
+                    })
+                    .then(res => {
+                        self.deVideo(self.videoData, res.data);
+                        setTimeout(() => {
+                            self.currentDuration = currentDurationTemp;
+                            self.video.currentTime = currentDurationTemp;
+                            currentDurationTemp = 0;
+
+                            if (isVideoPlayedTemp) {
+                                self.isVideoPlayed = true;
+                                self.video.play();
+                            }
+
+                            self.isLoadingVideo = false;
+                        }, 10)
+                    })
+                    .catch(err => {
+                        self.isLoadingVideo = false;
+                    });
+
+                });
+            },
+
+            async updateVideoContent() {
+                if (this.isLoadVideo) {
+                    this.isVideoPlayed = false;
+                    this.volume = 0.3;
+                    this.currentDuration = 0;
+                    this.totalDuration = 0;
+                    this.clearCanvas();
+                    this.createCanvas();
+                    this.setIsLoadVideo(false);
+                }
+            },
+
             getContext() {
                 this.canvas.content = this.$refs.canvas;
                 this.canvas.ctx = this.canvas.content.getContext('2d');
+            },
+
+            updateVideoDuration() {
+                if (this.isVideoPlayed) {
+                    if (this.currentDuration >= this.totalDuration) {
+                        // this.isVideoPlayed = false;
+                    } else {
+                        if (this.currentDuration == this.video.currentTime) {
+                            if (this.countLoadingVideo >= 101) {
+                                this.countLoadingVideo = 101;
+                            } else {
+                                this.countLoadingVideo++;
+                            }
+
+                            if (this.countLoadingVideo == 100) {
+                                this.isLoadingVideo = true;
+                            }
+                        } else {
+                            this.countLoadingVideo = 0;
+                            this.isLoadingVideo = false;
+                        }
+
+                        this.currentDuration = this.video.currentTime;
+                    }
+                }
+            },
+
+            drawData(value) {
+                this.canvas.ctx.drawImage(value, 0, 0, this.canvas.content.width, this.canvas.content.height);
+            },
+
+            drawFrame() {
+                this.drawData(this.video);
+                this.updateVideoDuration();
+
+                requestAnimationFrame(this.drawFrame);
             },
 
             createCanvas() {
@@ -119,6 +242,8 @@
                         this.totalDuration = this.video.duration;
                         this.isShowVideo = true;
                     };
+
+                    this.reloadVideo();
                 }
             },
 
@@ -131,17 +256,6 @@
                 
                 this.getContext();
                 this.canvas.ctx.clearRect(0, 0, this.canvas.content.width, this.canvas.content.height);
-            },
-
-            drawData(value) {
-                this.canvas.ctx.drawImage(value, 0, 0, this.canvas.content.width, this.canvas.content.height);
-            },
-
-            drawFrame() {
-                this.drawData(this.video);
-                this.updateDurationVideo();
-
-                requestAnimationFrame(this.drawFrame);
             },
 
             startVideo(e) {
@@ -164,26 +278,88 @@
                 this.drawFrame();
             },
 
-            updateDurationVideo() {
-                if (this.currentDuration >= this.totalDuration) {
-                    this.isVideoPlayed = false;
-                } else {
-                    this.currentDuration = this.video.currentTime
-                }
-            },
-
             seekVideo(e, value) {
                 e.preventDefault();
 
-                var newTime = 0;
+                let newTime = 0;
+                newTime = Math.min(this.video.currentTime + parseInt(value), this.video.duration);
+                this.video.currentTime = newTime;
+                this.currentDuration = newTime;
+            },
 
-                if (value != null) {
-                    newTime = Math.min(this.video.currentTime + value, this.video.duration);
-                } else {
-                    newTime = this.currentDuration;
+            startDraggingDuration() {
+                this.isDraggingDuration = true;
+            },
+
+            stopDraggingDuration() {
+                this.isDraggingDuration = false;
+            },
+
+            updateDuration(e, isClick = false) {
+                const timeBar = this.$refs.durationRange.getBoundingClientRect();
+                const width = e.clientX - timeBar.left;
+                const maxWidth = timeBar.width;
+                const percentage = (width / maxWidth) * 100;
+                const eleDuration = this.totalDuration * percentage / 100;
+
+                if (this.isDraggingDuration || isClick) {
+                    this.video.currentTime = eleDuration;
                 }
 
-                this.video.currentTime = newTime;
+                if (!this.isVideoPlayed && isClick) {
+                    this.video.currentTime = eleDuration;
+                    this.currentDuration = eleDuration;
+                    // this.video.play();
+                    // this.isVideoPlayed = true;
+                }
+            },
+
+            startDraggingVolume() {
+                this.isDraggingVolume = true;
+            },
+
+            stopDraggingVolume() {
+                this.isDraggingVolume = false;
+            },
+
+            updateVolume(e, isClick = false, isMute = false) {
+                e.preventDefault();
+
+                if (isMute) {
+                    if (this.video.volume == 0) {
+                        this.video.volume = this.volumeTemp;
+                        this.volume = this.volumeTemp;
+                    } else {
+                        this.volumeTemp = this.video.volume;
+                        this.video.volume = 0;
+                        this.volume = 0.1;
+                    }
+                } else {
+                    var timeBar = this.$refs.volumeRange.getBoundingClientRect();
+                    var width = e.clientX - timeBar.left;
+                    var maxWidth = timeBar.width;
+                    var percentage = parseInt((width / maxWidth) * 100) / 100;
+                    var eleVolume = percentage < 0 ? 0 : percentage;
+
+                    if ((this.isDraggingVolume && !isClick) || (!this.isDraggingVolume && isClick)) {
+                        this.video.volume = eleVolume;
+                        this.volume = eleVolume;
+
+                        if (this.volume >= 0.99 || this.volume == 0.01) {
+                            this.stopDraggingVolume();
+                        }
+
+                        if (this.volume <= 0.1) {
+                            this.video.volume = 0;
+                            this.volume = 0.1;
+                        }
+
+                        if (this.volume >= 0.95) {
+                            this.video.volume = 1;
+                            this.volume = 1;
+                        }
+                    }
+                }
             },
 
             changeVolumeVideo(e) {
@@ -192,77 +368,54 @@
                 this.video.volume = this.volume;
             },
             
-            async zoomVideo(e) {
+            zoomVideo(e) {
                 e.preventDefault();
 
-                this.alertMessage = 'start ';
-                try {
-                    var element = this.$refs.video;
-                    this.alertMessage += '200 ';
-
-                    if (this.isFullScreen) {
-                        this.alertMessage += '203 ';
-                        this.exitFullScreen(element);
-                    } else {
-                        this.alertMessage += '206 ';
-                        this.enterFullScreen(element);
-                    }
-                    this.alertMessage += '209 ';
-                } catch (err) {
-                    this.alertMessage += 'Catch ';
-                    this.alertMessage += err;
+                if (this.isFullScreen) {
+                    this.isFullScreen = false;
+                } else {
+                    this.isFullScreen = true;
                 }
 
-                alert(this.alertMessage);
+                // var element = this.$refs.video;
+
+                // if (this.isFullScreen) {
+                //     this.exitFullScreen(element);
+                // } else {
+                //     this.enterFullScreen(element);
+                // }
             },
 
             enterFullScreen(element) {
-                this.alertMessage += '206.1 ';
                 this.isFullScreen = true;
-                this.alertMessage += '206.2 ';
 
-                if (element.requestFullscreen) {
-                    this.alertMessage += '206.3 ';
-                    element.requestFullscreen();
-                } else if (element.mozRequestFullScreen) {
-                    this.alertMessage += '206.4 ';
-                    element.mozRequestFullScreen();
-                } else if (element.webkitRequestFullscreen) {
-                    this.alertMessage += '206.5 ';
-                    element.webkitRequestFullscreen();
-                } else if (element.msRequestFullscreen) {
-                    this.alertMessage += '206.6 ';
-                    element.msRequestFullscreen();
-                } else if (element.webkitEnterFullscreen) {
-                    this.alertMessage += '206.7 ';
-                    element.webkitEnterFullscreen();
-                }
-                this.alertMessage += '206.8 ';
+                // if (element.requestFullscreen) {
+                //     element.requestFullscreen();
+                // } else if (element.mozRequestFullScreen) {
+                //     element.mozRequestFullScreen();
+                // } else if (element.webkitRequestFullscreen) {
+                //     element.webkitRequestFullscreen();
+                // } else if (element.msRequestFullscreen) {
+                //     element.msRequestFullscreen();
+                // } else if (element.webkitEnterFullscreen) {
+                //     element.webkitEnterFullscreen();
+                // }
             },
             
             exitFullScreen() {
-                this.alertMessage += '203.1 ';
                 this.isFullScreen = false;
-                this.alertMessage += '203.2 ';
 
                 if (document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
-                    this.alertMessage += '203.3 ';
                     if (document.exitFullscreen) {
-                        this.alertMessage += '203.4 ';
                         document.exitFullscreen();
                     } else if (document.mozCancelFullScreen) {
-                        this.alertMessage += '203.5 ';
                         document.mozCancelFullScreen();
                     } else if (document.webkitExitFullscreen) {
-                        this.alertMessage += '203.6 ';
                         document.webkitExitFullscreen();
                     } else if (document.msExitFullscreen) {
-                        this.alertMessage += '203.7 ';
                         document.msExitFullscreen();
                     }
                 }
-
-                this.alertMessage += '203.8 ';
             },
         }
     }

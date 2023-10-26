@@ -82,11 +82,11 @@ class AuthService extends BaseService
             
             $user = auth()->guard('web')->user();
 
-            if ($user->email_verified_at === null) {
+            if ($user->email_verified_at == null) {
                 return $this->responseError(__('messages.auth.not_verified_email'), 400, ErrorCode::NOT_VERIFIED_EMAIL);
             }
 
-            if ($user->is_login === Constant::IS_LOGGED) {
+            if ($user->is_login == Constant::IS_LOGGED) {
                 return $this->responseError(__('messages.auth.logged_email'), 400, ErrorCode::AUTH_ERROR);
             }
         } catch (\Exception $ex) {
@@ -183,6 +183,17 @@ class AuthService extends BaseService
                 'email_verified_at' => now()
             ]);
 
+            return $this->responseSuccess();
+        } catch (\Exception $ex) {
+            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
+
+            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
+        }
+    }
+
+    public function getUserInformation($request)
+    {
+        try {
             return $this->responseSuccess();
         } catch (\Exception $ex) {
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());

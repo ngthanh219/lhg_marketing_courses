@@ -6,6 +6,7 @@ let actions = {
     login: authentication.login,
     sendVerifyCode: authentication.sendVerifyCode,
     register: authentication.register,
+    getInfo: authentication.getInfo,
 
     getCourses: course.getCourses,
     getCourseDetail: course.getCourseDetail,

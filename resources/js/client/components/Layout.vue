@@ -30,14 +30,25 @@
         },
         mounted() {
             this.$helper.setNotification(0, null);
-            this.middleware();
+            // this.middleware();
         },
         updated() {
             this.middleware();
         },
         methods: {
             middleware() {
-                
+                if (this.$store.state.auth.accessToken) {
+                    this.$store.dispatch("getInfo", {
+                        error: {
+                            message: ''
+                        }
+                    })
+                    .then(res => {
+                        
+                    })
+                    .catch(err => {
+                    });
+                }
             }
         }
     }

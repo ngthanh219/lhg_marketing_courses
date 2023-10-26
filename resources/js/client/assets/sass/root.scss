@@ -898,10 +898,17 @@ header {
                             position: relative;
                             transition: .3s all ease;
 
+                            .loading {
+                                .page-loading {
+                                    position: absolute !important;
+                                }
+                            }
+
                             canvas {
                                 object-fit: scale-down;
                                 background: black;
                                 height: 100%;
+                                cursor: pointer;
                             }
 
                             .video-controls {
@@ -913,19 +920,83 @@ header {
                                 bottom: 0px;
                                 left: 0;
                                 right: 0;
-                                z-index: 999999;
+                                z-index: 99999999999;
                                 // background: hsla(0, 0%, 8%, 0.7);
                                 opacity: 0;
-                                transition: .3s all ease;
+                                transition: .5s all ease;
 
                                 input {
                                     width: 100%;
                                 }
 
+                                .duration-range {
+                                    width: 100%;
+                                    background: #817575;
+                                    height: 5px;
+                                    border-radius: 3px;
+                                    cursor: pointer;
+                                    // transition: .5s all ease;
+                                    position: relative;
+
+                                    .n-duration {
+                                        position: absolute;
+                                        top: -28px;
+                                        color: white;
+                                        font-size: 14px;
+                                    }
+
+                                    .c-duration {
+                                        height: 5px;
+                                        background: white;
+                                        border-radius: 3px;
+                                        position: relative;
+                                    }
+
+                                    // .c-duration::before {
+                                    //     content: '';
+                                    //     position: absolute;
+                                    //     top: -3px;
+                                    //     right: 0;
+                                    //     background: white;
+                                    //     border-radius: 50%;
+                                    //     z-index: 9;
+                                    //     transition: .3s all ease;
+                                    //     opacity: 0;
+                                    //     height: 10px;
+                                    //     width: 10px;
+                                    // }
+                                }
+
+                                .duration-range.volume {
+                                    width: 100px;
+                                    margin-right: 0 !important;
+                                }
+
+                                .duration-range::before {
+                                    content: "";
+                                    position: absolute;
+                                    top: -19px;
+                                    left: 0;
+                                    right: 0;
+                                    bottom: 0;
+                                    height: 38px;
+                                }
+
+                                .duration-range:hover {
+                                    .c-duration {
+                                        background: red;
+                                    }
+
+                                    .c-duration::before {
+                                        opacity: 1;
+                                    }
+                                }
+
                                 .option {
                                     display: flex;
                                     justify-content: space-between;
-                                    padding-top: 5px;
+                                    // align-items: center;
+                                    padding: 15px;
 
                                     .left, .right {
                                         display: flex;
@@ -933,16 +1004,32 @@ header {
                                         align-items: center;
                                     }
 
+
+                                    i:hover {
+                                        color: red !important;
+                                    }
+
                                     a, i, .video-duration {
                                         color: white;
-                                        font-size: 15px;
+                                    }
+
+                                    .video-duration {
+                                        font-size: 14px;
                                     }
 
                                     .fa-expand, .fa-play, .fa-pause {
-                                        font-size: 15px;
+                                        font-size: 16px;
+                                    }
+
+                                    .fa-expand, .fa-volume-off, .fa-volume-mute {
+                                        font-size: 20px;
                                     }
                                     
                                     .left a, .right .volume {
+                                        margin-right: 20px;
+                                    }
+
+                                    .right .fa-volume-off, .fa-volume-mute {
                                         margin-right: 10px;
                                     }
 
@@ -974,7 +1061,7 @@ header {
                         }
 
                         .video:hover, .video.active-controls {
-                            .video-controls {
+                            .video-controls, .seek-option {
                                 opacity: 1;
                             }
                         }
@@ -1275,7 +1362,7 @@ footer {
 
 @media only screen and (max-width: 450px) {
     .page {
-        width: 300px !important;
+        width: 95% !important;
     }
 
     .container-wrapper {
@@ -1339,6 +1426,38 @@ footer {
                 .wc-general-information {
                     margin-bottom: 20px;
                     width: 100% !important;
+                }
+
+                .wc-information {
+                    .box-card {
+                        .tab-detail.video-tab {
+                            padding-left: 0 !important;
+                            padding-right: 0 !important;
+                            padding-bottom: 0 !important;
+
+                            .text-center {
+                                margin-bottom: 10px;
+                            }
+
+                            .video {
+                                .video-controls {
+                                    .option {
+                                        flex-direction: row;
+
+                                        .left {
+                                            
+                                        }
+
+                                        .right {
+                                            .volume {
+                                                display: none;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

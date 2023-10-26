@@ -109,6 +109,7 @@ Route::group([
     Route::group([
         'middleware' => 'client.auth'
     ], function () {
+        Route::get('info', [ClientAuthController::class, 'getUserInformation']);
         Route::post('register-course', [ClientCourseController::class, 'registerCourse']);
         Route::post('d-v', [ClientCourseController::class, 'decryptVideo']);
     });

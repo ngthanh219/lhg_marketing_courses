@@ -28,6 +28,13 @@
                                             </select>
                                         </div>
                                         <div class="form-group">
+                                            <label>Xác thực</label>
+                                            <select class="form-control" v-model="formData.email_verified_at">
+                                                <option value="0">Chưa xác thực</option>
+                                                <option value="1">Đã xác thực</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
                                             <label>Họ tên</label>
                                             <input type="text" class="form-control form-control-border" placeholder="xxx" v-model="formData.name">
                                         </div>
@@ -86,7 +93,8 @@
                     is_login: null,
                     role_id: null,
                     is_change_password: 0,
-                    password: '123456'
+                    password: '123456',
+                    email_verified_at: 0
                 },
                 formDataError: {
                     message: '',
@@ -97,6 +105,7 @@
                     role_id: '',
                     is_change_password: '',
                     password: '',
+                    email_verified_at: 0
                 }
             }
         },

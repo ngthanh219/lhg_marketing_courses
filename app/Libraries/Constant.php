@@ -34,4 +34,7 @@ class Constant
     const COURSE_USER_NO_ACTION = 2;
 
     const VIDEO_EXT = '.mp4';
+
+    const IS_NOT_VERIFIED_EMAIL = 0;
+    const IS_VERIFIED_EMAIL = 1;
 }
