@@ -112,7 +112,6 @@
                 isFullScreen: false,
                 isVideoPlayed: false,
                 currentDuration: 0,
-                currentDurationTemp: 0,
                 totalDuration: 0,
                 isShowVideo: false,
                 isDraggingDuration: false,
@@ -134,6 +133,42 @@
             }
         },
         methods: {
+            reloadVideo() {
+                var self = this;
+                self.video.addEventListener('error', () => {
+                    var currentDurationTemp = self.currentDuration;
+                    var isVideoPlayedTemp = self.isVideoPlayed;
+
+                    self.$store.dispatch("getDV", {
+                        request: self.$helper.appendFormData({
+                            id: self.videoData.id
+                        }),
+                        error: {
+                            message: ''
+                        }
+                    })
+                    .then(res => {
+                        self.deVideo(self.videoData, res.data);
+                        setTimeout(() => {
+                            self.currentDuration = currentDurationTemp;
+                            self.video.currentTime = currentDurationTemp;
+                            currentDurationTemp = 0;
+
+                            if (isVideoPlayedTemp) {
+                                self.isVideoPlayed = true;
+                                self.video.play();
+                            }
+
+                            self.isLoadingVideo = false;
+                        }, 10)
+                    })
+                    .catch(err => {
+                        self.isLoadingVideo = false;
+                    });
+
+                });
+            },
+
             async updateVideoContent() {
                 if (this.isLoadVideo) {
                     this.isVideoPlayed = false;
@@ -154,7 +189,7 @@
             updateVideoDuration() {
                 if (this.isVideoPlayed) {
                     if (this.currentDuration >= this.totalDuration) {
-                        this.isVideoPlayed = false;
+                        // this.isVideoPlayed = false;
                     } else {
                         if (this.currentDuration == this.video.currentTime) {
                             if (this.countLoadingVideo >= 101) {
@@ -208,40 +243,7 @@
                         this.isShowVideo = true;
                     };
 
-                    var self = this;
-                    this.video.addEventListener('error', () => {
-                        this.isLoadingVideo = true;
-                        this.currentDurationTemp = this.currentDuration;
-
-                        console.log('Reload video ' + this.videoData.id);
-
-                        this.$store.dispatch("getDV", {
-                            request: this.$helper.appendFormData({
-                                id: this.videoData.id
-                            }),
-                            error: {
-                                message: ''
-                            }
-                        })
-                        .then(res => {
-                            this.deVideo(this.videoData, res.data);
-                            // this.createCanvas();
-                            // this.video.currentTime = this.currentDurationTemp;
-                            // this.currentDuration = this.currentDurationTemp;
-
-                            // console.log(this.currentDurationTemp);
-                            // console.log(this.currentDuration);
-                            // console.log(this.video.currentTime);
-
-                            // this.refs.video.onloadedmetadata = () => {
-                            //     console.log('ok roi');
-                            //     this.isLoadingVideo = false;
-                            // };
-                        })
-                        .catch(err => {
-                            this.isLoadingVideo = false;
-                        });
-                    });
+                    this.reloadVideo();
                 }
             },
 

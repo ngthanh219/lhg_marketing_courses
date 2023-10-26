@@ -30,7 +30,7 @@
         },
         mounted() {
             this.$helper.setNotification(0, null);
-            this.middleware();
+            // this.middleware();
         },
         updated() {
             this.middleware();

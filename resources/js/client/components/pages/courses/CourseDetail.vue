@@ -33,6 +33,7 @@
                 <CourseDetailSection
                     :courseSections="data.course.course_sections"
                     :deVideo="deVideo"
+                    :setVideoSrc="setVideoSrc"
                 />
             </div>
 
@@ -125,8 +126,7 @@
 
                 var expiresKey = 'X-Amz-Expires';
                 if (!data.hasOwnProperty(expiresKey)) {
-                    // newData[expiresKey] = parseInt(video.duration) + 30;
-                    newData[expiresKey] = 10;
+                    newData[expiresKey] = parseInt(video.duration) + 300;
                 }
 
                 var query = this.$helper.getQueryString(newData);
