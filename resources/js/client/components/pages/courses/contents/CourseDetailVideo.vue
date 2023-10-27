@@ -224,6 +224,7 @@
 
             createCanvas() {
                 if (this.videoSrc) {
+                    this.isLoadingVideo = true;
                     this.getContext();
                     this.video = document.createElement('video');
                     this.video.$refs = 'video';
@@ -235,6 +236,7 @@
                     this.video.addEventListener('loadedmetadata', () => {
                         this.canvas.content.width = this.video.videoWidth;
                         this.canvas.content.height = this.video.videoHeight;
+                        this.isLoadingVideo = false;
                     });
 
                     this.video.onloadedmetadata = () => {
