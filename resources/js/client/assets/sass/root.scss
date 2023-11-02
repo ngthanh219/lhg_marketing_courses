@@ -449,18 +449,20 @@ header {
     }
 
     .wrapper {
-        .banner {
-            // background-position: center !important;
-            // background-size: cover !important;
-            // height: 500px;
-            // display: flex;
-            // align-items: center;
-            // justify-content: center;
-            // position: relative;
-
+        .banner-image {
             img {
                 height: 100%;
             }
+        }
+
+        .banner {
+            background-position: center !important;
+            background-size: cover !important;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
 
             .overlay {
                 position: absolute;
