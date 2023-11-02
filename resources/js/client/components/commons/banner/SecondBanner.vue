@@ -1,7 +1,7 @@
 <template>
     <div class="banner"
-        style="
-            background: url(https://haycafe.vn/wp-content/uploads/2022/03/Hinh-anh-bat-tay-chuyen-nghiep.jpg);
+        :style="
+            'background: url(' + $env.s3Url + 'banners/banner2.png);'
         "
     >
         <div class="overlay"></div>

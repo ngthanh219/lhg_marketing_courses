@@ -7,10 +7,10 @@
         name: "App",
         mounted() {
             console.clear();
-            // console.log(
-            //     "%cDừng lại!",
-            //     "color:red;font-size:50px;",
-            // );
+            console.log(
+                "%cDừng lại!",
+                "color:red;font-size:50px;",
+            );
         }
     }
 </script>

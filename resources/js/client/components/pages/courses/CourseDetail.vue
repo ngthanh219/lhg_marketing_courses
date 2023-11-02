@@ -95,7 +95,6 @@
             setVideoSrc(videoSrc) {
                 this.isLoadVideo = true;
                 this.videoSrc = videoSrc;
-                console.log(this.videoSrc);
             },
 
             async deVideo(video, data) {
