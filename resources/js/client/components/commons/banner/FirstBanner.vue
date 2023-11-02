@@ -13,7 +13,7 @@
     </div> -->
 
     <div class="banner">
-        <img :src="$env.s3Url + 'banners/banner.png">
+        <img :src="$env.s3Url + 'banners/banner.png'">
     </div>
 </template>
 
