@@ -1,5 +1,5 @@
 <template>
-    <div class="banner"
+    <!-- <div class="banner"
         v-bind:style="
             'background: url(' + $env.s3Url + 'banners/banner.png);'
         "
@@ -10,6 +10,10 @@
             <span>Lớp Học Online 3 Ngày Qua Zoom</span>
             <a href="#" class="btn btn-danger">Nhận vé miễn phí</a>
         </div>
+    </div> -->
+
+    <div class="banner">
+        <img :src="$env.s3Url + 'banners/banner.png">
     </div>
 </template>
 
