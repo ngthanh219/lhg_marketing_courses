@@ -8,13 +8,15 @@
                 <div class="c-info">
                     <div class="theme text-line-3">{{ post.name }}</div>
                     <div class="detail" style="flex-direction: row-reverse;">
-                        <a>Đọc tiếp...</a>
+                        <router-link :to="'bai-viet/' + post.slug" class="btn btn-success show">
+                            Đọc thêm <i class="fas fa-arrow-right"></i>
+                        </router-link>
                     </div>
                 </div>
             </router-link>
         </div>
         <div class="card-item" v-else v-for="index in 6">
-            <br v-for="index in 16">
+            <div class="clear-text"></div>
         </div>
     </div>
 </template>

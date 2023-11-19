@@ -1,11 +1,11 @@
 <template>
-    <header>
-        <div class="header-full-br" >
+    <header id="header">
+        <div class="header-full-br">
             <div class="header-center-content">
                 <div class="left-wrapper">
                     <div class="logo">
                         <router-link to="/trang-chu" @click="redirectPage">
-                            <img :src="this.$env.s3Url + 'logos/logo.png'" alt="">
+                            <img src="https://pmt.academy/wp-content/uploads/2022/04/pmt-logo.png" alt="">
                         </router-link>
                     </div>
                     <ul class="navbar-menu" v-bind:class="[
@@ -16,30 +16,30 @@
                             <router-link to="/trang-chu" @click="redirectPage">Trang chủ</router-link>
                         </li>
                         <li>
-                            <router-link to="/huong-dan-vao-hoc" @click="redirectPage">Hướng Dẫn Vào Học</router-link>
-                        </li>
-                        <li>
                             <router-link to="/khoa-hoc" @click="redirectPage">Khóa học</router-link>
                         </li>
                         <li>
                             <router-link to="/bai-viet" @click="redirectPage">Bài viết</router-link>
+                        </li>
+                        <li>
+                            <router-link to="/lien-he" @click="redirectPage">Liên hệ</router-link>
                         </li>
                         <!-- <li>
                             <input type="text" class="search" placeholder="Tìm khóa học">
                         </li> -->
                         <li class="toggler-active" v-if="!$store.state.auth.accessToken">
                             <router-link to="/dang-nhap" @click="redirectPage">
-                                <span>Đăng nhập</span>
+                                Đăng nhập
                             </router-link>
                         </li>
                         <li class="toggler-active" v-if="!$store.state.auth.accessToken">
                             <router-link to="/dang-ky" @click="redirectPage">
-                                <span>Đăng ký</span>
+                                Đăng ký
                             </router-link>
                         </li>
                         <li class="toggler-active" v-if="$store.state.auth.accessToken">
                             <a>
-                                <span>Tài khoản: {{ $store.state.auth.user.email }}</span>
+                                Tài khoản: {{ $store.state.auth.user.email }}
                             </a>
                         </li>
                     </ul>
@@ -53,12 +53,12 @@
                     <ul class="navbar-menu" v-if="!$store.state.auth.accessToken">
                         <li class="information-user">
                             <router-link to="/dang-nhap" @click="redirectPage">
-                                <span>Đăng nhập</span>
+                                Đăng nhập
                             </router-link>
                         </li>
                         <li class="information-user">
                             <router-link to="/dang-ky" @click="redirectPage">
-                                <span>Đăng ký</span>
+                                Đăng ký
                             </router-link>
                         </li>
                     </ul>
@@ -83,8 +83,21 @@
             }
         },
         mounted() {
+            this.fixedHeader();
         },
         methods: {
+            fixedHeader() {
+                window.addEventListener('scroll', function() {
+                var header = document.getElementById('header');
+
+                if (window.scrollY > 50) {
+                    header.classList.add('h-fixed');
+                } else {
+                    header.classList.remove('h-fixed');
+                }
+                });
+            },
+
             logout() {
                 
             },

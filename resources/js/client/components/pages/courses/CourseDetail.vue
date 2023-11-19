@@ -41,8 +41,8 @@
                 :courseDetailData="data"
             />
         </div>
+        <div class="clear-text"></div>
     </div>
-    <br v-else v-for="index in 50">
 </template>
 
 <script>

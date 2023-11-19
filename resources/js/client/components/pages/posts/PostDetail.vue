@@ -16,8 +16,8 @@
                 </div>
             </div>
         </div>
+        <div class="clear-text"></div>
     </div>
-    <br v-for="index in 30">
 </template>
 
 <script>
