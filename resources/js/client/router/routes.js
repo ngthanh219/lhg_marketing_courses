@@ -7,9 +7,10 @@ import Home from "../components/pages/Home.vue";
 import CourseList from "../components/pages/courses/CourseList.vue";
 import CourseDetail from "../components/pages/courses/CourseDetail.vue";
 import RegisterCourse from "../components/pages/register-course/RegisterCourse.vue";
-import Tutorial from "../components/pages/single/Tutorial.vue";
+import Contact from "../components/pages/single/Contact.vue";
 import PostList from "../components/pages/posts/PostList.vue";
 import PostDetail from "../components/pages/posts/PostDetail.vue";
+import BookDetail from "../components/pages/books/BookDetail.vue";
 
 const routes = [
     {
@@ -51,9 +52,9 @@ const routes = [
                 component: RegisterCourse
             },
             {
-                path: '/huong-dan-vao-hoc',
-                name: 'Tutorial',
-                component: Tutorial
+                path: '/lien-he',
+                name: 'Contact',
+                component: Contact
             },
             {
                 path: '/bai-viet',
@@ -64,6 +65,11 @@ const routes = [
                 path: '/bai-viet/:postSlug',
                 name: 'PostDetail',
                 component: PostDetail
+            },
+            {
+                path: '/sach/:bookSlug',
+                name: 'BookDetail',
+                component: BookDetail
             },
         ]
     },

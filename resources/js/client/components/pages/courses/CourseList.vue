@@ -35,7 +35,7 @@
                 </div>
             </div>
         </div>
-        <br v-for="index in 16">
+        <div class="clear-text"></div>
     </div>
 </template>
 

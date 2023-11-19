@@ -1,11 +1,11 @@
 <template>
     <div class="wrapper">
-        <!-- <MenuBanner
-            :pageName="'Tất cả bài viết'"
-        /> -->
+        <MenuBanner
+            :pageName="'Tất cả sách'"
+        />
         <div class="w-content page">
             <div class="wc-box">
-                <div class="title">Tất cả bài viết</div>
+                <div class="title">Tất cả sách</div>
 
                 <PostContent
                     ref="postContent"
@@ -18,8 +18,8 @@
                     <button @click="loadPostData" class="btn btn-primary">Xem thêm</button>
                 </div>
             </div>
-            <div class="clear-text"></div>
         </div>
+        <div class="clear-text"></div>
     </div>
 </template>
 
@@ -28,7 +28,7 @@
     import MenuBanner from '../../commons/banner/MenuBanner.vue';
 
     export default {
-        name: 'PostList',
+        name: 'BookList',
         components: {
             PostContent,
             MenuBanner
