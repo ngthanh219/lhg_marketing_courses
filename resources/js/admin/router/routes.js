@@ -9,6 +9,7 @@ import Video from "../components/pages/videos/Video.vue";
 import VideoObject from "../components/pages/videos/VideoObject.vue";
 import CourseUser from "../components/pages/course-users/CourseUser.vue";
 import Post from "../components/pages/posts/Post.vue";
+import Book from "../components/pages/books/Book.vue";
 
 const routes = [
     {
@@ -55,6 +56,11 @@ const routes = [
                 path: 'posts',
                 name: 'Post',
                 component: Post
+            },
+            {
+                path: 'books',
+                name: 'Book',
+                component: Book
             },
             {
                 path: ':pathMatch(.*)*',

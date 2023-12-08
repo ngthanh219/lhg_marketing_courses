@@ -1,7 +1,8 @@
 <template>
-    <div class="w-content banner-wrap contact-form" style="
-        background: url(https://pmt.academy/wp-content/uploads/2022/04/new-background-home-2.jpg);
-    ">
+    <div
+        class="w-content banner-wrap contact-form"
+        :style="{ 'background': 'url(' + $env.s3Url + 'banners/banner2.png)' }"
+    >
         <div class="content">
             <div class="wc-box">
                 <div class="title">Liên hệ với chúng tôi</div>

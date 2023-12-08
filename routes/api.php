@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\BookController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\CourseSectionController;
 use App\Http\Controllers\Admin\CourseUserController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Admin\VideoController;
 use App\Http\Controllers\Client\AuthController as ClientAuthController;
 use App\Http\Controllers\Client\CourseController as ClientCourseController;
 use App\Http\Controllers\Client\PostController as ClientPostController;
+use App\Http\Controllers\Client\BookController as ClientBookController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
@@ -93,6 +95,15 @@ Route::group([
                 Route::post('{id}', [PostController::class, 'update']);
                 Route::delete('{id}', [PostController::class, 'delete']);
             });
+
+            Route::group([
+                'prefix' => 'books'
+            ], function () {
+                Route::get('', [BookController::class, 'index']);
+                Route::post('', [BookController::class, 'create']);
+                Route::post('{id}', [BookController::class, 'update']);
+                Route::delete('{id}', [BookController::class, 'delete']);
+            });
         });
     });
 
@@ -106,6 +117,9 @@ Route::group([
     Route::get('courses/{courseSlug}', [ClientCourseController::class, 'getCourseDetail']);
     Route::get('posts', [ClientPostController::class, 'getPosts']);
     Route::get('posts/{postSlug}', [ClientPostController::class, 'getPostDetail']);
+    Route::get('books', [ClientBookController::class, 'getBooks']);
+    Route::get('books/{bookSlug}', [ClientBookController::class, 'getBookDetail']);
+
     Route::group([
         'middleware' => 'client.auth'
     ], function () {

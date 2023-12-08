@@ -22,6 +22,7 @@ class Constant
 
     const IMAGE_FOLDER = 'images/';
     const VIDEO_FOLDER = 'videos/';
+    const BOOK_FOLDER = 'books/';
 
     const EXPIRE_IMAGE = 60;
     const EXPIRE_VIDEO = 300;

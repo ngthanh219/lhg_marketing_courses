@@ -1,6 +1,7 @@
 import authentication from './api/authentication.js';
 import course from './api/course.js';
 import post from './api/post.js';
+import book from './api/book.js';
 
 let actions = {
     login: authentication.login,
@@ -15,6 +16,9 @@ let actions = {
 
     getPosts: post.getPosts,
     getPostDetail: post.getPostDetail,
+
+    getBooks: book.getBooks,
+    getBookDetail: book.getBookDetail,
 }
 
 export default actions;

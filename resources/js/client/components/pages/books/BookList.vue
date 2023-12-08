@@ -7,15 +7,15 @@
             <div class="wc-box">
                 <div class="title">Tất cả sách</div>
 
-                <PostContent
-                    ref="postContent"
+                <BookContent
+                    ref="bookContent"
 
                     :sortValue="sortValue"
                     :setIsShowLoadPage="setIsShowLoadPage"
                 />
 
                 <div class="action flex-center" v-if="isShowLoadPage">
-                    <button @click="loadPostData" class="btn btn-primary">Xem thêm</button>
+                    <button @click="loadBookData" class="btn btn-primary">Xem thêm</button>
                 </div>
             </div>
         </div>
@@ -24,14 +24,14 @@
 </template>
 
 <script>
-    import PostContent from '../../commons/content/PostContent.vue';
+    import BookContent from '../../commons/content/BookContent.vue';
     import MenuBanner from '../../commons/banner/MenuBanner.vue';
 
     export default {
         name: 'BookList',
         components: {
-            PostContent,
-            MenuBanner
+            MenuBanner,
+            BookContent
         },
         data() {
             return {
@@ -43,7 +43,7 @@
 
         },
         methods: {
-            async sortPost(e, val) {
+            async sortBook(e, val) {
                 e.preventDefault();
 
                 if (this.sortValue != val) {
@@ -59,21 +59,21 @@
                         query.price_sort = 'desc';
                     }
 
-                    this.$refs.postContent.setDataListNull();
-                    await this.$refs.postContent.getPostsDataWithQuery(query);
-                    this.$refs.postContent.checkPage();
+                    this.$refs.bookContent.setDataListNull();
+                    await this.$refs.bookContent.getBooksDataWithQuery(query);
+                    this.$refs.bookContent.checkPage();
                 }
             },
 
-            async loadPostData(e) {
+            async loadBookData(e) {
                 e.preventDefault();
 
-                var data = this.$refs.postContent.getData();
+                var data = this.$refs.bookContent.getData();
                 var query = data.query;
 
                 if (data.dataList.total_page > query.page) {
                     query.page += 1;
-                    await this.$refs.postContent.getPostsDataWithQuery(query);
+                    await this.$refs.bookContent.getBooksDataWithQuery(query);
 
                     if (data.dataList.total_page == query.page) {
                         this.setIsShowLoadPage(false);

@@ -44,6 +44,12 @@
                         </router-link>
                     </li>
                     <li class="nav-item">
+                        <router-link to="/admin/books" class="nav-link">
+                            <i class="nav-icon fas fa-book"></i>
+                            <p>Quản lý sách</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item">
                         <router-link to="/admin/posts" class="nav-link">
                             <i class="nav-icon far fa-newspaper"></i>
                             <p>Quản lý bài viết</p>
