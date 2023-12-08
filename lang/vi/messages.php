@@ -50,4 +50,8 @@ return [
         "not_exist" => "Bài viết này không tồn tại",
         "exist" => "Bài viết này đã tồn tại",
     ],
+    "book" => [
+        "not_exist" => "Sách này không tồn tại",
+        "exist" => "Sách này đã tồn tại",
+    ],
 ];
