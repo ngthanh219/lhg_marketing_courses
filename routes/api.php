@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BookController;
+use App\Http\Controllers\Admin\BookUserController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\CourseSectionController;
 use App\Http\Controllers\Admin\CourseUserController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\Client\AuthController as ClientAuthController;
 use App\Http\Controllers\Client\CourseController as ClientCourseController;
 use App\Http\Controllers\Client\PostController as ClientPostController;
 use App\Http\Controllers\Client\BookController as ClientBookController;
+use App\Http\Controllers\Client\BookUserController as ClientBookUserController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
@@ -104,6 +106,14 @@ Route::group([
                 Route::post('{id}', [BookController::class, 'update']);
                 Route::delete('{id}', [BookController::class, 'delete']);
             });
+
+            Route::group([
+                'prefix' => 'book-users'
+            ], function () {
+                Route::get('', [BookUserController::class, 'index']);
+                Route::post('{id}', [BookUserController::class, 'update']);
+                Route::delete('{id}', [BookUserController::class, 'delete']);
+            });
         });
     });
 
@@ -113,6 +123,7 @@ Route::group([
     Route::post('login', [ClientAuthController::class, 'login'])->middleware('throttle:10,2');
     Route::post('send-verify-code', [ClientAuthController::class, 'sendVerifyCode'])->middleware('throttle:5,1');
     Route::post('register', [ClientAuthController::class, 'register'])->middleware('throttle:10,2');
+    Route::post('register-book', [ClientBookUserController::class, 'registerBook'])->middleware('throttle:10,1');
     Route::get('courses', [ClientCourseController::class, 'getCourses']);
     Route::get('courses/{courseSlug}', [ClientCourseController::class, 'getCourseDetail']);
     Route::get('posts', [ClientPostController::class, 'getPosts']);

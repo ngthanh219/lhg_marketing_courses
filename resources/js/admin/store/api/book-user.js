@@ -1,10 +1,10 @@
 import actionParams from "./index";
 
-let book = {
-    getBooks({state}, form) {
+let bookUser = {
+    getBookUsers({state}, form) {
         axios.defaults.headers.common = {'Authorization': `Bearer ` + state.auth.accessToken}
         return new Promise((resolve, reject) => {
-            axios.get(actionParams.API + 'books' + form.query)
+            axios.get(actionParams.API + 'book-users' + form.query)
             .then((res) => {
                 actionParams.resetFormError(form.error);
                 resolve(res.data);
@@ -15,13 +15,10 @@ let book = {
         });
     },
 
-    getBookDetail({state}, form) {
-        if (state.auth.accessToken) {
-            axios.defaults.headers.common = {'Authorization': `Bearer ` + state.auth.accessToken}
-        }
-        
+    updateBookUser({state}, form) {
+        axios.defaults.headers.common = {'Authorization': `Bearer ` + state.auth.accessToken}
         return new Promise((resolve, reject) => {
-            axios.get(actionParams.API + 'books/' + form.slug)
+            axios.post(actionParams.API + 'book-users/' + form.id, form.request)
             .then((res) => {
                 actionParams.resetFormError(form.error);
                 resolve(res.data);
@@ -32,10 +29,10 @@ let book = {
         });
     },
 
-    registerBook({state}, form) {
+    deleteBookUser({state}, form) {
+        axios.defaults.headers.common = {'Authorization': `Bearer ` + state.auth.accessToken}
         return new Promise((resolve, reject) => {
-            axios.defaults.headers.common = {'Authorization': `Bearer ` + state.auth.accessToken}
-            axios.post(actionParams.API + 'register-book', form.request)
+            axios.delete(actionParams.API + 'book-users/' + form.id)
             .then((res) => {
                 actionParams.resetFormError(form.error);
                 resolve(res.data);
@@ -47,4 +44,4 @@ let book = {
     },
 }
 
-export default book;
+export default bookUser;

@@ -54,4 +54,8 @@ return [
         "not_exist" => "Sách này không tồn tại",
         "exist" => "Sách này đã tồn tại",
     ],
+    "book_user" => [
+        "not_exist" => "Thông tin sách này không tồn tại",
+        "registered_user" => "Dữ liệu này đã có trong hệ thống"
+    ],
 ];
