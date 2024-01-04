@@ -49,4 +49,8 @@ return [
         "not_exist" => "This post does not exist",
         "exist" => "This post already exists",
     ],
+    "book_user" => [
+        "not_exist" => "This book information does not exist",
+        "registered_user" => "This data is already in the system",
+    ],
 ];

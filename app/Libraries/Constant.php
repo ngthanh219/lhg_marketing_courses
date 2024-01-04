@@ -38,4 +38,8 @@ class Constant
 
     const IS_NOT_VERIFIED_EMAIL = 0;
     const IS_VERIFIED_EMAIL = 1;
+
+    const BOOK_USER_USING = 0;
+    const BOOK_USER_PENDING = 1;
+    const BOOK_USER_NO_ACTION = 2;
 }

@@ -6,6 +6,7 @@ import video from './api/video.js';
 import courseUser from './api/course-user.js';
 import post from './api/post.js';
 import book from './api/book.js';
+import bookUser from './api/book-user.js';
 
 let actions = {
     login: authentication.login,
@@ -51,6 +52,10 @@ let actions = {
     createBook: book.createBook,
     updateBook: book.updateBook,
     deleteBook: book.deleteBook,
+
+    getBookUsers: bookUser.getBookUsers,
+    updateBookUser: bookUser.updateBookUser,
+    deleteBookUser: bookUser.deleteBookUser,
 }
 
 export default actions;

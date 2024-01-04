@@ -10,6 +10,7 @@ import VideoObject from "../components/pages/videos/VideoObject.vue";
 import CourseUser from "../components/pages/course-users/CourseUser.vue";
 import Post from "../components/pages/posts/Post.vue";
 import Book from "../components/pages/books/Book.vue";
+import BookUser from "../components/pages/book-users/BookUser.vue";
 
 const routes = [
     {
@@ -61,6 +62,11 @@ const routes = [
                 path: 'books',
                 name: 'Book',
                 component: Book
+            },
+            {
+                path: 'book-users',
+                name: 'BookUser',
+                component: BookUser
             },
             {
                 path: ':pathMatch(.*)*',

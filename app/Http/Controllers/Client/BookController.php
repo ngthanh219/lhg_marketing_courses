@@ -25,10 +25,4 @@ class BookController extends Controller
     {
         return $this->bookService->getBookDetailClient($request);
     }
-
-    //RegisterCourseRequest
-    public function registerBookClient(Request $request)
-    {
-        return $this->bookService->registerBookClient($request);
-    }
 }

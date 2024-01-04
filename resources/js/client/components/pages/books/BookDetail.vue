@@ -38,20 +38,25 @@
                                 Để lại thông tin!
                             </div>
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Họ tên *" v-model="form.name" />
+                                <input type="text" class="form-control" placeholder="Họ tên *" v-model="formData.name" />
                             </div>
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Email *" v-model="form.email" />
+                                <input type="text" class="form-control" placeholder="Email *" v-model="formData.email" />
                             </div>
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Số điện thoại *" v-model="form.phone" />
+                                <input type="text" class="form-control" placeholder="Số điện thoại *" v-model="formData.phone" />
                             </div>
                             <div class="input-group">
-                                <textarea class="form-control" placeholder="Ghi chú" v-model="form.note"></textarea>
+                                <textarea class="form-control" placeholder="Ghi chú" v-model="formData.note"></textarea>
                             </div>
                         </div>
-                        <div class="btn-action">
-                            <a href="#" class="btn btn-danger">Đặt sách</a>
+                        <div class="btn-action" v-if="!isRegisterClick">
+                            <a @click="registerBook" class="btn btn-danger" ref="registerBookBtn">Đặt sách</a>
+                        </div>
+                        <div class="btn btn-action btn-danger btn-block btn-loading disabled" v-else :style="{ height: registerBookBtnHeight + 'px'}">
+                            <div class="loading">
+                                <BtnLoading />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -63,11 +68,13 @@
 
 <script>
     import MenuBanner1 from '../../commons/banner/MenuBanner1.vue';
+    import BtnLoading from '../../commons/loading/BtnLoading.vue';
 
     export default {
         name: 'BookDetail',
         components: {
-            MenuBanner1
+            MenuBanner1,
+            BtnLoading
         },
         data() {
             return {
@@ -75,20 +82,23 @@
                 formDataError: {
                     message: ""
                 },
-                form: {
+                formData: {
+                    book_id: null,
                     name: '',
                     email: '',
                     phone: '',
                     note: ''
-                }
+                },
+                isRegisterClick: false,
+                registerBookBtnHeight: 0
             };
         },
         async mounted() {
             await this.getBookData();
 
-            this.form.name = this.$store.state.auth.user ? this.$store.state.auth.user.name : '';
-            this.form.email = this.$store.state.auth.user ? this.$store.state.auth.user.email : '';
-            this.form.phone = this.$store.state.auth.user ? this.$store.state.auth.user.phone : '';
+            this.formData.name = this.$store.state.auth.user ? this.$store.state.auth.user.name : '';
+            this.formData.email = this.$store.state.auth.user ? this.$store.state.auth.user.email : '';
+            this.formData.phone = this.$store.state.auth.user ? this.$store.state.auth.user.phone : '';
         },
         methods: {
             async getBookData() {
@@ -99,10 +109,37 @@
                 })
                 .then(res => {
                     this.data = res.data;
+                    this.formData.book_id = this.data.id;
                 })
                 .catch(err => {
                 });
                 this.$helper.setPageLoading(false);
+            },
+
+            async registerBook(e) {
+                e.preventDefault();
+
+                this.registerBookBtnHeight = this.$refs.registerBookBtn.clientHeight - 10;
+                this.isRegisterClick = true;
+                if (this.isRegisterClick) {
+                    await this.$store.dispatch('registerBook', {
+                        request: this.$helper.appendFormData(this.formData),
+                        error: this.formDataError
+                    })
+                    .then(res => {
+                        for (var item in this.formData) {
+                            this.formData[item] = '';
+                        }
+                        
+                        this.$helper.setNotification(1, 'Chúng tôi đã nhận được thông tin của bạn và sẽ liên lạc với bạn sớm nhất')
+                    })
+                    .catch(err => {
+                        
+                    });
+
+                    this.registerBookBtnHeight = 0;
+                    this.isRegisterClick = false;
+                }
             }
         }
     }

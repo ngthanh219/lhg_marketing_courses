@@ -19,6 +19,7 @@ let actions = {
 
     getBooks: book.getBooks,
     getBookDetail: book.getBookDetail,
+    registerBook: book.registerBook,
 }
 
 export default actions;

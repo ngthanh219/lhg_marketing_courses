@@ -7,6 +7,7 @@
         <div class="sidebar" style="overflow-y: auto;">
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                    <li class="nav-header">Quản lý hệ thống</li>
                     <li class="nav-item">
                         <router-link to="/admin/users" class="nav-link">
                             <i class="nav-icon far fa-user"></i>
@@ -38,12 +39,6 @@
                         </router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link to="/admin/course-users" class="nav-link">
-                            <i class="nav-icon far fa-plus-square"></i>
-                            <p>Khóa học của người dùng</p>
-                        </router-link>
-                    </li>
-                    <li class="nav-item">
                         <router-link to="/admin/books" class="nav-link">
                             <i class="nav-icon fas fa-book"></i>
                             <p>Quản lý sách</p>
@@ -53,6 +48,20 @@
                         <router-link to="/admin/posts" class="nav-link">
                             <i class="nav-icon far fa-newspaper"></i>
                             <p>Quản lý bài viết</p>
+                        </router-link>
+                    </li>
+                    <div class="clear-br"></div>
+                    <li class="nav-header">Thông tin người dùng</li>
+                    <li class="nav-item">
+                        <router-link to="/admin/course-users" class="nav-link">
+                            <i class="nav-icon far fa-plus-square"></i>
+                            <p>Khóa học</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item">
+                        <router-link to="/admin/book-users" class="nav-link">
+                            <i class="nav-icon fas fa-book-medical"></i>
+                            <p>Sách</p>
                         </router-link>
                     </li>
                 </ul>
