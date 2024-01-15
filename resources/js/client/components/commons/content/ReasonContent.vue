@@ -1,7 +1,8 @@
 <template>
-    <div class="w-content">
-        <div class="reason-container page">
-            <h3>Tại sao bạn nên lựa chọn chúng tôi?</h3>
+  <div class="w-content">
+    <div class="reason-container">
+      <img :src="$env.s3Url + 'banners/section1.jpg'" alt="" />
+      <!-- <h3>Tại sao bạn nên lựa chọn chúng tôi?</h3>
             <div class="reason-box">
                 <div class="rb-item">
                     <div class="image">
@@ -31,16 +32,14 @@
                     <p>GIÁO TRÌNH ĐỔI MỚI – HỖ TRỢ TRỌN ĐỜI</p>
                     <span>Giáo trình đào tạo chuyên sâu của PMT GROUP luôn được cập nhật liên tục, phù hợp xu hướng mới. Học viên được thực hành thành thạo, hỗ trợ trọn đời sau khóa học tận tình và chu đáo</span>
                 </div>
-            </div>
-        </div>
+            </div> -->
     </div>
+  </div>
 </template>
 
 <script>
 export default {
-    name: 'ReasonContent',
-    props: {
-        
-    },
-}
+  name: "ReasonContent",
+  props: {},
+};
 </script>

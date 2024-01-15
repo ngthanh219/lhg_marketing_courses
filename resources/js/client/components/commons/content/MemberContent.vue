@@ -1,10 +1,13 @@
 <template>
-    <div class="w-content reason">
+    <div class="w-content">
         <div class="wc-box">
             <div class="box member">
-                <div class="title top-slogan">Đội ngũ giảng viên</div>
-                <div class="slogan small">Tất cả những giảng viên tại PMT GROUP đều là những giảng viên hàng đầu về Kinh doanh – Marketing, dày dặn kinh nghiệm thực chiến…</div>
-                <img :src="$env.s3Url + 'banners/banner3.png'">
+                <!-- <div class="title top-slogan">Đội ngũ giảng viên</div>
+                <div class="slogan small">Tất cả những giảng viên tại PMT GROUP đều là những giảng viên hàng đầu về Kinh doanh – Marketing, dày dặn kinh nghiệm thực chiến…</div> -->
+                
+                <img :src="$env.s3Url + 'banners/section4.jpg'" alt="" />
+                <img style="margin-top: -10px" :src="$env.s3Url + 'banners/section5.jpg'" alt="" />
+                <!-- <img :src="$env.s3Url + 'banners/banner3.png'"> -->
                 <div class="bar-clear"></div>
                 <div class="title">Đội ngũ PMT group</div>
                 <div class="slogan small">Đội ngũ Trợ giảng và Hỗ trợ nhiệt tình, support 24/7 cho các bạn Học viên</div>

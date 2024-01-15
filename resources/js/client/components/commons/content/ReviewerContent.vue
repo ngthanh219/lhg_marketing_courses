@@ -1,9 +1,17 @@
 <template>
-    <div class="w-content reviewer">
+    <div class="w-content reviewer" style="
+        background-image: url(https://kdtc.s3.ap-southeast-1.amazonaws.com/banners/section6.jpg);
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: cover;
+        padding-top: 300px;
+        padding-bottom: 100px;
+    ">
         <div class="wc-box">
             <div class="box member">
-                <div class="title top-slogan">Cảm nhận của học viên</div>
-                <div class="bar-clear"></div>
+                <!-- <div class="title top-slogan">Cảm nhận của học viên</div> -->
+                <!-- <div class="bar-clear"></div> -->
+                <!-- <img style="margin-top: -10px" :src="$env.s3Url + 'banners/section6.jpg'" alt="" /> -->
                 <div class="slider">
                     <swiper
                         :modules="modules"
