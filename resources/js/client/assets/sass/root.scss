@@ -1547,6 +1547,12 @@ footer {
     .page {
         width: 1200px !important;
     }
+
+    .youtube-video {
+        iframe {
+            width: 100% !important;
+        }
+    }
 }
 
 @media only screen and (max-width: 1210px) {
