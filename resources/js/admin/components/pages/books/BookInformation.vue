@@ -134,7 +134,8 @@
             }
         },
         mounted() {
-            this.$helper.scrollTop()
+            this.$helper.scrollTop();
+            var self = this;
 
             setTimeout(() => {
                 this.isTransitionActive = true;
@@ -153,7 +154,28 @@
                     ['height', ['height']]
                 ];
                 $('#summernote').summernote({
-                    toolbar: toolbarOptions
+                    toolbar: toolbarOptions,
+                    callbacks: {
+                        onImageUpload: function(files) {
+                            self.$helper.setPageLoading(true);
+                            let fileData = {
+                                file: files[0],
+                                folder: 'images'
+                            };
+
+                            self.$store.dispatch("uploadFile", {
+                                request: self.$helper.appendFormData(fileData),
+                                error: self.formDataError
+                            })
+                            .then(res => {
+                                $('#summernote').summernote('editor.insertImage', res.data);
+                                self.$helper.setPageLoading(false);
+                            })
+                            .catch(err => {
+                                self.$helper.setPageLoading(false);
+                            });
+                        }
+                    }
                 });
                 $('#summernote').summernote('code', this.formData.description);
             }, 200);

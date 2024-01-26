@@ -117,7 +117,8 @@
             }
         },
         mounted() {
-            this.$helper.scrollTop()
+            this.$helper.scrollTop();
+            var self = this;
 
             setTimeout(() => {
                 this.isTransitionActive = true;
@@ -142,6 +143,27 @@
                     toolbarOptions: {
                         fontsize: ['8', '9', '10', '11', '12', '14', '18', '24', '36', '48', '60', '72', '96'],
                     },
+                    callbacks: {
+                        onImageUpload: function(files) {
+                            self.$helper.setPageLoading(true);
+                            let fileData = {
+                                file: files[0],
+                                folder: 'images'
+                            };
+
+                            self.$store.dispatch("uploadFile", {
+                                request: self.$helper.appendFormData(fileData),
+                                error: self.formDataError
+                            })
+                            .then(res => {
+                                $('#summernote').summernote('editor.insertImage', res.data);
+                                self.$helper.setPageLoading(false);
+                            })
+                            .catch(err => {
+                                self.$helper.setPageLoading(false);
+                            });
+                        }
+                    }
                 });
                 $('#summernote').summernote('code', this.formData.content);
             }, 200);

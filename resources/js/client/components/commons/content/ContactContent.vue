@@ -1,14 +1,13 @@
 <template>
     <div
-        class="w-content banner-wrap contact-form"
-        :style="{ 'background': 'url(' + $env.s3Url + 'banners/banner2.png)' }"
+        class="w-content banner-wrap contact-form image-br"
+        :style="{ 'background': 'url(' + $env.s3Url + 'banners/section8.jpg)' }"
     >
-        <div class="content">
-            <div class="wc-box">
-                <div class="title">Liên hệ với chúng tôi</div>
+        <div class="content page">
+            <img :src="$env.s3Url + 'banners/lien-he.png'" alt="" />
+            <div class="wc-box" style="width: 90%; margin: 0 auto">
                 <div class="c-form">
                     <div class="c-branch">
-                        <div class="cf-title">Đăng ký thông tin</div>
                         <div class="location-info">
                             <div class="item">
                                 <div class="key">
@@ -53,7 +52,7 @@
                             <input type="text" class="form-control" placeholder="Tiêu đề *" v-model="form.title" />
                         </div>
                         <div class="input-group">
-                            <textarea class="form-control" placeholder="Nội dung yêu cầu *" v-model="form.content"></textarea>
+                            <textarea style="max-height: 100px; min-height: 100px" class="form-control" placeholder="Nội dung yêu cầu *" v-model="form.content"></textarea>
                         </div>
                         <div class="input-group">
                             <a href="#" class="btn btn-primary">Gửi yêu cầu</a>
