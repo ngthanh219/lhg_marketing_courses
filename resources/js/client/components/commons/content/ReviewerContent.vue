@@ -1,7 +1,7 @@
 <template>
     <div class="w-content reviewer image-br" :style="{ 'background': 'url(' + $env.s3Url + 'banners/grey-br.jpg)' }">
         <div class="wc-box">
-            <div class="box member">
+            <div class="box member page">
                 <img :src="$env.s3Url + 'banners/cam-nhan-hoc-vien.png'" />
                 <!-- <div class="slider">
                     <swiper
