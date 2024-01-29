@@ -2,15 +2,11 @@
     <div class="wrapper">
         <FirstBanner />
 
-        <div class="slogan">
-            Học chiến lược tư duy & công cụ marketing giúp bạn 10x thu nhập
-        </div>
-
         <ReasonContent />
 
-        <div class="w-content page">
-            <div class="wc-box">
-                <div class="title">Khóa học</div>
+        <div class="w-content image-br" :style="{ 'background': 'url(' + $env.s3Url + 'banners/red-br.jpg)' }">
+            <div class="wc-box page">
+                <img :src="$env.s3Url + 'banners/khoa-hoc.png'" />
                 <CourseContent />
 
                 <div class="action flex-center">
@@ -19,32 +15,24 @@
             </div>
         </div>
 
-        <div class="bar-clear"><div class="dash"></div></div>
+        <!-- <div class="bar-clear"><div class="dash"></div></div> -->
 
-        <div class="w-content page">
-            <div class="wc-box">
-                <div class="title">Sách</div>
+        <div class="w-content image-br" :style="{ 'background': 'url(' + $env.s3Url + 'banners/red-br.jpg)' }">
+            <div class="wc-box page">
+                <img :src="$env.s3Url + 'banners/giao-trinh-pmt.png'" />
                 <BookContent />
-
-                <!-- <div class="action flex-center">
-                    <router-link to="/sach" class="btn btn-primary">Xem thêm</router-link>
-                </div> -->
             </div>
         </div>
 
-        <div class="bar-clear"><div class="dash"></div></div>
-
         <MemberContent />
-
-        <div class="bar-clear"><div class="dash"></div></div>
 
         <ReviewerContent />
 
         <ContactContent/>
 
-        <div class="w-content page">
-            <div class="wc-box">
-                <div class="title">Bài viết nổi bật</div>
+        <div class="w-content image-br" :style="{ 'background': 'url(' + $env.s3Url + 'banners/grey-br.jpg)' }">
+            <div class="wc-box page">
+                <img :src="$env.s3Url + 'banners/bai-viet-noi-bat.png'" />
                 <PostContent />
 
                 <div class="action flex-center">

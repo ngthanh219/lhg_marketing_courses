@@ -1,10 +1,9 @@
 <template>
-    <div class="w-content reviewer">
+    <div class="w-content reviewer image-br" :style="{ 'background': 'url(' + $env.s3Url + 'banners/grey-br.jpg)' }">
         <div class="wc-box">
-            <div class="box member">
-                <div class="title top-slogan">Cảm nhận của học viên</div>
-                <div class="bar-clear"></div>
-                <div class="slider">
+            <div class="box member page">
+                <img :src="$env.s3Url + 'banners/cam-nhan-hoc-vien.png'" />
+                <!-- <div class="slider">
                     <swiper
                         :modules="modules"
                         :slides-per-view="1"
@@ -18,6 +17,10 @@
                             <img :src="$env.s3Url + 'reviewers/' + index + '.jpg'">
                         </swiper-slide>
                     </swiper>
+                </div> -->
+                
+                <div class="youtube-video text-center">
+                    <iframe width="1250" height="703" src="https://www.youtube.com/embed/d4dzkdh60MY" title="Tổng hợp video phản hồi học viên khi học xong khóa học củaPMT Group" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                 </div>
             </div>
         </div>

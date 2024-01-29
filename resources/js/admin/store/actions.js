@@ -37,6 +37,7 @@ let actions = {
     completeMultipartUpload: video.completeMultipartUpload,
     abortMultipartUpload: video.abortMultipartUpload,
     deleteVideoObject: video.deleteVideoObject,
+    uploadFile: video.uploadFile,
 
     getCourseUsers: courseUser.getCourseUsers,
     createCourseUser: courseUser.createCourseUser,

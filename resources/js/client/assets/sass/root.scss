@@ -735,10 +735,10 @@ header {
             padding: 100px 0 !important;
 
             .content {
-                background: white;
-                width: 70%;
+                background: rgba(255, 255, 255, 0.8);
+                // width: 70%;
                 height: 100%;
-                border-radius: 4px;
+                border-radius: 20px;
                 box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px;
 
                 .c-form {
@@ -750,7 +750,7 @@ header {
                     .cf-title {
                         font-size: 17px;
                         font-weight: 600;
-                        color: $greenColor;
+                        color: $redColor;
                     }
 
                     .c-branch {
@@ -764,20 +764,21 @@ header {
                             margin-bottom: 10px;
 
                             .key {
+                                font-weight: 700;
                                 i {
                                     margin-right: 10px;
                                 }
-                                
-                                color: $greenColor;
 
                                 span {
                                     color: black;
+                                    font-weight: 600;
                                 }
                             }
 
                             p {
                                 line-height: 25px;
                                 margin-left: 35px;
+                                font-weight: 600;
                             }
                         }
                     }
@@ -826,6 +827,7 @@ header {
                         transition: .3s all ease;
                         border-radius: 5px;
                         width: 255px;
+                        background: white;
 
                         a {
                             .c-image {
@@ -1518,6 +1520,12 @@ header {
                 }
             }
         }
+
+        .image-br {
+            background-repeat: no-repeat !important;
+            background-position: center center !important;
+            background-size: cover !important;
+        }
     }
 }
 
@@ -1539,6 +1547,12 @@ footer {
 @media only screen and (max-width: 1350px) {
     .page {
         width: 1200px !important;
+    }
+
+    .youtube-video {
+        iframe {
+            width: 100% !important;
+        }
     }
 }
 
