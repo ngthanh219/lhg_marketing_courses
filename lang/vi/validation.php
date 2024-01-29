@@ -175,6 +175,7 @@ return [
         'user_id'               => 'người dùng',
         'status'                => 'trạng thái',
         'billing_image_url'     => 'hóa đơn chuyển tiền',
-        'book_id'               => 'thông tin sách'
+        'book_id'               => 'thông tin sách',
+        'image_url'             => 'ảnh'
     ],
 ];
