@@ -42,43 +42,23 @@
                                                 {{ parseInt(formData.price - (formData.price * (formData.discount / 100))).toLocaleString() }}đ</label>
                                             <input type="text" class="form-control form-control-border" placeholder="xxx" v-model="formData.discount" @keypress="this.$helper.isNumber($event)">
                                         </div>
-                                        <div class="form-group" v-if="bookData != null">
-                                            <div class="custom-control custom-checkbox">
-                                                <input 
-                                                    class="custom-control-input" 
-                                                    type="checkbox" 
-                                                    id="customCheckbox2" 
-                                                    v-model="formData.is_change_image"
-                                                    @click="checkPreviewImage"
-                                                >
-                                                <label for="customCheckbox2" class="custom-control-label cursor-pointer">Thay ảnh</label>
-                                            </div>
-                                        </div>
-                                        <div class="form-group" v-if="formData.is_change_image">
+                                        <div class="form-group">
                                             <label for="exampleInputFile">Ảnh</label>
                                             <div class="input-group">
                                                 <div class="custom-file">
-                                                    <input type="file" class="custom-file-input" id="exampleInputFile" @change="handlePreviewImage($event)">
+                                                    <input type="file" class="custom-file-input" id="exampleInputFile" @change="handlePreviewImage($event)" accept="image/*" multiple>
                                                     <label class="custom-file-label" for="exampleInputFile">Chọn file</label>
                                                 </div>
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">Tải lên</span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" v-if="previewImage.length > 0">
+                                            <div class="form-preview-image gallery-image">
+                                                <div class="gallery-image-item" v-for="image, index in previewImage">
+                                                    <img class="img-fluid mb-3" :src="image.url" alt="Photo">
+                                                    <a @click="removeImages($event, image, index)" class="gi-tool cursor-pointer">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group" v-if="bookData != null">
-                                            <div class="form-preview-image">
-                                                Ảnh hiện tại{{ bookData.image_url != null || previewImage != null  ? '' : ': Chưa có' }}
-
-                                                <img class="img-fluid mb-3" v-if="previewImage != null" :src="previewImage" alt="Photo">
-                                                <img class="img-fluid mb-3" v-if="previewImage == null && bookData.image_url" :src="bookData.image_url" alt="Photo">
-                                            </div>
-                                        </div>
-                                        <div class="form-group" v-if="bookData == null">
-                                            <div class="form-preview-image">
-                                                Ảnh hiện tại{{  previewImage ? '' : ': Chưa có' }}
-
-                                                <img class="img-fluid mb-3" v-if="previewImage !== null" :src="previewImage" alt="Photo">
                                             </div>
                                         </div>
                                     </div>
@@ -109,28 +89,27 @@
         data() {
             return {
                 isTransitionActive: false,
-                previewImage: null,
                 formData: {
                     name: '',
                     introduction: '',
                     description: '',
-                    is_change_image: false,
-                    image_url: '',
                     price: 0,
                     discount: 0,
-                    is_show: 0
+                    is_show: 0,
+                    image: [],
+                    remove_image: []
                 },
                 formDataError: {
                     message: '',
                     name: '',
                     introduction: '',
                     description: '',
-                    is_change_image: '',
-                    image_url: '',
                     price: '',
                     discount: '',
-                    is_show: ''
-                }
+                    is_show: '',
+                    image: ''
+                },
+                previewImage: []    // type: 0 - preview; 1 - live, url
             }
         },
         mounted() {
@@ -142,8 +121,16 @@
 
                 if (this.bookData) {
                     this.$helper.mergeArrayData(this.bookData, this.formData);
-                } else {
-                    this.formData.is_change_image = true;
+                    var imageData = this.formData.image;
+                    this.formData.image = [];
+
+                    for (const image in imageData) {
+                        this.previewImage.push({
+                            type: 1,
+                            name: null,
+                            url: imageData[image]
+                        });
+                    }
                 }
 
                 const toolbarOptions = [
@@ -196,9 +183,16 @@
                 this.formData.description = $('#summernote').summernote('code');
 
                 if (this.bookData) {
-                    if (this.$helper.checkChangeFormData(this.bookData, this.formData) || this.formData.is_change_image == 1) {
+                    if (this.$helper.checkChangeFormData(this.bookData, this.formData)) {
                         this.$helper.setPageLoading(true);
-                        await this.update();
+                        var transaction = await this.update();
+
+                        if (transaction) {
+                            await this.getBookData();
+                            // this.closeFormComponent(e);
+                        } else {
+                            this.$helper.setPageLoading(false);
+                        }
                     }
                 } else {
                     if (this.$helper.checkChangeFormData(null, this.formData)) {
@@ -218,7 +212,7 @@
             async create() {
                 var transaction = false;
                 await this.$store.dispatch("createBook", {
-                    request: this.$helper.appendFormData(this.formData),
+                    request: this.handleFormRequest(),
                     error: this.formDataError
                 })
                 .then(res => {
@@ -233,43 +227,85 @@
             },
 
             async update() {
+                var transaction = false;
                 await this.$store.dispatch("updateBook", {
                     id: this.bookData.id,
-                    request: this.$helper.appendFormData(this.formData),
+                    request: this.handleFormRequest(),
                     error: this.formDataError
                 })
                 .then(res => {
-                    this.formData.is_change_image = 0;
-                    this.formData.image_url = res.data.image_url;
                     this.formData.price = res.data.price;
                     this.bookData.discount_price = res.data.discount_price;
+                    this.previewImage = [];
+
+                    for (const imageData in res.data.image) {
+                        this.previewImage.push({
+                            type: 1,
+                            name: null,
+                            url: res.data.image[imageData]
+                        });
+                    }
+
+                    this.formData.image = [];
                     this.$helper.mergeArrayData(this.formData, this.bookData);
+                    transaction = true;
 
                     this.$helper.setNotification(1, 'Cập nhật thành công');
                 })
                 .catch(err => {
 
                 });
-                this.$helper.setPageLoading(false);
+                
+                return transaction;
+            },
+
+            handleFormRequest() {
+                const formRequest = new FormData();
+                
+                for (var param in this.formData) {
+                    if (param == 'image' || param == 'remove_image') {
+                        for (let i = 0; i < this.formData[param].length; i++) {
+                            formRequest.append(param + '[]', this.formData[param][i]);
+                        }
+                    } else if (this.formData[param] !== null && this.formData[param] !== '') {
+                        formRequest.append(param, this.formData[param]);
+                    }
+                }
+
+                return formRequest;
             },
 
             handlePreviewImage(e) {
                 var self = this;
-                const reader = new FileReader();
 
-                reader.onload = (load) => {
-                    self.previewImage = load.target.result;
+                for (const file of e.target.files) {
+                    const reader = new FileReader();
+
+                    reader.onload = (load) => {
+                        self.previewImage.push({
+                            type: 0,
+                            name: file.name,
+                            url: load.target.result
+                        });
+                    }
+
+                    reader.readAsDataURL(file);
+                    self.formData.image.push(file);
                 }
-
-                reader.readAsDataURL(e.target.files[0]);
-                self.formData.image_url = e.target.files[0];
             },
 
-            checkPreviewImage() {
-                if (this.bookData !== null) {
-                    if (this.formData.is_change_image) {
-                        this.previewImage = null;
-                        this.formData.image_url = this.bookData.image_url;
+            removeImages(e, image, index) {
+                e.preventDefault();
+
+                if (this.bookData && this.previewImage.length == 1) {
+                    this.$helper.setNotification(0, 'Trường ảnh không được bỏ trống.');
+                } else {
+                    if (image.type == 0) {
+                        this.previewImage.splice(index, 1);
+                        this.formData.image = this.formData.image.filter(file => file.name !== image.name);
+                    } else {
+                        this.formData.remove_image.push(image.url);
+                        this.previewImage.splice(index, 1);
                     }
                 }
             }

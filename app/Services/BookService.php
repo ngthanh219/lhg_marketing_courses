@@ -60,12 +60,16 @@ class BookService extends BaseService
     public function create($request)
     {
         try {
-            $image = null;
             $slug = Str::slug($request->name);
             $checkSlug = $this->book->where('slug', $slug)->withTrashed()->first();
-            
             if ($checkSlug) {
                 return $this->responseError(__('messages.book.exist'), 400, ErrorCode::PARAM_INVALID);
+            }
+            
+            $imageData = [];
+            foreach ($request->image as $file) {
+                $request->file = $file;
+                $imageData[] = config('base.aws.s3.url') . $this->awsS3Service->uploadFile($request, Constant::BOOK_FOLDER);
             }
 
             $newData = [
@@ -73,23 +77,18 @@ class BookService extends BaseService
                 'slug' => $slug,
                 'introduction' => $request->introduction,
                 'description' => $request->description,
+                'image' => json_encode($imageData),
                 'price' => (double) $request->price,
                 'discount' => (int) $request->discount,
                 'is_show' => (int) $request->is_show,
                 'discount_price' => (double) ($request->price - (($request->price * ($request->discount / 100)) * 100 / 100))
             ];
 
-            if (isset($request->image_url)) {
-                $request->file = $request->image_url;
-                $image = $this->awsS3Service->uploadFile($request, Constant::BOOK_FOLDER);
-                $newData['image'] = $image;
-            }
-
             $book = $this->book->create($newData);
 
             return $this->responseSuccess($book);
         } catch (\Exception $ex) {
-            $this->awsS3Service->removeFile($image);
+            $this->awsS3Service->removeFile($imageData);
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 
             return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
@@ -100,12 +99,10 @@ class BookService extends BaseService
     {
         try {
             $book = $this->book->find($id);
-            
             if (!$book) {
                 return $this->responseError(__('messages.book.not_exist'), 400, ErrorCode::PARAM_INVALID);
             }
 
-            $image = null;
             $slug = Str::slug($request->name);
             $checkSlug = $this->book->where('id', '!=', $id)
                 ->where('slug', $slug)
@@ -115,30 +112,48 @@ class BookService extends BaseService
             if ($checkSlug) {
                 return $this->responseError(__('messages.book.exist'), 400, ErrorCode::PARAM_INVALID);
             }
+            
+            $imageData = (array) $book->image;
+            $removeImage = [];
+
+            if ($request->remove_image) {
+                foreach ($request->remove_image as $item) {
+                    $key = array_search($item, $imageData);
+
+                    if ($key !== false) {
+                        $removeImage[] = str_replace(config('base.aws.s3.url'), '', $item);
+                        unset($imageData[$key]);
+                    }
+                }
+            }
+
+            if ($request->image) {
+                foreach ($request->image as $file) {
+                    $request->file = $file;
+                    $imageData[] = config('base.aws.s3.url') . $this->awsS3Service->uploadFile($request, Constant::BOOK_FOLDER);
+                }
+            }
+
+            if ($removeImage) {
+                $this->awsS3Service->removeFile($removeImage);
+            }
 
             $updatedData = [
                 'name' => $request->name,
                 'slug' => $slug,
                 'introduction' => $request->introduction,
                 'description' => $request->description,
+                'image' => json_encode(array_values($imageData)),
                 'price' => (double) $request->price,
                 'discount' => (int) $request->discount,
                 'is_show' => (int) $request->is_show,
                 'discount_price' => (double) ($request->price - (($request->price * ($request->discount / 100)) * 100 / 100))
             ];
 
-            if ($request->is_change_image === "true") {
-                $request->file = $request->image_url;
-                $image = $this->awsS3Service->uploadFile($request, Constant::BOOK_FOLDER);
-                $updatedData['image'] = $image;
-                $this->awsS3Service->removeFile($book->image);
-            }
-
             $book->update($updatedData);
 
             return $this->responseSuccess($book);
         } catch (\Exception $ex) {
-            $this->awsS3Service->removeFile($image);
             GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
 
             return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);

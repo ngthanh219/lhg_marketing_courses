@@ -1,9 +1,9 @@
 <template>
     <div class="card-list">
         <div class="card-item" v-if="dataList" v-for="book in dataList.list">
-            <router-link :to="'sach/' + book.slug">
+            <router-link :to="'giao-trinh/' + book.slug">
                 <div class="c-image">
-                    <img :src="book.image_url" alt="">
+                    <img :src="book.image[0]" alt="">
                 </div>
                 <div class="c-info">
                     <div class="theme text-line-3">{{ book.name }}</div>

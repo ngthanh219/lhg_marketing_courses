@@ -78,6 +78,48 @@ body {
     background-color: rgba(0,0,0,.075);
 }
 
+.gallery-image {
+    display: flex;
+    flex-flow: wrap;
+    width: 100% !important;
+
+    .gallery-image-item {
+        width: 200px;
+        height: 200px;
+        margin: 10px;
+        position: relative;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+
+        img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .gi-tool {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 10px;
+            
+            i {
+                font-size: 20px;
+                color: red;
+            }
+        }
+
+        .gi-tool:hover {
+            background: red;
+
+            i {
+                color: white;
+            }
+        }
+    }
+}
+
+
 .table-action {
     width: 50px;
     // height: 40px;

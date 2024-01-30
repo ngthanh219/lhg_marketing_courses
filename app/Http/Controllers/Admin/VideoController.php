@@ -38,11 +38,6 @@ class VideoController extends Controller
         return $this->videoService->delete($request, $id);
     }
 
-    public function uploadFile(Request $request)
-    {
-        return $this->videoService->uploadFile($request);
-    }
-
     public function getVideoObjectInS3(Request $request)
     {
         return $this->videoService->getVideoObjectInS3($request);

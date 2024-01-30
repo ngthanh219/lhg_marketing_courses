@@ -18,7 +18,23 @@
             <div class="wc-general-information">
                 <div class="gi-card">
                     <div class="gic-image">
-                        <img :src="data.image_url" alt="" style="object-fit: scale-down;">
+                        <!-- <img :src="data.image_url" alt="" style="object-fit: scale-down;"> -->
+                        <div class="slider" style="height: 400px">
+                            <swiper
+                                :modules="modules"
+                                :slides-per-view="1"
+                                :space-between="1"
+                                navigation
+                                :pagination="{ clickable: true }"
+                                @swiper="onSwiper"
+                                @slideChange="onSlideChange"
+                                style="height: 100%;"
+                            >
+                                <swiper-slide v-for="index, key in data.image">
+                                    <img :src="index" style="height: 400px" class="cursor-pointer" @click="showImage($event, index)">
+                                </swiper-slide>
+                            </swiper>
+                        </div>
                     </div>
                     <div class="gic-action">
                         <div class="price-box-theme">
@@ -69,12 +85,31 @@
 <script>
     import MenuBanner1 from '../../commons/banner/MenuBanner1.vue';
     import BtnLoading from '../../commons/loading/BtnLoading.vue';
+    import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
+    import { Swiper, SwiperSlide } from 'swiper/vue';
+    import 'swiper/css';
+    import 'swiper/css/navigation';
+    import 'swiper/css/pagination';
+    import 'swiper/css/scrollbar';
 
     export default {
         name: 'BookDetail',
         components: {
             MenuBanner1,
-            BtnLoading
+            BtnLoading,
+            Swiper,
+            SwiperSlide,
+        },
+        setup() {
+            const onSwiper = (swiper) => {
+            };
+            const onSlideChange = () => {
+            };
+            return {
+                onSwiper,
+                onSlideChange,
+                modules: [Navigation, Pagination, Scrollbar, A11y],
+            };
         },
         data() {
             return {
@@ -140,6 +175,10 @@
                     this.registerBookBtnHeight = 0;
                     this.isRegisterClick = false;
                 }
+            },
+
+            showImage(e, url) {
+                window.open(url, '_blank');
             }
         }
     }

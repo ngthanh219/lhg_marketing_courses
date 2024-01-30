@@ -16,7 +16,8 @@ class CreateBookRequest extends FormRequest
         return [
             'name' => 'required|max:255',
             'introduction' => 'max:500',
-            'image_url' => 'file|mimes:jpg,jpeg,png|max:600',
+            'image' => 'required|array',
+            'image.*' => 'required|file|mimes:jpg,jpeg,png|max:600',
             'price' => 'required|integer|min:0',
             'discount' => 'required|integer|min:0|between:0,100',
             'is_show' => 'required|integer|min:0|max:1'
