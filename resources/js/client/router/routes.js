@@ -10,6 +10,7 @@ import RegisterCourse from "../components/pages/register-course/RegisterCourse.v
 import Contact from "../components/pages/single/Contact.vue";
 import PostList from "../components/pages/posts/PostList.vue";
 import PostDetail from "../components/pages/posts/PostDetail.vue";
+import BookList from "../components/pages/books/BookList.vue";
 import BookDetail from "../components/pages/books/BookDetail.vue";
 
 const routes = [
@@ -67,7 +68,12 @@ const routes = [
                 component: PostDetail
             },
             {
-                path: '/sach/:bookSlug',
+                path: '/giao-trinh',
+                name: 'BookList',
+                component: BookList
+            },
+            {
+                path: '/giao-trinh/:bookSlug',
                 name: 'BookDetail',
                 component: BookDetail
             },

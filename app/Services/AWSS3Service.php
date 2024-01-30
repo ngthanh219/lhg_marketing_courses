@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\GeneralHelper;
 use Aws\S3\S3Client;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -57,7 +58,7 @@ class AWSS3Service
 
     public function uploadFile($request, $folder)
     {
-        $fileName = time() . '.' . $request->file->getClientOriginalExtension();
+        $fileName = GeneralHelper::randomString(100) . '_' . time() . '.' . $request->file->getClientOriginalExtension();
         $filePath = $folder . $fileName;
         Storage::disk('s3')->put($filePath, file_get_contents($request->file));
 

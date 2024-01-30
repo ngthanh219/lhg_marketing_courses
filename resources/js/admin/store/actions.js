@@ -7,6 +7,7 @@ import courseUser from './api/course-user.js';
 import post from './api/post.js';
 import book from './api/book.js';
 import bookUser from './api/book-user.js';
+import file from './api/file.js';
 
 let actions = {
     login: authentication.login,
@@ -37,7 +38,6 @@ let actions = {
     completeMultipartUpload: video.completeMultipartUpload,
     abortMultipartUpload: video.abortMultipartUpload,
     deleteVideoObject: video.deleteVideoObject,
-    uploadFile: video.uploadFile,
 
     getCourseUsers: courseUser.getCourseUsers,
     createCourseUser: courseUser.createCourseUser,
@@ -57,6 +57,9 @@ let actions = {
     getBookUsers: bookUser.getBookUsers,
     updateBookUser: bookUser.updateBookUser,
     deleteBookUser: bookUser.deleteBookUser,
+
+    uploadFile: file.upload,
+    removeFile: file.remove,
 }
 
 export default actions;

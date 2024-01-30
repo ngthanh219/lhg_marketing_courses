@@ -24,18 +24,13 @@ class Book extends Model
     ];
 
     protected $hidden = [
-        'image',
         'deleted_at',
         'updated_at'
     ];
 
-    protected $appends = [
-        'image_url'
-    ];
-
-    public function getImageUrlAttribute()
+    public function getImageAttribute($value)
     {
-        return $this->image != null ? (config('base.aws.s3.url') . $this->image) : null;
+        return $value != null ? json_decode($value, true) : [];
     }
 
     public function getCreatedAtAttribute($value)

@@ -176,6 +176,7 @@ return [
         'status'                => 'trạng thái',
         'billing_image_url'     => 'hóa đơn chuyển tiền',
         'book_id'               => 'thông tin sách',
-        'image_url'             => 'ảnh'
+        'image_url'             => 'ảnh',
+        'images'                => 'ảnh'
     ],
 ];

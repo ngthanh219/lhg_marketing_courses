@@ -178,23 +178,6 @@ class VideoService extends BaseService
         }
     }
 
-    public function uploadFile($request)
-    {
-        try {
-            if (isset($request->file) && isset($request->folder)) {
-                $image = $this->awsS3Service->uploadFile($request, $request->folder . '/');
-
-                return $this->responseSuccess(config('base.aws.s3.url') . $image);
-            }
-            
-            return $this->responseSuccess(null, [], 'Thất bại');
-        } catch (\Exception $ex) {
-            GeneralHelper::detachException(__CLASS__ . '::' . __FUNCTION__, 'Try catch', $ex->getMessage());
-
-            return $this->responseError(__('messages.system.server_error'), 500, ErrorCode::SERVER_ERROR);
-        }
-    }
-
     public function getVideoObjectInS3($request)
     {
         try {

@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <MenuBanner
-            :pageName="'Tất cả khóa học'"
+            :pageName="'Khóa học'"
         />
         <div class="w-content page">
             <div class="wc-box">

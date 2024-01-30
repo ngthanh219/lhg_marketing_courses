@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\BookUserController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\CourseSectionController;
 use App\Http\Controllers\Admin\CourseUserController;
+use App\Http\Controllers\Admin\FileController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VideoController;
@@ -30,7 +31,8 @@ Route::group([
             'middleware' => 'admin.auth'
         ], function () {
             Route::post('logout', [AuthController::class, 'logout']);
-            Route::post('upload-file', [VideoController::class, "uploadFile"]);
+            Route::post('upload-file', [FileController::class, "uploadFile"]);
+            Route::post('remove-file', [FileController::class, "removeFile"]);
 
             Route::group([
                 'prefix' => 'users'

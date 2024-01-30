@@ -24,6 +24,9 @@
                         <li>
                             <router-link to="/lien-he" @click="redirectPage">Liên hệ</router-link>
                         </li>
+                        <li>
+                            <router-link to="/giao-trinh" @click="redirectPage">Giáo trình</router-link>
+                        </li>
                         <!-- <li>
                             <input type="text" class="search" placeholder="Tìm khóa học">
                         </li> -->

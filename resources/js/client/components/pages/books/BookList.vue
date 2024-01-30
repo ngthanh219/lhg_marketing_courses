@@ -1,11 +1,11 @@
 <template>
     <div class="wrapper">
         <MenuBanner
-            :pageName="'Tất cả sách'"
+            :pageName="'Giáo trình'"
         />
         <div class="w-content page">
             <div class="wc-box">
-                <div class="title">Tất cả sách</div>
+                <div class="title">Tất cả giáo trình</div>
 
                 <BookContent
                     ref="bookContent"
