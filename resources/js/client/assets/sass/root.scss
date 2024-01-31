@@ -1238,6 +1238,7 @@ header {
                             .loading {
                                 .page-loading {
                                     position: absolute !important;
+                                    z-index: 9;
                                 }
                             }
 
@@ -1252,13 +1253,13 @@ header {
                                 display: flex;
                                 flex-direction: column;
                                 justify-content: space-between;
-                                padding: 0 10px 10px 10px;
+                                padding: 10px 10px 0 10px;
                                 position: absolute;
                                 bottom: 0px;
                                 left: 0;
                                 right: 0;
                                 z-index: 99999999999;
-                                // background: hsla(0, 0%, 8%, 0.7);
+                                background: hsla(0, 0%, 8%, 0.7);
                                 opacity: 0;
                                 transition: .5s all ease;
 
@@ -1397,7 +1398,19 @@ header {
                             }
                         }
 
-                        .video:hover, .video.active-controls {
+                        .video.unactive-controls {
+                            .video-controls, .seek-option {
+                                opacity: 0 !important;
+                            }
+                        }
+
+                        // .video:hover, .video:focus, .video.active-controls {
+                        //     .video-controls, .seek-option {
+                        //         opacity: 1;
+                        //     }
+                        // }
+
+                        .video.active-controls {
                             .video-controls, .seek-option {
                                 opacity: 1;
                             }

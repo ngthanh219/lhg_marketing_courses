@@ -11,6 +11,8 @@
                     {'fullscreen': isFullScreen}
                 ]" 
                 ref="video"
+                @mouseleave="hiddenControls"
+                @mousemove="moveMouse"
                 v-else
             >
                 <div class="loading" v-if="isLoadingVideo">
@@ -19,7 +21,8 @@
                 <canvas
                     class="cursor-pointer"
                     v-bind:class="{'background': !isShowVideo}" 
-                    ref="canvas" @click="startVideo"
+                    ref="canvas" 
+                    @click="startVideo"
                 />
                 <div class="video-controls" id="controls" v-if="video">
                     <div
@@ -118,7 +121,8 @@
                 isDraggingVolume: false,
                 volumeTemp: 0.3,
                 isLoadingVideo: false,
-                countLoadingVideo: 0
+                countLoadingVideo: 0,
+                controlTimeoutId: null
             };
         },
         mounted() {
@@ -189,7 +193,8 @@
             updateVideoDuration() {
                 if (this.isVideoPlayed) {
                     if (this.currentDuration >= this.totalDuration) {
-                        // this.isVideoPlayed = false;
+                        this.isVideoPlayed = false;
+                        this.showControls();
                     } else {
                         if (this.currentDuration == this.video.currentTime) {
                             if (this.countLoadingVideo >= 101) {
@@ -249,6 +254,57 @@
                 }
             },
 
+            moveMouse() {
+                if (this.isVideoPlayed) {
+                    let videoEle = this.$refs.video.classList;
+
+                    if (videoEle.contains('unactive-controls')) {
+                        videoEle.remove('unactive-controls');
+                    }
+
+                    if (videoEle.contains('active-controls')) {
+                        videoEle.remove('active-controls');
+                    }
+
+                    if (!videoEle.contains('active-controls')) {
+                        videoEle.add('active-controls');
+
+                        clearTimeout(this.controlTimeoutId);
+                        this.controlTimeoutId = setTimeout(() => {
+                            videoEle.add('unactive-controls');
+                        }, 1500);
+                    }
+                }
+            },
+
+            showControls() {
+                let videoEle = this.$refs.video.classList;
+                clearTimeout(this.controlTimeoutId);
+
+                if (videoEle.contains('unactive-controls')) {
+                    videoEle.remove('unactive-controls');
+                }
+
+                if (!videoEle.contains('active-controls')) {
+                    videoEle.add('active-controls');
+                }
+            },
+
+            hiddenControls() {
+                if (this.isVideoPlayed) {
+                    let videoEle = this.$refs.video.classList;
+                    clearTimeout(this.controlTimeoutId);
+
+                    if (!videoEle.contains('unactive-controls')) {
+                        videoEle.add('unactive-controls');
+                    }
+
+                    if (videoEle.contains('active-controls')) {
+                        videoEle.remove('active-controls');
+                    }
+                }
+            },
+
             clearCanvas() {
                 this.isShowVideo = false;
                 if (this.video) {
@@ -275,6 +331,7 @@
                 } else {
                     this.video.pause();
                     this.isVideoPlayed = false;
+                    this.showControls();
                 }
                 
                 this.drawFrame();
@@ -373,35 +430,35 @@
             zoomVideo(e) {
                 e.preventDefault();
 
-                if (this.isFullScreen) {
-                    this.isFullScreen = false;
-                } else {
-                    this.isFullScreen = true;
-                }
-
-                // var element = this.$refs.video;
-
                 // if (this.isFullScreen) {
-                //     this.exitFullScreen(element);
+                //     this.isFullScreen = false;
                 // } else {
-                //     this.enterFullScreen(element);
+                //     this.isFullScreen = true;
                 // }
+
+                var element = this.$refs.video;
+
+                if (this.isFullScreen) {
+                    this.exitFullScreen(element);
+                } else {
+                    this.enterFullScreen(element);
+                }
             },
 
             enterFullScreen(element) {
                 this.isFullScreen = true;
 
-                // if (element.requestFullscreen) {
-                //     element.requestFullscreen();
-                // } else if (element.mozRequestFullScreen) {
-                //     element.mozRequestFullScreen();
-                // } else if (element.webkitRequestFullscreen) {
-                //     element.webkitRequestFullscreen();
-                // } else if (element.msRequestFullscreen) {
-                //     element.msRequestFullscreen();
-                // } else if (element.webkitEnterFullscreen) {
-                //     element.webkitEnterFullscreen();
-                // }
+                if (element.requestFullscreen) {
+                    element.requestFullscreen();
+                } else if (element.mozRequestFullScreen) {
+                    element.mozRequestFullScreen();
+                } else if (element.webkitRequestFullscreen) {
+                    element.webkitRequestFullscreen();
+                } else if (element.msRequestFullscreen) {
+                    element.msRequestFullscreen();
+                } else if (element.webkitEnterFullscreen) {
+                    element.webkitEnterFullscreen();
+                }
             },
             
             exitFullScreen() {
