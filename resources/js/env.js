@@ -3,7 +3,7 @@ const env = {
     // s3Url: 'https://kdtc.s3.ap-southeast-1.amazonaws.com/',
 
     api: 'https://kinhdoanhthucchien.edu.vn/api/v1/',
-    s3Url: 'https://kdtc.s3.ap-southeast-1.amazonaws.com/',
+    s3Url: 'https://pmtkdtc.s3.ap-southeast-1.amazonaws.com/',
 }
 
 export default env;
