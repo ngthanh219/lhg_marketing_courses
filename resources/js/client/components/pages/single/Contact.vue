@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <div class="w-content page">
+        <div class="w-content">
             <div class="wc-box">
                 <div class="title">Bản Đồ PMT GROUP</div>
             </div>
