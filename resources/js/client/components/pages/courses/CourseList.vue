@@ -18,7 +18,7 @@
                                 <li>
                                     <a @click="sortCourse($event, 2)" class="text-center cursor-pointer" v-bind:class="{'active': sortValue == 2}">Giá giảm dần</a>
                                 </li>
-                                <li v-if="$store.state.auth.accessToken != null">
+                                <li v-if="$store.state.auth.accessToken">
                                     <a @click="sortCourse($event, 3)" class="text-center cursor-pointer" v-bind:class="{'active': sortValue == 3}">Khóa học của tôi</a>
                                 </li>
                             </ul>
