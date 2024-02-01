@@ -186,27 +186,52 @@ class CourseService extends BaseService
     public function getCoursesClient($request)
     {
         try {
-            $courses = $this->course;
+            if (isset($request->is_user) && $request->is_user == true) {
+                $user = auth()->guard('api')->user();
 
-            if (isset($request->name)) {
-                $courses = $courses->where('name', 'like', '%' . $request->name . '%');
+                if (!$user) {
+                    return $this->responseError(__('messages.auth.auth_error'), 401, ErrorCode::AUTH_ERROR);
+                }
+
+                $courses = $this->course->select([
+                    'courses.id',
+                    'courses.name',
+                    'courses.slug',
+                    'courses.image',
+                    'courses.price',
+                    'courses.discount',
+                    'courses.discount_price'
+                ])->rightJoin('course_users', 'courses.id', '=', 'course_users.course_id')
+                    ->where('courses.is_show', Constant::IS_SHOW)
+                    ->where('courses.deleted_at', null)
+                    ->where('course_users.is_show', Constant::IS_SHOW)
+                    ->where('course_users.deleted_at', null)
+                    ->where('course_users.user_id', $user->id)
+                    ->orderByDesc('courses.id');
+            } else {
+                $courses = $this->course;
+
+                if (isset($request->name)) {
+                    $courses = $courses->where('name', 'like', '%' . $request->name . '%');
+                }
+
+                if (isset($request->price_sort)) {
+                    $courses = $courses->orderBy('discount_price', $request->price_sort);
+                }
+
+                $courses = $courses->where('is_show', Constant::IS_SHOW)
+                    ->select([
+                        'id',
+                        'name',
+                        'slug',
+                        'image',
+                        'price',
+                        'discount',
+                        'discount_price'
+                    ])
+                    ->orderByDesc('id');
             }
 
-            if (isset($request->price_sort)) {
-                $courses = $courses->orderBy('discount_price', $request->price_sort);
-            }
-
-            $courses = $courses->where('is_show', Constant::IS_SHOW)
-                ->select([
-                    'id',
-                    'name',
-                    'slug',
-                    'image',
-                    'price',
-                    'discount',
-                    'discount_price'
-                ])
-                ->orderByDesc('id');
             $data = $this->pagination($courses, $request);
 
             return $this->responseSuccess($data);

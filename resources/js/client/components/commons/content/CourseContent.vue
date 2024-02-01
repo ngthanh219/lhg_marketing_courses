@@ -55,7 +55,8 @@
                     limit: 15,
                     page: 1,
                     price_sort: "",
-                    name: ""
+                    name: "",
+                    is_user: false
                 },
                 formDataError: {
                     message: ""

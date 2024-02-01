@@ -6,7 +6,7 @@
         <div class="w-content page">
             <div class="wc-box">
                 <div class="wc-information">
-                    <div class="box-card">
+                    <div class="box-card flex-center">
                         <div class="tab-detail">
                             <ul>
                                 <li>
@@ -17,6 +17,9 @@
                                 </li>
                                 <li>
                                     <a @click="sortCourse($event, 2)" class="text-center cursor-pointer" v-bind:class="{'active': sortValue == 2}">Giá giảm dần</a>
+                                </li>
+                                <li>
+                                    <a @click="sortCourse($event, 3)" class="text-center cursor-pointer" v-bind:class="{'active': sortValue == 3}">Khóa học của tôi</a>
                                 </li>
                             </ul>
                         </div>
@@ -66,13 +69,16 @@
                     this.sortValue = val;
                     var query = {
                         page: 1,
-                        price_sort: ''
+                        price_sort: '',
+                        is_user: false
                     };
 
                     if (val == 1) {
                         query.price_sort = 'asc';
                     } else if (val == 2) {
                         query.price_sort = 'desc';
+                    } else if (val == 3) {
+                        query.is_user = true;
                     }
 
                     this.$refs.courseContent.setDataListNull();
